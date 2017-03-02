@@ -1,0 +1,54 @@
+[general]
+accounts = frosch03,gmail
+maxsyncaccounts = 2
+ui = ttyui
+pythonfile = ~/bin/offlineimap-helper.py
+socktimeout = 90
+expunge = yes
+
+[Account frosch03]
+localrepository = frosch03local
+remoterepository = frosch03remote
+# autorefresh = 2
+
+[Account gmail]
+localrepository = gmaillocal
+remoterepository = gmailremote
+# autorefresh = 4
+
+[Repository frosch03local]
+type = Maildir
+localfolders = ~/Mail/frosch03
+
+[Repository gmaillocal]
+type = Maildir
+localfolders = ~/Mail/gmail
+
+[Repository frosch03remote]
+type = IMAP
+remotehost = mail.frosch03.de
+# remoteport = 143
+remoteuser = frosch03@frosch03.de
+remotepasseval = mailpasswd("frosch03")
+# nametrans = oimaptransfolder_frosch03
+ssl = no
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+# sslverify = false
+auth_mechanisms = CRAM-MD5
+# auth_mechanisms = GSSAPI, CRAM-MD5, XOAUTH2, PLAIN, LOGIN
+folderfilter = lambda foldername: foldername in ['INBOX', 'Sent', 'Drafts' ]
+maxconnections = 2
+# Folders to get:
+idlefolders = ['INBOX']
+
+[Repository gmailremote]
+type = Gmail
+remoteuser = frosch03@gmail.com
+remotepasseval = mailpasswd("gmail")
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+auth_mechanisms = GSSAPI, CRAM-MD5, PLAIN, LOGIN
+folderfilter = lambda foldername: foldername in ['INBOX', '[Gmail].Sent Mail', '[Gmail].Starred', '[Gmail].Important' ]
+# folderfilter = lambda foldername: foldername not in ['[Gmail].Trash', '[Gmail].Spam', '[Gmail].All Mail', 'Trash', '[Gmail]/All Mail', '[Gmail]/Spam', '[Gmail]/Trash' ]
+maxconnections = 2
+idlefolders = ['INBOX']

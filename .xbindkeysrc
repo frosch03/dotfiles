@@ -1,0 +1,14 @@
+"xbacklight -dec 3"
+  XF86MonBrightnessDown
+
+"/home/frosch03/bin/incBacklight.sh"
+  XF86MonBrightnessUp
+
+"pamixer --increase 5"
+  XF86AudioRaiseVolume
+
+"pamixer --decrease 5"
+  XF86AudioLowerVolume
+
+"pamixer --toggle-mute"
+  XF86AudioMute
