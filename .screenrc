@@ -1,0 +1,35 @@
+startup_message off
+shell /bin/zsh
+vbell on
+vbell_msg " * muuuuh * "
+activity "activity in %t %n"
+defmonitor on
+#termcapinfo vt100 dl=5\E[M
+
+#screensaver
+#blankerprg /home/frosch03/matrix
+#idle 300
+
+#backticks
+#backtick 1 1 1 /home/frosch03/temp.sh
+#backtick 2 40 2 /home/frosch03/cpu
+#backtick 3 1 1 /home/frosch03/bat.sh
+#backtick 3 30 30 /home/frosch03/weather.sh GMXX5897
+
+#hardstatus
+hardstatus alwayslastline
+hardstatus string "%{.bW}%-Lw%{.wB}%n %t%{-}%+Lw %=%{..G} %3` CPU@%2` [%1`]%h %D,%d.%M %c:%s "
+
+# autostart some stuff
+screen -t console 1 
+# screen -t Jabber 0 mcabber
+# screen -t IRC 1 irssi -c jomach-ich.de
+# screen -t r00t 6 su -
+# screen -t RSS 5 snownews
+# screen -t Web 4 links2
+# screen -t IRC 3 bitchx -b
+# screen -t ICQ 2 centericq
+# screen -t Music 0 mocp
+
+#bind f screen bash -c "screen -X split;screen -X resize +32; screen -X select 0; screen -X focus; screen -X select 1;exit"
+bind f screen sh -c "cd /tmp"

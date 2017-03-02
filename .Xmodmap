@@ -1,0 +1,22 @@
+remove Lock = Caps_Lock
+
+! Set CapsLock to ESC (for VI)
+keycode 66 = Escape
+
+! Set CapsLock to Ctrl (for Emacs)
+! keycode 66 = Control_L
+
+
+keycode 49 = grave asciitilde degree
+keycode 108 = Mode_switch
+keysym e = e E EuroSign
+keysym c = c C cent
+keysym a = a A adiaeresis Adiaeresis
+keysym o = o O odiaeresis Odiaeresis
+keysym u = u U udiaeresis Udiaeresis
+keysym s = s S ssharp 
+keysym 0 = 0 parenright degree
+keysym m = m M mu
+
+keycode 133 = Super_L
+add mod4 = Super_L
