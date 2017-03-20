@@ -112,7 +112,6 @@ wsGimp  = "gimp"
 wsMusi  = "musi"
 wsIrc   = "irc"
 
--- myWorkspaces = map show [1] ++ ["code", "web", "im", "mail", "skype", "gimp", "musi", "irc"]
 myWorkspaces = [wsOne, wsCode, wsWeb, wsIm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
 
 
@@ -120,11 +119,27 @@ myWorkspaces = [wsOne, wsCode, wsWeb, wsIm, wsMail, wsSkype, wsGimp, wsMusi, wsI
 projects :: [Project]
 projects =
 
-    [ Project   { projectName       = "code"
-                , projectDirectory  = "~/Programming/"
-                , projectStartHook  = Just $ do spawnOn "code" myTerminal
-                                                spawnOn "code" myTerminal
+    [ Project   { projectName       = wsOne
+                , projectDirectory  = "~/"
+                , projectStartHook  = Just $ do spawnOn wsOne "/usr/bin/emacs"
                 }
+
+    , Project   { projectName       = wsCode
+                , projectDirectory  = "~/Programming/"
+                , projectStartHook  = Just $ do spawnOn wsCode myTerminal
+                                                spawnOn wsCode myTerminal
+                }
+
+    , Project   { projectName       = wsWeb
+                , projectDirectory  = "~/"
+                , projectStartHook  = Just $ do spawnOn wsWeb myBrowser
+                }
+
+    , Project   { projectName       = wsMail
+                , projectDirectory  = "~/"
+                , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -nw -e '(mu4e)'"
+                }
+
     ]
 
 
@@ -950,8 +965,8 @@ myKeys' conf = let
     subKeys "System"
     [ ("M-q"          , addName "Restart XMonad"            $ spawn "xmonad --restart")
     , ("M-i"          , addName "Run a programm"            $ shellPrompt myXPConfig)
-    -- , ("M-S-r"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
+    , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
+    , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
     -- , ("M-S-m"        , addName "" $ manPrompt myXPConfig)
     -- , ("M-S-s"        , addName "" $ sshPrompt myXPConfig)
@@ -963,28 +978,95 @@ myKeys' conf = let
     -- , ("M-S-l"        ,	addName "" $ spawn "/home/frosch03/bin/lock")
 
     , ("M-C-q"        , addName "Rebuild & restart XMonad"  $ spawn "xmonad --recompile && xmonad --restart")
-    -- , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ io (exitWith ExitSuccess))
+    , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ io (exitWith ExitSuccess))
     -- , ("M-x"          , addName "Lock screen"               $ spawn "xset s activate")
     -- , ("M-<F4>"       , addName "Print Screen"              $ return ())
   --, ("M-F1"                   , addName "Show Keybindings"                $ return ())
-    ] -- ^++^
+    ] ^++^
+
+
+    -----------------------------------------------------------------------
+    -- Resizing
+    -----------------------------------------------------------------------
+
+    subKeys "Resize"
+
+    [
+
+    -- following is a hacky hack hack
+    --
+    -- I want to be able to use the same resize bindings on both BinarySpacePartition and other
+    -- less sophisticated layouts. BSP handles resizing in four directions (amazing!) but other
+    -- layouts have less refined tastes and we're lucky if they just resize the master on a single
+    -- axis.
+    --
+    -- To this end, I am using X.A.MessageFeedback to test for success on using the BSP resizing
+    -- and, if it fails, defaulting to the standard (or the X.L.ResizableTile Mirror variants)
+    -- Expand and Shrink commands.
+    --
+    -- The "sequence_" wrapper is needed because for some reason the windows weren't resizing till
+    -- I moved to a different window or refreshed, so I added that here. Shrug.
+    
+    -- mnemonic: less than / greater than
+    --, ("M4-<L>"       , addName "Expand (L on BSP)"     $ sequence_ [(tryMessage_ (ExpandTowards L) (Expand)), refresh])
+
+--      ("C-<L>"                  , addName "Expand (L on BSP)"           $ tryMsgR (ExpandTowards L) (Shrink))
+--    , ("C-<R>"                  , addName "Expand (R on BSP)"           $ tryMsgR (ExpandTowards R) (Expand))
+--    , ("C-<U>"                  , addName "Expand (U on BSP)"           $ tryMsgR (ExpandTowards U) (MirrorShrink))
+--    , ("C-<D>"                  , addName "Expand (D on BSP)"           $ tryMsgR (ExpandTowards D) (MirrorExpand))
+--
+--    , ("C-S-<L>"                , addName "Shrink (L on BSP)"           $ tryMsgR (ShrinkFrom R) (Shrink))
+--    , ("C-S-<R>"                , addName "Shrink (R on BSP)"           $ tryMsgR (ShrinkFrom L) (Expand))
+--    , ("C-S-<U>"                , addName "Shrink (U on BSP)"           $ tryMsgR (ShrinkFrom D) (MirrorShrink))
+--    , ("C-S-<D>"                , addName "Shrink (D on BSP)"           $ tryMsgR (ShrinkFrom U) (MirrorExpand))
+
+      ("M-["                    , addName "Expand (L on BSP)"           $ tryMsgR (ExpandTowards L) (Shrink))
+    , ("M-]"                    , addName "Expand (R on BSP)"           $ tryMsgR (ExpandTowards R) (Expand))
+    , ("M-S-["                  , addName "Expand (U on BSP)"           $ tryMsgR (ExpandTowards U) (MirrorShrink))
+    , ("M-S-]"                  , addName "Expand (D on BSP)"           $ tryMsgR (ExpandTowards D) (MirrorExpand))
+
+    , ("M-C-["                  , addName "Shrink (L on BSP)"           $ tryMsgR (ShrinkFrom R) (Shrink))
+    , ("M-C-]"                  , addName "Shrink (R on BSP)"           $ tryMsgR (ShrinkFrom L) (Expand))
+    , ("M-C-S-["                , addName "Shrink (U on BSP)"           $ tryMsgR (ShrinkFrom D) (MirrorShrink))
+    , ("M-C-S-]"                , addName "Shrink (D on BSP)"           $ tryMsgR (ShrinkFrom U) (MirrorExpand))
+
+  --, ("M-r"                    , addName "Mirror (BSP rotate)"         $ tryMsgR (Rotate) (XMonad.Layout.MultiToggle.Toggle MIRROR))
+  --, ("M-S-C-m"                , addName "Mirror (always)"             $ sendMessage $ XMonad.Layout.MultiToggle.Toggle MIRROR)
+  --, ("M4-r"                   , addName "BSP Rotate"                  $ sendMessage Rotate)
+
+-- TODO: the following are potentially useful but I won't know till I work with BSP further
+--    , ("M4-s"                   , addName "BSP Swap"                    $ sendMessage XMonad.Layout.BinarySpacePartition.Swap)
+--    , ("M4-p"                   , addName "BSP Focus Parent"            $ sendMessage FocusParent)
+--    , ("M4-n"                   , addName "BSP Select Node"             $ sendMessage SelectNode)
+    --, ("M4-m"                   , addName "BSP Move Node"               $ sendMessage MoveNode)
+
+    -- sublayout specific (unused)
+    --  ("M4-C-S-."               , addName "toSubl Shrink"               $ toSubl Shrink)
+    --, ("M4-C-S-,"               , addName "toSubl Expand"               $ toSubl Expand)
+    ]               
+
               where
 		toggleCopyToAll = wsContainingCopies >>= \ws -> case ws of
 							         [] -> windows copyToAll
 				                                 _  -> killAllOtherCopies
 
 
-active      = blue
+active      = base02
 activeWarn  = red
-inactive    = base02
-focusColor  = blue
-unfocusColor = base02
+inactive    = base00
+focusColor  = base02
+unfocusColor = base00
 
 
-base03  = "#002b36"
-base02  = "#073642"
-base01  = "#586e75"
-base00  = "#657b83"
+
+base03  = "#555555"
+base02  = "#333333"
+base01  = "#111111"
+base00  = "#000000"
+hisBase03  = "#002b36"
+hisBase02  = "#073642"
+hisBase01  = "#586e75"
+hisBase00  = "#657b83"
 base0   = "#839496"
 base1   = "#93a1a1"
 base2   = "#eee8d5"
@@ -1000,8 +1082,8 @@ green   = "#859900"
 
 
 
-gap         = 10
-topbar      = 10
+gap         = 0
+topbar      = 0
 
 
 myFont      = "xft:Inconsolata:antialias=true:pixelsize=14:autohint=true"
