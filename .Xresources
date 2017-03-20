@@ -21,6 +21,9 @@ URxvt.keysym.M-u:    perl:url-select:select_next
 URxvt.url-select.launcher:   /usr/bin/firefox
 URxvt.url-select.underline: false
 
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
 ! Bind C-0, C-+ and C-= to activate medium, big and small font size respectively.
 URxvt.keysym.C-7:     command:\033]710;xft:Inconsolata:pixelsize=30:antialias=true:autohint=true\007
 URxvt.keysym.C-8:     command:\033]710;xft:Inconsolata:pixelsize=24:antialias=true:autohint=true\007
