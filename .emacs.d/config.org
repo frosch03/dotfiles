@@ -1,303 +1,321 @@
 * Package Archives
-#+BEGIN_SRC emacs-lisp
-;;(require 'package)
-;; Add the original Emacs Lisp Package Archive
-;; (add-to-list 'package-archives
-;;              '("elpa" . "http://tromey.com/elpa/"))
-;; Add the user-contributed repository
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; (add-to-list 'package-archives
-;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(add-to-list 'package-archives
-             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
-;;(package-initialize)
-
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+  (add-to-list 'package-archives '("org"  . "http://orgmode.org/elpa/") t)
+  (add-to-list 'package-archives '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+  #+END_SRC
 
 * Interface Tweaks
-#+BEGIN_SRC emacs-lisp
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(fg:erc-color-face12 ((t (:foreground "deep sky blue"))))
- '(iedit-occurrence ((t (:inherit highlight :background "yellow")))))
-
-;; Set font face
-;; (set-face-attribute 'default nil :font "ProggyTinySZ-12") ;; Bitmap font
-;; (set-face-attribute 'default nil :font "ProggyTinyTTSZ-14") ;; Truetype font
-;; (set-face-attribute 'default nil :font "") ;; Truetype font
-;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
-(set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
-;; (set-default-font "Inconsolata 10")
-
-; set the font size ... 
-(set-face-attribute 'default nil :height 100)
-
-; No Splash-Screen
-(setq inhibit-startup-message t)
-
-;; (require 'color-theme-sanityinc-tomorrow)
-;; (color-theme-sanityinc-tomorrow--define-theme night)
-
-; Transparent Emacs
-(set-frame-parameter (selected-frame) 'alpha '(85 85))
-(add-to-list 'default-frame-alist '(alpha 85 85))
-
-; Longer History length
-(setq history-length 1000)
-
-;; Visual bell
-(setq visible-bell 1)
-
-(require 'moe-theme)
-#+END_SRC
+  - custom-set-faces was added by Custom. 
+    If you edit it by hand, you could mess it up, so be careful. Your
+    init file should contain only one such instance. If there is more
+    than one, they won't work right.
+    #+BEGIN_SRC emacs-lisp
+      (custom-set-faces
+       '(fg:erc-color-face12 ((t (:foreground "deep sky blue"))))
+       '(iedit-occurrence ((t (:inherit highlight :background "yellow")))))
+    #+END_SRC
+  - set font face
+    #+BEGIN_SRC emacs-lisp
+      ;; (set-face-attribute 'default nil :font "ProggyTinySZ-12") ;; Bitmap font
+      ;; (set-face-attribute 'default nil :font "ProggyTinyTTSZ-14") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
+      (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-default-font "Inconsolata 10")
+    #+END_SRC
+  - set the font size
+    #+BEGIN_SRC emacs-lisp
+      (set-face-attribute 'default nil :height 120)
+    #+END_SRC
+  - inhibit splash screen
+    #+BEGIN_SRC emacs-lisp
+      (setq inhibit-startup-message t)
+    #+END_SRC
+  - make emacs transparent
+    #+BEGIN_SRC emacs-lisp
+      (set-frame-parameter (selected-frame) 'alpha '(85 85))
+      (add-to-list 'default-frame-alist '(alpha 85 85))
+    #+END_SRC
+  - make history length longer
+    #+BEGIN_SRC emacs-lisp
+      (setq history-length 1000)
+    #+END_SRC
+  - enable visual bell
+    #+BEGIN_SRC emacs-lisp
+      (setq visible-bell 1)
+    #+END_SRC
+  - use theme moe
+    #+BEGIN_SRC emacs-lisp
+      (use-package moe-theme)
+    #+END_SRC
 
 * Loadpaths
-#+BEGIN_SRC emacs-lisp
-; Add folders to the load-path
-;; (add-to-list 'load-path "~/.emacs.d/")
-(add-to-list 'load-path "~/.emacs.d/color-theme/")
-(add-to-list 'load-path "~/.emacs.d/color-theme/themes/")
-(add-to-list 'load-path "~/.emacs.d/calendar/")
-(add-to-list 'load-path "~/.emacs.d/elim/")
-(add-to-list 'load-path "~/.emacs.d/elim/elisp/")
-(add-to-list 'load-path "~/.emacs.d/flycheck/")
-(add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-(add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-(add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-(add-to-list 'load-path "~/.emacs.d/neotree/")
-(add-to-list 'load-path "~/.emacs.d/frogblogmode/")
-(add-to-list 'load-path "~/.emacs.d/nginx-mode/")
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-#+END_SRC
+  Add folders to the load-path
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/color-theme/")
+    (add-to-list 'load-path "~/.emacs.d/color-theme/themes/")
+    (add-to-list 'load-path "~/.emacs.d/calendar/")
+    (add-to-list 'load-path "~/.emacs.d/elim/")
+    (add-to-list 'load-path "~/.emacs.d/elim/elisp/")
+    (add-to-list 'load-path "~/.emacs.d/flycheck/")
+    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+    (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+    (add-to-list 'load-path "~/.emacs.d/neotree/")
+    (add-to-list 'load-path "~/.emacs.d/frogblogmode/")
+    (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
+    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  #+END_SRC
 
 * Key-Bindings
-#+BEGIN_SRC emacs-lisp
+  Define custom key bindings
 
-; ibuffer-mode
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+  - ibuffer-mode
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-x C-b") 'ibuffer)
+    #+END_SRC
 
+  - set global print key
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "<print>") 'print-buffer)
+    #+END_SRC
 
-; set global print key
-(global-set-key (kbd "<print>") 'print-buffer)
-
-(global-set-key (kbd "C-= C-=")   'er/expand-region)
-
-(global-set-key (kbd "C-<tab>") 'other-window)
-(global-set-key (kbd "M-<tab>") 'other-frame)
-#+END_SRC
+  - other bindings
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "C-= C-=") 'er/expand-region)
+      (global-set-key (kbd "C-<tab>") 'other-window)
+      (global-set-key (kbd "M-<tab>") 'other-frame)
+      (global-set-key (kbd "<f5>")    'revert-buffer)
+      (global-set-key (kbd "C-z")     'undo)
+    #+END_SRC
 
 * Org-Mode Config
-#+BEGIN_SRC emacs-lisp
-; Org-Mode stuff:
-; MobileOrg
-;; Set to the location of your Org files on your local system
-;; (setq org-directory "~/Org/")
-;; Set to the name of the file where new notes will be stored
-;; (setq org-mobile-inbox-for-pull "~/mobile-org/flagged.org")
-;; Set to <your Dropbox root directory>/MobileOrg.
-;; (setq org-mobile-directory "~/mobile-org/")
+** exports
+   #+BEGIN_SRC emacs-lisp
+     (require 'ox-latex)
+     (require 'ox-md)
+   #+END_SRC
 
-;; ; Here comes the nice color-theme 
-;; (require 'zenburn)
-;; (color-theme-zenburn)
+** mu4e
+   #+BEGIN_SRC emacs-lisp
+     (require 'org-mu4e)
+   #+END_SRC
 
-;;(require 'color-theme-tomorrow)
-;;(color-theme-tomorrow-night)
+** agenda
+   #+BEGIN_SRC emacs-lisp
+     ;; starte agenda in ganzem fenster
+     (setq org-agenda-window-setup 'current-window)
 
-;; adding comments to org mode
-;; (add-to-list 'org-structure-template-alist '("C" "#+BEGIN_COMMENT\n?\n#+END_COMMENT"))
+     ;; Tasks mit Prioriäten unterschiedlich darstellen:
+     (setq org-agenda-fontify-priorities 
+           (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Some Org-Mode Configurations
-(setq org-image-actual-width 300)
-
-(require 'org-install)			
-
-;; To link to mu4e mail
-(require 'org-mu4e)
-;; set keys to link
-(global-set-key (kbd "C-c C-l") 'org-store-link)
-(global-set-key (kbd "C-c l") 'org-insert-link)
-
-;; refile targets
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
-
-;; starte agenda in ganzem fenster
-(setq org-agenda-window-setup 'current-window)
-
-;; Tasks mit Prioriäten unterschiedlich darstellen:
-(setq org-agenda-fontify-priorities 
-   (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
-
-(setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
-
-;; Remember-settings (or is it capture?)
-;; (require 'org-remember)
-;; (require 'remember)
-;; (org-remember-insinuate)
-;; (add-hook 'remember-mode-hook 'org-remember-apply-template)
-(define-key global-map "\C-cc" 'org-capture)
-;; (define-key global-map "\C-cr" 'org-remember)
+     (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
 
 
-;; Org's taskjuggler exporter
-;; (require 'ox-taskjuggler)
+     ;; refile targets
+     (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                      (org-agenda-files :maxlevel . 9))))
 
 
-;; Org's Latex Exporter configurations sction
-(setq org-latex-pdf-process
-			'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-(require 'ox-latex)
-(setq org-export-latex-listings 'minted)
-(add-to-list 'org-latex-packages-alist '("" "minted"))
+     (define-key mode-specific-map [?a] 'org-agenda)
 
-(eval-after-load "org"
-  '(progn
-     ;; .txt files aren't in the list initially, but in case that changes
-     ;; in a future version of org, use if to avoid errors
-     (if (assoc "\\.txt\\'" org-file-apps)
-         (setcdr (assoc "\\.txt\\'" org-file-apps) "notepad.exe %s") 
-       (add-to-list 'org-file-apps '("\\.txt\\'" . "notepad.exe %s") t))
-     ;; Change .pdf association directly within the alist
-     (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
+     (setq org-todo-keywords
+           '((sequence "TODO" "|" "DONE" "DELEGATED" "CANCELLED")))
 
-(setq org-src-fontify-natively t)
 
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+     (eval-after-load "org"
+       '(progn
+          (define-prefix-command 'org-todo-state-map)
 
-(define-key mode-specific-map [?a] 'org-agenda)
+          (define-key org-mode-map "\C-cx" 'org-todo-state-map)
 
-(setq org-todo-keywords
-  '((sequence "TODO" "|" "DONE" "DELEGATED" "CANCELLED")))
+          (define-key org-todo-state-map "x"
+            #'(lambda nil (interactive) (org-todo "CANCELLED")))
+          (define-key org-todo-state-map "d"
+            #'(lambda nil (interactive) (org-todo "DONE")))
+          ;; (define-key org-todo-state-map "f"
+          ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
+          (define-key org-todo-state-map "l"
+            #'(lambda nil (interactive) (org-todo "DELEGATED")))
+          ;; (define-key org-todo-state-map "s"
+          ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
+          ;; (define-key org-todo-state-map "w"
+          ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
 
-(eval-after-load "org"
-  '(progn
-     (define-prefix-command 'org-todo-state-map)
-
-     (define-key org-mode-map "\C-cx" 'org-todo-state-map)
-
-     (define-key org-todo-state-map "x"
-       #'(lambda nil (interactive) (org-todo "CANCELLED")))
-     (define-key org-todo-state-map "d"
-       #'(lambda nil (interactive) (org-todo "DONE")))
-     ;; (define-key org-todo-state-map "f"
-     ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
-     (define-key org-todo-state-map "l"
-       #'(lambda nil (interactive) (org-todo "DELEGATED")))
-     ;; (define-key org-todo-state-map "s"
-     ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
-     ;; (define-key org-todo-state-map "w"
-     ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
-
-     (eval-after-load "org-agenda"
-       '(progn 
-	  (define-key org-agenda-mode-map "\C-n" 'next-line)
-	  (define-key org-agenda-keymap "\C-n" 'next-line)
-	  (define-key org-agenda-mode-map "\C-p" 'previous-line)
-	  (define-key org-agenda-keymap "\C-p" 'previous-line)
-	  )
+          (eval-after-load "org-agenda"
+            '(progn 
+               (define-key org-agenda-mode-map "\C-n" 'next-line)
+               (define-key org-agenda-keymap "\C-n" 'next-line)
+               (define-key org-agenda-mode-map "\C-p" 'previous-line)
+               (define-key org-agenda-keymap "\C-p" 'previous-line)
+               )
+            )
+          )
        )
-     )
-  )
 
-;; Markdown Exporter
-(require 'ox-md)
-;; (require 'ox-hlog)
+     (global-set-key (kbd "C-S-<f10>")   'org-agenda-list)
+     (global-set-key (kbd "C-S-<f11>")   'org-mobile-push)
+     (global-set-key (kbd "C-S-<f12>")   'org-mobile-pull)
+   #+END_SRC
 
-; Org-Mode Bullets - for nice looking org-mode bullet items (previously stars *)
-; (require 'org-bullets)
-; (autoload 'org-bullets "org-bullets")
-; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+** mobile
+   - Automaticall pull mobile while starting and push while ending
+     #+BEGIN_SRC emacs-lisp
+       ;; (add-hook 'after-init-hook 'org-mobile-pull)
+       ;; (add-hook 'kill-emacs-hook 'org-mobile-push)
+     #+END_SRC
 
-;; Automaticall pull mobile while starting and push while ending
-;; (add-hook 'after-init-hook 'org-mobile-pull)
-;; (add-hook 'kill-emacs-hook 'org-mobile-push)
+** install
+   #+BEGIN_SRC emacs-lisp
+     (require 'org-install)
+   #+END_SRC
 
-(setq org-ditaa-jar-path "~/bin/ditaa.jar")
-(setq org-plantuml-jar-path "~/bin/plantuml.jar")
+** latex
+   #+BEGIN_SRC emacs-lisp
+   ;; Org's Latex Exporter configurations sction
+   (setq org-latex-pdf-process
+  			 '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+   (setq org-export-latex-listings 'minted)
+   (add-to-list 'org-latex-packages-alist '("" "minted"))
+  
+   ;; for bigger latex preview in org-mode (C-c C-x C-l)
+   (plist-put org-format-latex-options :scale 1.8)
+   #+END_SRC
 
-(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+** bullets
+   Org-Mode Bullets - for nice looking org-mode bullet items
+   # #+BEGIN_SRC emacs-lisp
+   #   (use-package org-bullets
+   #     :ensure t
+   #     :config
+   #     (autoload 'org-bullets "org-bullets")
+   #     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+   #     )
+   # #+END_SRC
 
-; Make babel results blocks lowercase
-(setq org-babel-results-keyword "results")
+** ditaa & plantuml
+   - setup paths
+     #+BEGIN_SRC emacs-lisp
+       (setq org-ditaa-jar-path "~/bin/ditaa.jar")
+       (setq org-plantuml-jar-path "~/bin/plantuml.jar")
+     #+END_SRC
+   - Use fundamental mode when editing plantuml blocks with C-c '
+     #+BEGIN_SRC emacs-lisp
+       (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+     #+END_SRC
 
-(defun bh/display-inline-images ()
-  (condition-case nil
-      (org-display-inline-images)
-    (error nil)))
+** babel
+   - Make babel results blocks lowercase
+     #+BEGIN_SRC emacs-lisp
+     (setq org-babel-results-keyword "results")
+     #+END_SRC
 
-(org-babel-do-load-languages
- (quote org-babel-load-languages)
- (quote ((emacs-lisp . t)
-         (dot . t)
-         (ditaa . t)
-         (R . t)
-         (python . t)
-         (ruby . t)
-         (gnuplot . t)
-         (clojure . t)
-         (sh . t)
-         (ledger . t)
-         (org . t)
-         (plantuml . t)
-         (latex . t))))
+   - list of loaded languages
+     #+BEGIN_SRC emacs-lisp
+     (org-babel-do-load-languages
+      (quote org-babel-load-languages)
+      (quote ((emacs-lisp . t)
+              (dot . t)
+              (ditaa . t)
+              (R . t)
+              (python . t)
+              (ruby . t)
+              (gnuplot . t)
+              (clojure . t)
+              (sh . t)
+              (ledger . t)
+              (org . t)
+              (plantuml . t)
+              (latex . t))))
+     #+END_SRC
 
-; Do not prompt to confirm evaluation
-; This may be dangerous - make sure you understand the consequences
-; of setting this -- see the docstring for details
-(setq org-confirm-babel-evaluate nil)
+   - inhibit prompt to confirm evaluation
 
-; Use fundamental mode when editing plantuml blocks with C-c '
-(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+     This may be dangerous - make sure you understand the consequences
+     of setting this -- see the docstring for details
+     #+BEGIN_SRC emacs-lisp
+     (setq org-confirm-babel-evaluate nil)
+     #+END_SRC
+
+** jira
+  you need make sure whether the "/jira" at the end is necessary or
+  not, see discussion at the end of this page
+  #+BEGIN_SRC emacs-lisp
+    (setq jiralib-url "http://jira.frosch03.de")
+  #+END_SRC
+
+  jiralib is not explicitly required, since org-jira will load it.
+  #+BEGIN_SRC emacs-lisp
+    (require 'org-jira) 
+  #+END_SRC  
+
+** gcal
+   #+BEGIN_SRC emacs-lisp
+     (setq package-check-signature nil)
+  
+     (require 'org-gcal)
+     ;; configuration within private_config.org
+     ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
+     ;; 	org-gcal-client-secret "<password>"
+     ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
+  
+     (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+     ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+   #+END_SRC
+
+** taskjuggler
+   Org's taskjuggler exporter
+   #+BEGIN_SRC emacs-lisp
+     ;; (require 'ox-taskjuggler)
+   #+END_SRC
+
+** image handling
+   #+BEGIN_SRC emacs-lisp
+     (setq org-image-actual-width 300)
+
+     (defun bh/display-inline-images ()
+       (condition-case nil
+           (org-display-inline-images)
+         (error nil)))
+
+   (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+   #+END_SRC
+
+** keybindings
+   #+BEGIN_SRC emacs-lisp
+     ;; set keys to link
+     (global-set-key (kbd "C-c C-l") 'org-store-link)
+     (global-set-key (kbd "C-c l") 'org-insert-link)
+
+     ;; Remember-settings (or is it capture?)
+     ;; (require 'org-remember)
+     ;; (require 'remember)
+     ;; (org-remember-insinuate)
+     ;; (add-hook 'remember-mode-hook 'org-remember-apply-template)
+     (define-key global-map "\C-cc" 'org-capture)
+     ;; (define-key global-map "\C-cr" 'org-remember)
 
 
-(global-set-key (kbd "C-S-<f10>")   'org-agenda-list)
-(global-set-key (kbd "C-S-<f11>")   'org-mobile-push)
-(global-set-key (kbd "C-S-<f12>")   'org-mobile-pull)
+   #+END_SRC
+** file associations
+   #+BEGIN_SRC emacs-lisp
+     (eval-after-load "org"
+       '(progn
+          ;; .txt files aren't in the list initially, but in case that changes
+          ;; in a future version of org, use if to avoid errors
+          (if (assoc "\\.txt\\'" org-file-apps)
+              (setcdr (assoc "\\.txt\\'" org-file-apps) "notepad.exe %s") 
+            (add-to-list 'org-file-apps '("\\.txt\\'" . "notepad.exe %s") t))
+          ;; Change .pdf association directly within the alist
+          (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
 
-;; End Org-Mode Configurations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     (setq org-src-fontify-natively t)
 
-;; for bigger latex preview in org-mode (C-c C-x C-l)
-(plist-put org-format-latex-options :scale 1.8)
-#+END_SRC
-** Org Jira
-#+BEGIN_SRC emacs-lisp
-;; org-jira
-;;;;;;;;;;;
-
-;; (add-to-list 'load-path "~/.emacs.d/org-jira/")
-(setq jiralib-url "http://jira.frosch03.de")
-;; you need make sure whether the "/jira" at the end is 
-;; necessary or not, see discussion at the end of this page
-
-(require 'org-jira) 
-;; jiralib is not explicitly required, since org-jira will load it.
-#+END_SRC
-
-** Org gcal
- #+BEGIN_SRC emacs-lisp
-   ;; org-gcal syncer
-   (setq package-check-signature nil)
-
-   (require 'org-gcal)
-   ;; configuration within private_config.org
-   ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-   ;; 	org-gcal-client-secret "<password>"
-   ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
-
-   (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-   ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
- #+END_SRC
+     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+   #+END_SRC
 
 * Dired Config
 #+BEGIN_SRC emacs-lisp
@@ -1190,11 +1208,10 @@
 #+END_SRC
 
 * weechat
-#+BEGIN_SRC emacs-lisp
-;; Weechat
-;;;;;;;;;;
-(require 'weechat)
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    ;; (require 'weechat)
+    (use-package weechat)
+  #+END_SRC
 
 * tramp
 #+BEGIN_SRC emacs-lisp
