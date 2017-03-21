@@ -187,13 +187,14 @@
 
 ** bullets
    Org-Mode Bullets - for nice looking org-mode bullet items
-   #+BEGIN_SRC emacs-lisp
-     (use-package 'org-bullets
-       :config
-       (autoload 'org-bullets "org-bullets")
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-       )
-   #+END_SRC
+   # #+BEGIN_SRC emacs-lisp
+   #   (use-package org-bullets
+   #     :ensure t
+   #     :config
+   #     (autoload 'org-bullets "org-bullets")
+   #     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+   #     )
+   # #+END_SRC
 
 ** ditaa & plantuml
    - setup paths
