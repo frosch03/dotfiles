@@ -318,365 +318,278 @@
    #+END_SRC
 
 * Dired Config
-#+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Begin Dired Configurations
-
-; dired starts in homedir with shift + F1
-(require 'dired-x)
-(require 'dired-details+)
-(global-set-key (kbd "S-<f1>")
-  (lambda ()
-    (interactive)
-    (dired "~/")))
-(add-to-list 'dired-omit-extensions ".hi") ;; hide haskell .hi files
-
-;; Always Recursion
-;; Always recursively delete directory
-(setq dired-recursive-deletes 'always)
-
-;; Always recursively copy directory
-(setq dired-recursive-copies 'always)
-
-;; Auto guess target
-;; Set this variable to non-nil, Dired will try to guess a default
-;; target directory. This means: if there is a dired buffer
-;; displayed in the next window, use its current subdir, instead of
-;; the current subdir of this dired buffer. The target is used in
-;; the prompt for file copy, rename etc.
-(setq dired-dwim-target t)
-
-;; Delete by moving to Trash.
-;; Replace ~/.Trash/emacs with the path to your trash folder.
-(setq delete-by-moving-to-trash t
-      trash-directory "/tmp/trash")
-
-;; Also in dired-details, to show sym link targets, add this to our
-;; .emacs
-(setq dired-details-hide-link-targets nil)
-
-;; dired-omit-files contains the regex of the files to hide in Dired
-;; Mode. For example, if you want to hide the files that begin with
-;; . and #, set that variable like this
-(setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.")
-
-;; Customize Dired mode with ls command
-;; The last step is to config Dired mode. You need to tell Dired to
-;; add more arguments to the ls call so that it can display
-;; correctly. The library called dired-sort-map, which you can find
-;; here, call help you achieve that task. Download the
-;; dired-sort-map.el file from the link above, put it in your
-;; .emacs.d folder or somewhere that Emacs can find it in the load
-;; path and add this to your .emacs
-
-(add-to-list 'load-path "~/.emacs.d/dired/")
-;; (require 'dired-sort-map)
-
-;; The variable dired-listing-switches specifies the extra argument
-;; that you want to pass to ls command. For example, calling ls
-;; –group-directories-first will result in ls sort the directories
-;; first in the output. To let Emacs pass that argument to ls, use
-;; this code
-(setq dired-listing-switches "--group-directories-first")
-
-;; You can add more arguments that you like, in that case the code will
-;; look like this
-(setq dired-listing-switches "--group-directories-first -alh")
-
-(require 'dired-rainbow)
-
-(defconst dired-audio-files-extensions
-  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")
-  "Dired Audio files extensions")
-(dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
-
-(defconst dired-video-files-extensions
-    '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts"
-      "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
-    "Dired Video files extensions")
-(dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
-
-(require 'dired-filter)
-
-;; End Dired Configurations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; dired-details to hide the details ...
-(require 'dired-details+)
-#+END_SRC
-
-* IRC Config
-#+BEGIN_SRC emacs-lisp
-  ; ERC IRC
-  ; (require 'erc)
-  (autoload 'erc "erc")
-#+END_SRC
-
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+      (require 'dired-x)
+      (require 'dired-details+)
+      (require 'dired-rainbow)
+      (require 'dired-filter)
+    #+END_SRC
+  - Configuring loadpath:
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'load-path "~/.emacs.d/dired/")
+    #+END_SRC
+  - Startup dired within home directory by S-<F1>
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "S-<f1>")
+                      (lambda ()
+                        (interactive)
+                        (dired "~/")))
+    #+END_SRC
+  - Omit some file \\
+    dired-omit-files contains the regex of the files to hide in Dired
+    Mode. For example, if you want to hide the files that begin with
+    . and #, set that variable like this
+    #+BEGIN_SRC emacs-lisp
+      (setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.")
+      (add-to-list 'dired-omit-extensions ".hi") ;; hide haskell .hi files
+    #+END_SRC
+  - Always copy & delete directories recursively
+    #+BEGIN_SRC emacs-lisp
+      (setq dired-recur;sive-copies 'always)
+      (setq dired-recursive-deletes 'always)
+    #+END_SRC
+  - Auto guess target \\
+    Set this variable to non-nil, Dired will try to guess a default
+    target directory. This means: if there is a dired buffer displayed
+    in the next window, use its current subdir, instead of the current
+    subdir of this dired buffer. The target is used in the prompt for
+    file copy, rename etc.
+    #+BEGIN_SRC emacs-lisp
+      (setq dired-dwim-target t)
+    #+END_SRC
+  - Delete by moving to Trash
+    #+BEGIN_SRC emacs-lisp
+      (setq delete-by-moving-to-trash t
+            trash-directory "/tmp/trash")
+    #+END_SRC
+  - Show dired detils like sym-links
+    #+BEGIN_SRC emacs-lisp
+      (setq dired-details-hide-link-targets nil)
+    #+END_SRC
+  - Configure the listing of files \\
+    The variable dired-listing-switches specifies the extra argument
+    that you want to pass to ls command. For example, calling ls
+    –group-directories-first will result in ls sort the directories
+    first in the output. To let Emacs pass that argument to ls, use
+    this code
+    #+BEGIN_SRC emacs-lisp
+      (setq dired-listing-switche;s "--group-directories-first -alh")
+    #+END_SRC
+  - Configure extensions of audio files
+    #+BEGIN_SRC emacs-lisp
+      (defconst dired-audio-files-extensions
+        '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")
+        "Dired Audio files extensions")
+      (dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
+    #+END_SRC
+  - Configure extensions of video files
+    #+BEGIN_SRC emacs-lisp
+      (defconst dired-video-files-extensions
+        '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts"
+          "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
+        "Dired Video files extensions")
+      (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
+    #+END_SRC
+* ERC irc
+  #+BEGIN_SRC emacs-lisp
+    (autoload 'erc "erc")
+  #+END_SRC
 * Latex Config
-#+BEGIN_SRC emacs-lisp
-; RefTeX
-;; (require 'reftex)
-(autoload 'reftex "reftex" "RefTeX")
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+    (autoload 'reftex "reftex" "RefTeX")
+    (load "auctex.el" nil t t)
+    #+END_SRC
+  - Configure some load-hooks
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'TeX-language-de-hook 
+                (lambda () (ispell-change-dictionary "german")))
+      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
+      (defun fill-latex-mode-hook ()
+        "LaTeX setup."
+        (setq fill-column 130))
+      (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
 
-; AUCTeX for the daily latex fun
-(load "auctex.el" nil t t)
-;; (load "preview-latex.el" nil t t)
-;; (autoload 'auto-complete-auctex "~/.emacs.d/auto-complete-auctex.el")
-(add-hook 'TeX-language-de-hook 
-					(lambda () (ispell-change-dictionary "german")))
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode
-(setq-default TeX-master nil)                 ; Query for master file.
+      (fset 'my-latex-write-and-view
+            [?\C-x ?\C-s ?\C-c ?\C-c return])
+      (add-hook 'LaTeX-mode-hook (lambda () 
+                                   (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
 
-(defun fill-latex-mode-hook ()
-  "LaTeX setup."
-  (setq fill-column 130))
-(add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook); with AUCTeX LaTeX mode
+      (defun my-latex-highlight-owninlinecode ()
+        "Highlight own inline code"
+        (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
+      (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
 
-(fset 'my-latex-write-and-view
-   [?\C-x ?\C-s ?\C-c ?\C-c return])
+      (defun my-latex-highlight-todos ()
+        "Highlight Todo's"
+        (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
+      (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
 
-(add-hook 'LaTeX-mode-hook (lambda () 
-															 (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
+      (add-hook 'LaTeX-mode-hook (lambda () 
+                                   (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
 
-(defun my-latex-highlight-owninlinecode ()
-	"Highlight own inline code"
-  (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
-(add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
+    #+END_SRC
+  - Query for master file
+    #+BEGIN_SRC emacs-lisp
+      (setq-default TeX-master nil)
+    #+END_SRC
+  - Highlight special words within latex files
+    #+BEGIN_SRC emacs-lisp
+      (defface my-green-b '((t  (:foreground  "green"               
+                                              )))  "green-face")
 
-(defun my-latex-highlight-todos ()
-	"Highlight Todo's"
-  	(highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
-(add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
-
-(defface my-green-b '((t  (:foreground  "green"               
-                          )))  "green-face")
-
-(font-lock-add-keywords 'latex-mode 
-												'( ("\\\\hs"   0 'my-green-b prepend)
-													 ("\\\\todo" 0 'hi-red     prepend)
-												 )
-)
-
-(add-hook 'LaTeX-mode-hook (lambda () 
-															 (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
-
-
-; add the -shell-escape to the compiling command 
-; for the minted sourcecode package
-(eval-after-load "tex" 
-  '(setcdr (assoc "LaTeX" TeX-command-list)
-          '("%`%l%(mode) -shell-escape%' %t"
-          TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX")
-    )
-  )
-
-; Set the column-length to 130 for latex files
-;; (add-hook 'LaTeX-mode-hook
-;;           (lambda ()
-;;             (set-fill-column 130)))
-
-;; Add LongLines Wrap mode to Latex
-;; (add-hook 'LaTeX-mode-hook 
-;; 					(lambda ()
-;; 						(set-fill-column 130)
-;; 						'longlines-mode))
-
-(put 'LaTeX-narrow-to-environment 'disabled nil)
-#+END_SRC
-
+      (font-lock-add-keywords 'latex-mode 
+        										  '( ("\\\\hs"   0 'my-green-b prepend)
+        											   ("\\\\todo" 0 'hi-red     prepend)
+                                 )
+                              )
+    #+END_SRC
+  - Add the -shell-escape to the compiling command for the minted
+    sourcecode package
+    #+BEGIN_SRC emacs-lisp
+      (eval-after-load "tex" 
+        '(setcdr (assoc "LaTeX" TeX-command-list)
+                 '("%`%l%(mode) -shell-escape%' %t"
+                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX")
+                 )
+        )
+    #+END_SRC
+  - Disable narrowing to latex environment
+    #+BEGIN_SRC emacs-lisp
+      (put 'LaTeX-narrow-to-environment 'disabled nil)
+    #+END_SRC
 * Markdown-Mode
-#+BEGIN_SRC emacs-lisp
-; Markdown mode
-(autoload 'markdown-mode "markdown-mode.el"
-   "Major mode for editing Markdown files" t)
-(setq auto-mode-alist
-   (cons '("\\.md" . markdown-mode) auto-mode-alist))
-#+END_SRC
-
+  #+BEGIN_SRC emacs-lisp
+    (autoload 'markdown-mode "markdown-mode.el"
+      "Major mode for editing Markdown files" t)
+    (setq auto-mode-alist
+          (cons '("\\.md" . markdown-mode) auto-mode-alist))
+  #+END_SRC
 * Magit
-#+BEGIN_SRC emacs-lisp
-; magit - a git frontend 
-;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
-(require 'magit)
-(global-set-key (kbd "C-<f9>") 'magit-status)
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+  (require 'magit)
+  (global-set-key (kbd "C-<f9>") 'magit-status)
+  #+END_SRC
 
 * Haskell
-#+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;
-;; Haskell Customization
-
-(add-to-list 'load-path "~/.emacs.d/haskell-mode/")
-
-;; (autoload 'haskell-mode "haskell-mode.el" nil t)
-;; (autoload 'haskell-mode-autoloads "haskell-mode-autoloads.el" nil t)
-;; (autoload 'haskell-cabal-get-dir "haskell-cabal.el" nil t)
-
-(require 'haskell-mode)
-(require 'haskell-cabal)
-;; (require 'haskell-mode-autoloads)
-
-
-(add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ghc-mod stuff
-; (add-to-list 'load-path "~/.cabal/share/ghc-mod-3.1.3/")
-;; (autoload 'ghc-init "ghc" nil t)
-; (require 'ghc)
-; (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
-
-; ; We need some agda-stuff in here
-; (load-file (let ((coding-system-for-read 'utf-8))
-;                 (shell-command-to-string "agda-mode locate")))
-
-; (load "~/.emacs.d/lib/haskell-mode/haskell-site-file")
-
-; ; And also Haskell is pretty important ;) 
-; (load-library "haskell-site-file")
-
-; (defun my-save-haskell ()
-;   (interactive)
-;   (save-buffer)
-; 	(haskell-process-generate-tags)
-; 	;; (custom-set-variables '(haskell-tags-on-save t))
-;   ;; (inferior-haskell-load-file)
-; 	) 
-; (add-hook 'haskell-mode-hook (lambda () 
-; 															 (local-set-key (kbd "C-x C-s") 'my-save-haskell)))
-;; (add-to-list 'auto-mode-alist '("\\.hs\\'" . haskell-mode))
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; End Haskell Customization
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#+END_SRC
-
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+      (require 'haskell-mode)
+      (require 'haskell-cabal)
+    #+END_SRC
+  - Configure loadpath
+    #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/haskell-mode/")
+    #+END_SRC
+  - Setup some hooks
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+      (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+    #+END_SRC
+  - Define default info directory
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+    #+END_SRC
 * Flyspell
-#+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Flyspell Customizations
-
-;; Add Flyspell switch language Key
-(defun fd-switch-dictionary()
-  (interactive)
-  (let* ((dic ispell-current-dictionary)
-    	 (change (if (string= dic "deutsch8") "english" "deutsch8")))
-    (ispell-change-dictionary change)
-    (message "Dictionary switched from %s to %s" dic change)
-    ))
-(global-set-key (kbd "<f9>")       'fd-switch-dictionary)
-(global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
-(global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
-(global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
-
-(defun flyspell-check-next-highlighted-word ()
-  "Custom function to spell check next highlighted word"
-  (interactive)
-  (flyspell-goto-next-error)
-  (ispell-word)
-  )
-(global-set-key (kbd "M-<f8>") 'flyspell-check-next-highlighted-word)
-
-;; End Flyspell Customizations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#+END_SRC
-
+  - Define flyspell switch language function
+    #+BEGIN_SRC emacs-lisp
+      (defun fd-switch-dictionary()
+        (interactive)
+        (let* ((dic ispell-current-dictionary)
+               (change (if (string= dic "deutsch8") "english" "deutsch8")))
+          (ispell-change-dictionary change)
+          (message "Dictionary switched from %s to %s" dic change)
+          ))
+    #+END_SRC
+  - Define function that checks next highlighted word
+    #+BEGIN_SRC emacs-lisp
+      (defun flyspell-check-next-highlighted-word ()
+        "Custom function to spell check next highlighted word"
+        (interactive)
+        (flyspell-goto-next-error)
+        (ispell-word)
+        )
+    #+END_SRC
+  - Setup keybindings
+    #+BEGIN_SRC emacs-lisp
+      (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
+      (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
+      (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
+      (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
+      (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
+    #+END_SRC
 * Flymake
-#+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Begin Flymake Customizations
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+    (require 'flymake)
+    #+END_SRC
+  - Define function to make haskell code on the fly
+    #+BEGIN_SRC emacs-lisp
+      (defun flymake-Haskell-init ()
+    	  (flymake-simple-make-init-impl
+    	   'flymake-create-temp-with-folder-structure nil nil
+    	   (file-name-nondirectory buffer-file-name)
+    	   'flymake-get-Haskell-cmdline))
 
-(require 'flymake)
-
-(defun flymake-Haskell-init ()
-	(flymake-simple-make-init-impl
-	 'flymake-create-temp-with-folder-structure nil nil
-	 (file-name-nondirectory buffer-file-name)
-	 'flymake-get-Haskell-cmdline))
-
-(defun flymake-get-Haskell-cmdline (source base-dir)
-	(list "flycheck_haskell.pl"
-				(list source base-dir)))
-
-(push '(".+\\.hs$" flymake-Haskell-init flymake-simple-java-cleanup)
-			flymake-allowed-file-name-masks)
-(push '(".+\\.lhs$" flymake-Haskell-init flymake-simple-java-cleanup)
-			flymake-allowed-file-name-masks)
-(push
- '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)"
-	 1 2 3 4) flymake-err-line-patterns)
-
-;; optional setting
-;; if you want to use flymake always, then add the following hook.
-;; (add-hook
-;;  'haskell-mode-hook
-;;  '(lambda ()
-;;     (if (not (null buffer-file-name)) (flymake-mode))))
-
-;; (defun my-flymake-show-next-error()
-;; 	(interactive)
-;; 	(flymake-goto-next-error)
-;; 	(flymake-display-err-menu-for-current-line)
-;; 	)
-
-;; (when (fboundp 'resize-minibuffer-mode) ; for old emacs
-;; 	(resize-minibuffer-mode)
-;; 	(setq resize-minibuffer-window-exactly nil))
-
-;; End Flymake Customizations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#+END_SRC
-
+      (defun flymake-get-Haskell-cmdline (source base-dir)
+    	  (list "flycheck_haskell.pl"
+    				  (list source base-dir)))
+    #+END_SRC
+  - Attach functionality to filetypes
+    #+BEGIN_SRC emacs-lisp
+      (push '(".+\\.hs$" flymake-Haskell-init flymake-simple-java-cleanup)
+    			  flymake-allowed-file-name-masks)
+      (push '(".+\\.lhs$" flymake-Haskell-init flymake-simple-java-cleanup)
+    			  flymake-allowed-file-name-masks)
+      (push
+       '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)"
+    	   1 2 3 4) flymake-err-line-patterns)
+    #+END_SRC
 * GNUS
-#+BEGIN_SRC emacs-lisp
-(setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
-(autoload 'gnus-load "gnus-load")
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+      (autoload 'gnus-load "gnus-load")
+    #+END_SRC
+  - Configure loadpath
+    #+BEGIN_SRC emacs-lisp
+      (setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
+    #+END_SRC
+  - Configure info directory
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
+    #+END_SRC
+  - Setup emacss mail user agent
+    #+BEGIN_SRC emacs-lisp
+      (setq mail-user-agent 'gnus-user-agent)
+    #+END_SRC
+  - Attach bbdb hook
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+    #+END_SRC
+  - Configure S/MIME\\
+    This configuration might not just be for gnus but also for mu4e,
+    but i need to further confirm that
+    #+BEGIN_SRC emacs-lisp
+      (setq mm-decrypt-option 'always)
+      (setq mm-verify-option 'always)
+      (setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
 
-;; Set info-dir with gnus info dir
-(add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
+      (add-hook 'message-send-hook 'mml-secure-message-sign-smime)
 
-(setq mail-user-agent 'gnus-user-agent)
+      (setq password-cache t) ; default is true, so no need to set this actually
+      (setq password-cache-expiry 86400); default is 16 seconds
 
+      ;; (setq mml-signencrypt-style-alist '(("smime" combined)
+      ;;                                     ("pgp" combined)
+      ;;                                     ("pgpmime" combined)))
 
-
-
-(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-;; the rest at ~/.gnus.el
-
-
-;; S/MIME configuration for GNUS
-; via: http://www.emacswiki.org/emacs/GnusSMIME
-(setq mm-decrypt-option 'always)
-(setq mm-verify-option 'always)
-(setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
-
-(add-hook 'message-send-hook 'mml-secure-message-sign-smime)
-
-(setq password-cache t) ; default is true, so no need to set this actually
-(setq password-cache-expiry 86400); default is 16 seconds
-
-;; (setq mml-signencrypt-style-alist '(("smime" combined)
-;;                                     ("pgp" combined)
-;;                                     ("pgpmime" combined)))
-
-(setq mml-signencrypt-style-alist '(("smime" separate)
-                                    ("pgp" separate)
-                                    ("pgpauto" separate)
-                                    ("pgpmime" separate)))
-#+END_SRC
-
+      (setq mml-signencrypt-style-alist '(("smime" separate)
+                                          ("pgp" separate)
+                                          ("pgpauto" separate)
+                                          ("pgpmime" separate)))
+    #+END_SRC
 * BBDB 
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;
