@@ -591,127 +591,124 @@
                                           ("pgpmime" separate)))
     #+END_SRC
 * BBDB 
-#+BEGIN_SRC emacs-lisp
-  ;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Big Brother DataBase
+  - Configuring loadpath
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'load-path "~/.emacs.d/bbdb/lisp/")
+    #+END_SRC
+  - Configuring Info directory
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'Info-default-directory-list "~/.emacs.d/bbdb/texinfo/")
+    #+END_SRC
+  - Loading up
+    #+BEGIN_SRC emacs-lisp
+      (require 'bbdb) 
+      (bbdb-initialize 'gnus 'message)
+    #+END_SRC
+  - Configuring bbdb
+    #+BEGIN_SRC emacs-lisp
+      (setq 
+       bbdb-offer-save 1                        ;; 1 means save-without-asking
 
-  (add-to-list 'load-path "~/.emacs.d/bbdb/lisp/")
-  (add-to-list 'Info-default-directory-list "~/.emacs.d/bbdb/texinfo/")
 
-  ;; (setq bbdb-file "/home/frosch03/.emacs.d/bbdb")           ;; keep ~/ clean; set before loading
-  (require 'bbdb) 
-  ;; (bbdb-insinuate-gnus)  ;; because gnus has to be loaded...
-  ;; (bbdb-initialize 'gnus 'message 'w3)
-  (bbdb-initialize 'gnus 'message)
-  (setq 
-      bbdb-offer-save 1                        ;; 1 means save-without-asking
+       bbdb-use-pop-up t                        ;; allow popups for addresses
+       bbdb-electric-p t                        ;; be disposable with SPC
+       bbdb-popup-target-lines  1               ;; very small
+       bbdb-dwim-net-address-allow-redundancy t ;; always use full name
+       bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
+       bbdb-always-add-address t                ;; add new addresses to existing...
+       ;; ...contacts automatically
+       ;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
+       bbdb-completion-type nil                 ;; complete on anything
+       bbdb-complete-name-allow-cycling t       ;; cycle through matches
+       ;; this only works partially
+       bbbd-message-caching-enabled t           ;; be fast
+       bbdb-use-alternate-names t               ;; use AKA
+       bbdb-elided-display t                    ;; single-line addresses
 
-    
-      bbdb-use-pop-up t                        ;; allow popups for addresses
-      bbdb-electric-p t                        ;; be disposable with SPC
-      bbdb-popup-target-lines  1               ;; very small
-      bbdb-dwim-net-address-allow-redundancy t ;; always use full name
-      bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
-      bbdb-always-add-address t                ;; add new addresses to existing...
-                                               ;; ...contacts automatically
-  ;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
-      bbdb-completion-type nil                 ;; complete on anything
-      bbdb-complete-name-allow-cycling t       ;; cycle through matches
-                                               ;; this only works partially
-      bbbd-message-caching-enabled t           ;; be fast
-      bbdb-use-alternate-names t               ;; use AKA
-      bbdb-elided-display t                    ;; single-line addresses
+       ;; auto-create addresses from mail
+       bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
+       bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
+       ;; NOTE: there can be only one entry per header (such as To, From)
+       ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
 
-      ;; auto-create addresses from mail
-      bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
-      bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
-      ;; NOTE: there can be only one entry per header (such as To, From)
-      ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
-
-      '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))
-  )
-
-  ;; End Big Brother
-  ;;;;;;;;;;;;;;;;;;
-#+END_SRC
+       '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))
+       )
+    #+END_SRC
 ** Additional Functions
-#+BEGIN_SRC emacs-lisp
-; Extract SMime Certificates
-;;;;
+   - Extract SMime Certificates
+     #+BEGIN_SRC emacs-lisp
+       (defun DE-get-certificate-files-from-bbdb () 
+         (let ((certfiles nil))
+           (save-excursion
+             (save-restriction
+               (message-narrow-to-headers-or-head)
+               (let ((names (remq nil (mapcar 'message-fetch-field '("To" "Cc" "From")))))
+                 (mapc (function (lambda (arg)
+                                   (let ((rec (bbdb-search-simple nil (cdr arg))))
+                                     (when rec
+                                       (let ((cert (bbdb-get-field rec 'certfile)))
+                                         (when (and (> (length cert) 0) (not (member cert certfiles)))
+                                           (push cert certfiles)(push 'certfile certfiles)))))))
+                       (mail-extract-address-components (mapconcat 'identity names ",") t)))
+               (if (y-or-n-p (concat (mapconcat 'file-name-nondirectory (remq 'certfile certfiles) ", ") ".  Add more certificates? "))
+                   (nconc (mml-smime-encrypt-query) certfiles)
+                 certfiles)))))
 
-(defun DE-get-certificate-files-from-bbdb () 
-  (let ((certfiles nil))
-    (save-excursion
-      (save-restriction
-	(message-narrow-to-headers-or-head)
-	(let ((names (remq nil (mapcar 'message-fetch-field '("To" "Cc" "From")))))
-	  (mapc (function (lambda (arg)
-			    (let ((rec (bbdb-search-simple nil (cdr arg))))
-			      (when rec
-				(let ((cert (bbdb-get-field rec 'certfile)))
-				  (when (and (> (length cert) 0) (not (member cert certfiles)))
-				    (push cert certfiles)(push 'certfile certfiles)))))))
-	      (mail-extract-address-components (mapconcat 'identity names ",") t)))
-	(if (y-or-n-p (concat (mapconcat 'file-name-nondirectory (remq 'certfile certfiles) ", ") ".  Add more certificates? "))
-	    (nconc (mml-smime-encrypt-query) certfiles)
-	  certfiles)))))
+       (add-to-list 'mml-encrypt-alist '("smime" mml-smime-encrypt-buffer DE-get-certificate-files-from-bbdb))
 
-(add-to-list 'mml-encrypt-alist '("smime" mml-smime-encrypt-buffer DE-get-certificate-files-from-bbdb))
-
-(defun DE-snarf-smime-certificate ()
-  (interactive)
-  (if (or (assoc "certfile" (bbdb-propnames))
-	  (progn (when (y-or-n-p "Field 'certfile' does not exist in BBDB. Define it? ")
-		   (bbdb-set-propnames 
-		    (append (bbdb-propnames) (list (list "certfile"))))
-		   t)))
-      (if (get-buffer gnus-article-buffer)
-	  (progn 
-	    (set-buffer gnus-article-buffer)
-	    (beginning-of-buffer)
-	    (if (search-forward "S/MIME Signed Part:Ok" nil t)
-		(let* ((data (mm-handle-multipart-ctl-parameter 
-			      (get-text-property (point) 'gnus-data) 'gnus-details))
-		       (address (progn (string-match "^Sender claimed to be: \\(.*\\)$" data)
-				       (substring data (match-beginning 1) (match-end 1))))
-		       (rec (bbdb-search-simple nil address)))
-		  (if rec
-		      (let* ((certfile (bbdb-get-field rec 'certfile))
-			     (filename (bbdb-record-name rec))
-			     (dowrite (or (zerop (length certfile)) 
-					  (y-or-n-p "User already has a certfile entry. Overwrite? ")))
-			     (begincert nil))
-			(when dowrite
-			  (string-match (concat "\\(emailAddress=\\|email:\\)" address) data)
-			  (setq begincert (string-match "^-----BEGIN CERTIFICATE-----$" data (match-end 0)))
-			  (if (and smime-certificate-directory
-				   (file-directory-p smime-certificate-directory))
-			      (progn
-				(setq filename (concat (file-name-as-directory smime-certificate-directory) 
-						       (mm-file-name-replace-whitespace filename) ".pem"))
-				(when (or (not (file-exists-p filename))
-					  (y-or-n-p (concat "Filename " filename " already exists. Overwrite? "))) 
-				  (string-match "^-----END CERTIFICATE-----$" data begincert)
-				  (write-region (substring data begincert (+ (match-end 0) 1)) nil filename)
-				  (bbdb-record-putprop rec 'certfile filename)
-				  (bbdb-change-record rec t)
-				  (bbdb-redisplay-one-record rec)
-				  (message (concat "Saved certificate and updated BBDB record for " address))))
-			    (progn
-			      (ding)(message "smime-certificate-directory not correctly set.")))
-			  ))
-		    (progn
-		      (ding)
-		      (message (concat "No entry for address " address " in the BBDB.")))))
-	      (progn (ding)
-		     (message "No valid S/MIME signed message found.")))
-	    )  
-	(progn
-	  (ding)(message "No article buffer available.")))
-    (progn
-      (ding)(message "No field 'certfile' defined in BBDB."))))
-#+END_SRC
-
+       (defun DE-snarf-smime-certificate ()
+         (interactive)
+         (if (or (assoc "certfile" (bbdb-propnames))
+                 (progn (when (y-or-n-p "Field 'certfile' does not exist in BBDB. Define it? ")
+                          (bbdb-set-propnames 
+                           (append (bbdb-propnames) (list (list "certfile"))))
+                          t)))
+             (if (get-buffer gnus-article-buffer)
+                 (progn 
+                   (set-buffer gnus-article-buffer)
+                   (beginning-of-buffer)
+                   (if (search-forward "S/MIME Signed Part:Ok" nil t)
+                       (let* ((data (mm-handle-multipart-ctl-parameter 
+                                     (get-text-property (point) 'gnus-data) 'gnus-details))
+                              (address (progn (string-match "^Sender claimed to be: \\(.*\\)$" data)
+                                              (substring data (match-beginning 1) (match-end 1))))
+                              (rec (bbdb-search-simple nil address)))
+                         (if rec
+                             (let* ((certfile (bbdb-get-field rec 'certfile))
+                                    (filename (bbdb-record-name rec))
+                                    (dowrite (or (zerop (length certfile)) 
+                                                 (y-or-n-p "User already has a certfile entry. Overwrite? ")))
+                                    (begincert nil))
+                               (when dowrite
+                                 (string-match (concat "\\(emailAddress=\\|email:\\)" address) data)
+                                 (setq begincert (string-match "^-----BEGIN CERTIFICATE-----$" data (match-end 0)))
+                                 (if (and smime-certificate-directory
+                                          (file-directory-p smime-certificate-directory))
+                                     (progn
+                                       (setq filename (concat (file-name-as-directory smime-certificate-directory) 
+                                                              (mm-file-name-replace-whitespace filename) ".pem"))
+                                       (when (or (not (file-exists-p filename))
+                                                 (y-or-n-p (concat "Filename " filename " already exists. Overwrite? "))) 
+                                         (string-match "^-----END CERTIFICATE-----$" data begincert)
+                                         (write-region (substring data begincert (+ (match-end 0) 1)) nil filename)
+                                         (bbdb-record-putprop rec 'certfile filename)
+                                         (bbdb-change-record rec t)
+                                         (bbdb-redisplay-one-record rec)
+                                         (message (concat "Saved certificate and updated BBDB record for " address))))
+                                   (progn
+                                     (ding)(message "smime-certificate-directory not correctly set.")))
+                                 ))
+                           (progn
+                             (ding)
+                             (message (concat "No entry for address " address " in the BBDB.")))))
+                     (progn (ding)
+                            (message "No valid S/MIME signed message found.")))
+                   )  
+               (progn
+                 (ding)(message "No article buffer available.")))
+           (progn
+             (ding)(message "No field 'certfile' defined in BBDB."))))
+     #+END_SRC
 * ACE Jump mode
 #+BEGIN_SRC emacs-lisp
 ;; ace quick jump feature 
