@@ -346,7 +346,7 @@
     #+END_SRC
   - Always copy & delete directories recursively
     #+BEGIN_SRC emacs-lisp
-      (setq dired-recur;sive-copies 'always)
+      (setq dired-recursive-copies 'always)
       (setq dired-recursive-deletes 'always)
     #+END_SRC
   - Auto guess target \\
@@ -374,7 +374,7 @@
     first in the output. To let Emacs pass that argument to ls, use
     this code
     #+BEGIN_SRC emacs-lisp
-      (setq dired-listing-switche;s "--group-directories-first -alh")
+      (setq dired-listing-switches "--group-directories-first -alh")
     #+END_SRC
   - Configure extensions of audio files
     #+BEGIN_SRC emacs-lisp
