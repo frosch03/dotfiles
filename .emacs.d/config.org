@@ -168,8 +168,8 @@
 ** mobile
    - Automaticall pull mobile while starting and push while ending
      #+BEGIN_SRC emacs-lisp
-       ;; (add-hook 'after-init-hook 'org-mobile-pull)
-       ;; (add-hook 'kill-emacs-hook 'org-mobile-push)
+       (add-hook 'after-init-hook 'org-mobile-pull)
+       (add-hook 'kill-emacs-hook 'org-mobile-push)
      #+END_SRC
 
 ** install
