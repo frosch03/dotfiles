@@ -25,7 +25,7 @@
     #+END_SRC
   - set the font size
     #+BEGIN_SRC emacs-lisp
-      (set-face-attribute 'default nil :height 120)
+      (set-face-attribute 'default nil :height 100)
     #+END_SRC
   - inhibit splash screen
     #+BEGIN_SRC emacs-lisp
@@ -102,6 +102,12 @@
    #+END_SRC
 
 ** agenda
+
+   Start emacs within Org's Agenda mode. 
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'after-init-hook 'org-agenda-list)
+   #+END_SRC
+
    #+BEGIN_SRC emacs-lisp
      ;; starte agenda in ganzem fenster
      (setq org-agenda-window-setup 'current-window)
