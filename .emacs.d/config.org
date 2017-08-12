@@ -1006,14 +1006,15 @@
 
 * w3m
 #+BEGIN_SRC emacs-lisp
-;; w3m basic configuration
-;; (setq browse-url-browser-function 'w3m-browse-url)
- (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
- ;; optional keyboard short-cut
- (global-set-key "\C-xm" 'browse-url-at-point)
+  ;; w3m basic configuration
+  ;; (setq browse-url-browser-function 'w3m-browse-url)
+   (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+   ;; optional keyboard short-cut
+   (global-set-key "\C-xm" 'browse-url-at-point)
 
-;; anyhow, set the brower to the firefox
-(setq browse-url-browser-function 'browse-url-firefox)
+  ;; anyhow, set the brower to the -firefox- chromium
+  ;; (setq browse-url-browser-function 'browse-url-firefox)
+  (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
 
 * pushbullet
