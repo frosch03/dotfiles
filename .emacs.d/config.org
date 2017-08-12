@@ -813,7 +813,7 @@
 ;; (setq browse-url-browser-function 'browse-url-generic
 ;;       browse-url-generic-program "/home/frosch03/bin/conky")
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "/usr/bin/firefox")
+      browse-url-generic-program "/usr/bin/chromium")
 #+END_SRC
 
 * elpy
