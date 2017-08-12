@@ -256,3 +256,8 @@ export PERL5LIB="/home/frosch03/perl5/lib/perl5/x86_64-linux-thread-multi:/home/
 export PATH="/home/frosch03/perl5/bin:$PATH";
 
 
+### START-Keychain ###
+# Let  re-use ssh-agent and/or gpg-agent between logins
+/usr/bin/keychain $HOME/.ssh/id_rsa
+source $HOME/.keychain/$(hostname)-sh
+### End-Keychain ###
