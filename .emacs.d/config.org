@@ -87,6 +87,7 @@
       (global-set-key (kbd "M-<tab>") 'other-frame)
       (global-set-key (kbd "<f5>")    'revert-buffer)
       (global-set-key (kbd "C-z")     'undo)
+      (global-set-key (kbd "M-*")     'pop-tag-mark)
     #+END_SRC
 
 * Org-Mode Config
