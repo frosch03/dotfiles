@@ -536,6 +536,9 @@
     #+BEGIN_SRC emacs-lisp
       (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
       (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+      (add-hook 'haskell-mode-hook (lambda () 
+                                   (local-set-key (kbd "M-.") 'haskell-mode-tag-find)))
+
     #+END_SRC
   - Define default info directory
     #+BEGIN_SRC emacs-lisp
