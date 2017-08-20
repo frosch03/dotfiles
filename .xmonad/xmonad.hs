@@ -125,8 +125,8 @@ projects =
                 }
 
     , Project   { projectName       = wsCode
-                , projectDirectory  = "~/Programming/"
-                , projectStartHook  = Just $ do spawnOn wsCode myTerminal
+                , projectDirectory  = "~/"
+                , projectStartHook  = Just $ do spawnOn wsCode "/usr/bin/pavucontrol"
                                                 spawnOn wsCode myTerminal
                 }
 

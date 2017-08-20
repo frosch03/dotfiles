@@ -87,6 +87,7 @@
       (global-set-key (kbd "M-<tab>") 'other-frame)
       (global-set-key (kbd "<f5>")    'revert-buffer)
       (global-set-key (kbd "C-z")     'undo)
+      (global-set-key (kbd "M-*")     'pop-tag-mark)
     #+END_SRC
 
 * Org-Mode Config
@@ -102,6 +103,57 @@
    #+END_SRC
 
 ** agenda
+   To Capture things into orgmode via various methods, we need these:
+   #+BEGIN_SRC emacs-lisp
+     (require 'org-protocol)
+     (require 'org-capture)
+     (require 'org-capture-pop-frame)
+   #+END_SRC
+
+   Set the agenda files to my GTD fileset:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-files '("~/gtd/inbox.org"
+                              "~/gtd/current.org"
+                              "~/gtd/timed.org"))
+   #+END_SRC
+
+   Define capture templates, 'i' and 'T' are for direct usage, 'w' and
+   'W' are for org protocol inputs
+   #+BEGIN_SRC emacs-lisp
+     (setq org-capture-templates '(("i" "Item [inbox]" entry
+                                    (file "~/gtd/inbox.org")
+                                    "* TODO %i%?")
+                                   ("T" "Timed" entry
+                                    (file+headline "~/gtd/timed.org" "Timed")
+                                    "* %i%? \n %U")
+                                   ("w" "Url [inbox]" entry
+                                    (file "~/gtd/inbox.org")
+                                    "* TODO %?[[%:link][%:description]]")
+                                   ("W" "Url with Text [inbox]" entry
+                                    (file "~/gtd/inbox.org")
+                                    "* TODO %?[[%:link][%:description]] \n  %:initial")
+                                   ))
+   #+END_SRC
+
+   Define the files one is able to refile stuff into:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-refile-use-outline-path t)
+
+     (setq org-refile-targets '(("~/gtd/current.org" :maxlevel . 2)
+                                ("~/gtd/future.org" :level . 1)
+                                ("~/gtd/timed.org" :maxlevel . 2)))
+   #+END_SRC
+
+   Set the default todo types:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+   #+END_SRC
+
+   Make sure the server is running, in order to let other connect to
+   this instance
+   #+BEGIN_SRC emacs-lisp
+     (server-start)
+   #+END_SRC
 
    Start emacs within Org's Agenda mode. 
    #+BEGIN_SRC emacs-lisp
@@ -119,16 +171,7 @@
      (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
 
 
-     ;; refile targets
-     (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                      (org-agenda-files :maxlevel . 9))))
-
-
      (define-key mode-specific-map [?a] 'org-agenda)
-
-     (setq org-todo-keywords
-           '((sequence "TODO" "|" "DONE" "DELEGATED" "CANCELLED")))
-
 
      (eval-after-load "org"
        '(progn
@@ -142,8 +185,8 @@
             #'(lambda nil (interactive) (org-todo "DONE")))
           ;; (define-key org-todo-state-map "f"
           ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
-          (define-key org-todo-state-map "l"
-            #'(lambda nil (interactive) (org-todo "DELEGATED")))
+          (define-key org-todo-state-map "w"
+            #'(lambda nil (interactive) (org-todo "WAITING")))
           ;; (define-key org-todo-state-map "s"
           ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
           ;; (define-key org-todo-state-map "w"
@@ -493,6 +536,9 @@
     #+BEGIN_SRC emacs-lisp
       (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
       (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+      (add-hook 'haskell-mode-hook (lambda () 
+                                   (local-set-key (kbd "M-.") 'haskell-mode-tag-find)))
+
     #+END_SRC
   - Define default info directory
     #+BEGIN_SRC emacs-lisp
@@ -812,7 +858,7 @@
 ;; (setq browse-url-browser-function 'browse-url-generic
 ;;       browse-url-generic-program "/home/frosch03/bin/conky")
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "/usr/bin/firefox")
+      browse-url-generic-program "/usr/bin/chromium")
 #+END_SRC
 
 * elpy
@@ -1005,14 +1051,15 @@
 
 * w3m
 #+BEGIN_SRC emacs-lisp
-;; w3m basic configuration
-;; (setq browse-url-browser-function 'w3m-browse-url)
- (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
- ;; optional keyboard short-cut
- (global-set-key "\C-xm" 'browse-url-at-point)
+  ;; w3m basic configuration
+  ;; (setq browse-url-browser-function 'w3m-browse-url)
+   (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+   ;; optional keyboard short-cut
+   (global-set-key "\C-xm" 'browse-url-at-point)
 
-;; anyhow, set the brower to the firefox
-(setq browse-url-browser-function 'browse-url-firefox)
+  ;; anyhow, set the brower to the -firefox- chromium
+  ;; (setq browse-url-browser-function 'browse-url-firefox)
+  (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
 
 * pushbullet

@@ -1,4 +1,4 @@
-remove Lock = Caps_Lock
+! remove Lock = Caps_Lock
 
 ! Set CapsLock to ESC (for VI)
 keycode 66 = Escape
