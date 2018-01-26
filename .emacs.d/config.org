@@ -100,8 +100,8 @@
 ** mu4e
    #+BEGIN_SRC emacs-lisp
      (require 'org-mu4e)
+     (setq org-mu4e-convert-to-html t)
    #+END_SRC
-
 ** agenda
    To Capture things into orgmode via various methods, we need these:
    #+BEGIN_SRC emacs-lisp
@@ -1120,6 +1120,29 @@
 
   ;; End mu4e
   ;;;;;;;;;;;
+#+END_SRC
+
+In order to generate html mails from org-mode, this function helps to
+add some org configurations before the output is created. Here:
+- imagemagick is selected for cutting the latex formulas into little
+  snippits. Also
+- the table of content is disabled
+#+BEGIN_SRC lisp
+(defun frog/mu4e-org-compose ()
+  "Switch to/from mu4e-compose-mode and org-mode"
+   (interactive)
+   ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
+   (let ((p (point)))
+     (goto-char (point-min))
+     (let ((case-fold-search t))
+       (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
+         (goto-char (point-max))
+         (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
+     (goto-char p))
+   (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
+       (org~mu4e-mime-switch-headers-or-body)
+     (mu4e-compose-mode)))
+(global-set-key "\M-@" 'frog/mu4e-org-compose)
 #+END_SRC
 
 * autshine
