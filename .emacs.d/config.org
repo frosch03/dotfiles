@@ -1271,3 +1271,11 @@ add some org configurations before the output is created. Here:
               (lambda ()
                 (local-set-key (kbd "C-c C-t") 'endless/toggle-image-display)))
   #+END_SRC
+
+* Ur/Web mode
+  Ur/Web mode is a mode for the programming environment of Ur/Web.
+
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/urweb-mode/")
+    (load "urweb-mode-startup")
+  #+END_SRC
