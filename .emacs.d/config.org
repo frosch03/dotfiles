@@ -1279,3 +1279,12 @@ add some org configurations before the output is created. Here:
     (add-to-list 'load-path "~/.emacs.d/urweb-mode/")
     (load "urweb-mode-startup")
   #+END_SRC
+
+* Atomic Chrome
+  I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] extension within firefox
+
+  #+BEGIN_SRC emacs-lisp
+  (require 'atomic-chrome)
+  (atomic-chrome-start-server)
+  (setq atomic-chrome-buffer-open-style 'frame)
+  #+END_SRC
