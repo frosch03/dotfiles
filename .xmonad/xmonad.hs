@@ -19,7 +19,7 @@ import XMonad.Layout.Fullscreen
 import XMonad.Layout.Hidden                 -- for popOldestHiddenWindow
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
-import XMonad.Layout.NoFrillsDecoration
+import XMonad.Layout.NoFrillsDecoration     -- Have window deco topbar the whole window size
 import XMonad.Layout.PerScreen              -- Check screen width & adjust layouts
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile          -- Resizable Horizontal border
@@ -35,6 +35,7 @@ import qualified XMonad.StackSet as W       -- myManageHookShift
 
 import XMonad.Prompt                        -- to get my old key bindings working
 import XMonad.Prompt.ConfirmPrompt          -- don't just hard quit
+import XMonad.Prompt.Input                  -- for the capture window
 
 import XMonad.Util.EZConfig                 -- removeKeys, additionalKeys
 import XMonad.Util.NamedActions
@@ -72,6 +73,9 @@ import XMonad.Prompt.Ssh
 import XMonad.Prompt.Man
 
 import XMonad.Util.Scratchpad
+
+import XMonad.Config.Desktop
+
 
 import qualified XMonad.StackSet as S
 
@@ -154,15 +158,13 @@ main = do
        $ dynamicProjects projects
        $ withUrgencyHook NoUrgencyHook
        $ addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
-       $ defaultConfig
-             { borderWidth        = 1
-             , normalBorderColor  = "#333333"
+       $ desktopConfig
+             { borderWidth        = 0
+             , normalBorderColor  = myGray
              , focusedBorderColor = "#999999"
              , modMask            = myModMask
-             -- , keys               = newKeys
              , workspaces         = myWorkspaces
-             , manageHook         = manageDocks <+> manageHook defaultConfig <+> myManagedHook
-             -- , layoutHook         = avoidStruts $ myLayout
+             , manageHook         = myManagedHook
              , layoutHook         = myLayoutHook
              , logHook            = dynamicLogWithPP $ myLemonbarPP
              } 
@@ -181,9 +183,9 @@ myLemonbarPP = defaultPP
                  } 
                  
 -- The XPConfig definition for my XMonad.Prompts 
-myXPConfig = defaultXPConfig { bgColor     = "black"
+myXPConfig = defaultXPConfig { bgColor     = "#000030" -- dark dark blue
                              , fgColor     = "white"
-                             , borderColor = "#333333"
+                             , borderColor = "#000060"
                              , position    = Top
                              , font        = "xft:Inconsolata:pixelsize=10:antialias=true:autohint=true"
                              }
@@ -226,7 +228,8 @@ instance Transformer FULLBAR Window where
 -- tabBarFull = avoidStruts $ noFrillsDeco shrinkText topBarTheme $ addTabs shrinkText myTabTheme $ Simplest
 barFull = avoidStruts $ Simplest
 
-myLayoutHook = showWorkspaceName
+myLayoutHook = hiddenWindows
+             $ avoidStruts $ showWorkspaceName
              -- $ onWorkspace "AV" floatWorkSpace
              $ fullscreenFloat -- fixes floating windows going full screen, while retaining "bounded" fullscreen
              $ fullScreenToggle
@@ -266,15 +269,15 @@ myLayoutHook = showWorkspaceName
     -- Tabs Layout                                                          --
     --------------------------------------------------------------------------
 
-    threeCol = named "Unflexed"
-         $ avoidStruts
-         $ addTopBar
-         $ myGaps
-         $ mySpacing
-         $ ThreeColMid 1 (1/10) (1/2)
-
+    -- threeCol = named "Unflexed"
+    --      $ avoidStruts
+    --      $ addTopBar
+    --      $ myGaps
+    --      $ mySpacing
+    --      $ ThreeColMid 1 (1/10) (1/2)
+                          
     tabs = named "Tabs"
-         $ avoidStruts
+         -- $ avoidStruts
          $ addTopBar
          $ addTabs shrinkText myTabTheme
          $ Simplest
@@ -407,7 +410,7 @@ myLayoutHook = showWorkspaceName
     -- retained during development: safe to remove later
 
     flex = trimNamed 5 "Flex"
-              $ avoidStruts
+              -- $ avoidStruts
               -- don't forget: even though we are using X.A.Navigation2D
               -- we need windowNavigation for merging to sublayouts
               $ windowNavigation
@@ -582,27 +585,6 @@ myLayoutHook = showWorkspaceName
     --     standard display (this is easy enough to deal with but
     --     is a non-intuitive effect)
 
-    masterTabbedDynamic = named "Master-Tabbed Dynamic"
-              $ ifWider smallMonResWidth masterTabbedWide masterTabbedStd
-
-    masterTabbedStd = named "Master-Tabbed Standard"
-              $ addTopBar
-              $ avoidStruts
-              $ gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
-              $ mastered (1/100) (2/3)
-              $ gaps [(U, 0),(D, 0),(L, gap*2),(R, 0)]
-              $ tabbed shrinkText myTabTheme
-
-    masterTabbedWide = named "Master-Tabbed Wide"
-              $ addTopBar
-              $ avoidStruts
-              $ gaps [(U, gap*2),(D, gap*2),(L, gap*2),(R, gap*2)]
-              $ mastered (1/100) (1/4)
-              $ gaps [(U, 0),(D, 0),(L, gap*2),(R, 0)]
-              $ mastered (1/100) (2/3)
-              $ gaps [(U, 0),(D, 0),(L, gap*2),(R, 0)]
-              $ tabbed shrinkText myTabTheme
-
     -----------------------------------------------------------------------
     -- Tall-Tabbed Dymamic                                               --
     -----------------------------------------------------------------------
@@ -736,7 +718,30 @@ xK_FroggersPause = 0x1008ff12
 
 
 myTerminal = "/usr/bin/urxvt"
-myBrowser  = "/usr/bin/firefox"
+myFirefox  = "/usr/bin/firefox"
+myChrome   = "/usr/bin/chromium"
+myBrowser  = myFirefox
+
+jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
+jiraInfix           = "jira"
+jiraResource        = "jira.frosch03.de"
+isJira              = (resource =? jiraResource)
+
+threemaCommand      = "dex $HOME/.local/share/applications/threema.desktop"
+threemaInfix        = "threema"
+threemaResource     = "t.frosch03.de"
+isThreema           = (resource =? threemaResource)
+
+whatsappCommand     = "dex $HOME/.local/share/applications/whatsapp.desktop"
+whatsappInfix       = "whatsapp"
+whatsappResource    = "web.whatsapp.com"
+isWhatsapp          = (resource =? whatsappResource)
+
+scratchpads =
+    [   (NS "jira"     jiraCommand     isJira     defaultFloating)
+    ,   (NS "threema"  threemaCommand  isThreema  defaultFloating)
+    ,   (NS "whatsapp" whatsappCommand isWhatsapp defaultFloating)
+    ] 
 
 -- My additional keybindings
 myKeys x = M.fromList $
@@ -764,21 +769,27 @@ myKeys x = M.fromList $
 newKeys x = myKeys x `M.union` keys defaultConfig x
 
 -- My additional managed applications (browser is always on desktop 3 and in fullscreen, etc.)
-myManagedHook = composeAll . concat $
-  [ [ className =? c --> doFloat               | c <- floatClass ]
-  , [ title     =? t --> doFloat               | t <- floatTitle ]
-  , [ title     =? x --> doF (S.shift "1")     | x <- hacking]
-  , [ title     =? x --> doF (S.shift "code")  | x <- coding]
-  , [ className =? x --> doF (S.shift "web")   | x <- webApps ]
-  , [ className =? x --> doF (S.shift "im")    | x <- comApps ]
-  , [ title     =? x --> doF (S.shift "im")    | x <- comApps ]
-  , [ className =? x --> doF (S.shift "mail")  | x <- mailApps ]
-  , [ title     =? x --> doF (S.shift "mail")  | x <- mailApps ]
-  , [ className =? x --> doF (S.shift "gimp")  | x <- gimpApp ]
-  , [ className =? x --> doF (S.shift "skype") | x <- skypeApp ]
-  , [ title     =? x --> doF (S.shift "irc")   | x <- ircApps ]
-  , [ isFullscreen   --> doFullFloat]
-  ]
+myManagedHook =
+        manageSpecific
+    <+> manageDocks
+    <+> namedScratchpadManageHook scratchpads
+    <+> fullscreenManageHook
+    <+> manageSpawn
+    where manageSpecific = composeAll . concat $
+                           [ [ className =? c --> doFloat               | c <- floatClass ]
+                           , [ title     =? t --> doFloat               | t <- floatTitle ]
+                           , [ title     =? x --> doF (S.shift "1")     | x <- hacking]
+                           , [ title     =? x --> doF (S.shift "code")  | x <- coding]
+                           , [ className =? x --> doF (S.shift "web")   | x <- webApps ]
+                           , [ className =? x --> doF (S.shift "im")    | x <- comApps ]
+                           , [ title     =? x --> doF (S.shift "im")    | x <- comApps ]
+                           , [ className =? x --> doF (S.shift "mail")  | x <- mailApps ]
+                           , [ title     =? x --> doF (S.shift "mail")  | x <- mailApps ]
+                           , [ className =? x --> doF (S.shift "gimp")  | x <- gimpApp ]
+                           , [ className =? x --> doF (S.shift "skype") | x <- skypeApp ]
+                           , [ title     =? x --> doF (S.shift "irc")   | x <- ircApps ]
+                           , [ isFullscreen   --> doFullFloat]
+                           ]
 
 
 myModMask = mod4Mask
@@ -788,10 +799,15 @@ myModMask = mod4Mask
 --              blob/master/.xmonad/lib/XMonad/Config/A00001.hs
 showKeybindings :: [((KeyMask, KeySym), NamedAction)] -> NamedAction
 showKeybindings x = addName "Show Keybindings" $ io $ do
-    h <- spawnPipe "zenity --text-info --font=terminus"
+    h <- spawnPipe "zenity --text-info --font=consolas"
     hPutStr h (unlines $ showKm x)
     hClose h
     return ()
+
+-- any workspace but scratchpad
+notSP = (return $ ("NSP" /=) . W.tag) :: X (WindowSpace -> Bool)
+shiftAndView dir = findWorkspace getSortByIndex dir (WSIs notSP) 1
+        >>= \t -> (windows . W.shift $ t) >> (windows . W.greedyView $ t)
 
 nextNonEmptyWS = findWorkspace getSortByIndexNoSP Next HiddenNonEmptyWS 1
         >>= \t -> (windows . W.view $ t)
@@ -802,6 +818,12 @@ getSortByIndexNoSP =
 
 wsKeys = map show $ [1..9] ++ [0]
             
+
+
+-- toggle any workspace but scratchpad
+myToggle = windows $ W.view =<< W.tag . head . filter 
+           ((\x -> x /= "NSP" && x /= "SP") . W.tag) . W.hidden
+
 
 myKeys' conf = let
 
@@ -853,7 +875,9 @@ myKeys' conf = let
     -- , ("M-t"                    , addName "NSP Tasks"                       $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "trelloWork"),
     --                                                                           ("", namedScratchpadAction scratchpads "trello")])
     -- , ("M-m"                    , addName "NSP Music"                       $ namedScratchpadAction scratchpads "googleMusic")
-    -- , ("M-v"                    , addName "NSP Video"                       $ namedScratchpadAction scratchpads "plex")
+    , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
+    , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
+    , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
     -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
     -- , ("M-n"                    , addName "NSP Console"                     $ namedScratchpadAction scratchpads "console")
     , ("M-s s"                  , addName "Cancel submap"                   $ return ())
@@ -868,9 +892,10 @@ myKeys' conf = let
     (
     [ ("M-<Backspace>"          , addName "Kill"                            kill1)
     , ("M-S-<Backspace>"        , addName "Kill all"                        $ confirmPrompt hotPromptTheme "kill all" $ killAll)
-    , ("M-d"                    , addName "Duplicate w to all ws"           $ windows copyToAll)
     , ("M-S-d"                  , addName "Kill other duplicates"           $ killAllOtherCopies)
-    , ("M-d"                    , addName "Duplicate w to all ws"           $ toggleCopyToAll)
+    , ("M-e"                    , addName "Duplicate w to all ws"           $ windows copyToAll)
+    , ("M-S-e"                  , addName "Toggle copy w to all ws"         $ toggleCopyToAll)
+    , ("M-d"                    , addName "Browse DuckDuckGo via uzbl"      $ inputPrompt myXPConfig "Internet" ?+ (\x -> spawn ("uzbl-browser 'http://ddg.gg/?q=" ++ x ++ "'")))
     , ("M-u"                    , addName "Hide window to stack"            $ withFocused hideWindow)
     , ("M-S-u"                  , addName "Restore hidden window (FIFO)"    $ popOldestHiddenWindow)
 
@@ -965,8 +990,9 @@ myKeys' conf = let
     subKeys "System"
     [ ("M-q"          , addName "Restart XMonad"            $ spawn "xmonad --restart")
     , ("M-i"          , addName "Run a programm"            $ shellPrompt myXPConfig)
-    , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-    , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
+    , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
+    -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
+    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
     -- , ("M-S-m"        , addName "" $ manPrompt myXPConfig)
     -- , ("M-S-s"        , addName "" $ sshPrompt myXPConfig)
@@ -981,7 +1007,7 @@ myKeys' conf = let
     , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ io (exitWith ExitSuccess))
     -- , ("M-x"          , addName "Lock screen"               $ spawn "xset s activate")
     -- , ("M-<F4>"       , addName "Print Screen"              $ return ())
-  --, ("M-F1"                   , addName "Show Keybindings"                $ return ())
+  --, ("M-F1"            , addName "Show Keybindings"          $ return ())
     ] ^++^
 
 
@@ -1051,18 +1077,20 @@ myKeys' conf = let
 				                                 _  -> killAllOtherCopies
 
 
-active      = base02
-activeWarn  = red
-inactive    = base00
-focusColor  = base02
-unfocusColor = base00
+focusColor   = myGray -- base03
+unfocusColor = myGray -- base00
+active       = myGray -- base03
+inactive     = myGray -- base00
+activeWarn   = red
 
-
-
-base03  = "#555555"
-base02  = "#333333"
+base03  = "#898989"
+base02  = "#CCCCCC"
 base01  = "#111111"
 base00  = "#000000"
+-- base03  = "#555555"
+-- base02  = "#333333"
+-- base01  = "#111111"
+-- base00  = "#000000"
 hisBase03  = "#002b36"
 hisBase02  = "#073642"
 hisBase01  = "#586e75"
@@ -1082,8 +1110,8 @@ green   = "#859900"
 
 
 
-gap         = 0
-topbar      = 0
+gap    = 6
+topbar = 6
 
 
 myFont      = "xft:Inconsolata:antialias=true:pixelsize=14:autohint=true"
@@ -1093,16 +1121,20 @@ myWideFont  = "xft:Inconsolata:antialias=true:pixelsize=180:autohint=true"
 -- myBigFont   = "-*-terminus-medium-*-*-*-*-240-*-*-*-*-*-*"
 -- myWideFont  = "xft:Eurostar Black Extended:"
 --             ++ "style=Regular:pixelsize=180:hinting=true"
+myGray = "#333333"
 
 
 topBarTheme = def
     { fontName              = myFont
-    , inactiveBorderColor   = base03
-    , inactiveColor         = base03
-    , inactiveTextColor     = base03
-    , activeBorderColor     = active
-    , activeColor           = active
-    , activeTextColor       = active
+    , activeBorderColor     = myGray -- "white"
+    , inactiveBorderColor   = "black"
+
+    , activeColor           = myGray -- "white"
+    , inactiveColor         = "black"
+
+    , activeTextColor       = myGray -- "white"
+    , inactiveTextColor     = "black" -- "white"
+
     , urgentBorderColor     = red
     , urgentTextColor       = yellow
     , decoHeight            = topbar
@@ -1110,12 +1142,12 @@ topBarTheme = def
 
 myTabTheme = def
     { fontName              = myFont
-    , activeColor           = active
-    , inactiveColor         = base02
-    , activeBorderColor     = active
-    , inactiveBorderColor   = base02
-    , activeTextColor       = base03
-    , inactiveTextColor     = base00
+    , activeBorderColor     = "black"
+    , inactiveBorderColor   = "black"
+    , activeColor           = myGray
+    , inactiveColor         = "black"
+    , activeTextColor       = "white"
+    , inactiveTextColor     = "white"
     }
 
 warmPromptTheme = myPromptTheme
