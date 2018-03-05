@@ -1,3 +1,5 @@
+#+Startup: overview
+
 * Package Archives
   #+BEGIN_SRC emacs-lisp
   (add-to-list 'package-archives '("org"  . "http://orgmode.org/elpa/") t)
@@ -48,6 +50,10 @@
     #+BEGIN_SRC emacs-lisp
       (use-package moe-theme)
     #+END_SRC
+  - set the width of simple html reader to a more comforting value
+    #+BEGIN_SRC emacs-lisp
+      (setq shr-width 80)
+    #+END_SRC
 
 * Loadpaths
   Add folders to the load-path
@@ -88,6 +94,7 @@
       (global-set-key (kbd "<f5>")    'revert-buffer)
       (global-set-key (kbd "C-z")     'undo)
       (global-set-key (kbd "M-*")     'pop-tag-mark)
+      (global-set-key (kbd "C-<f7>")  'simple-mpc)
     #+END_SRC
 
 * Org-Mode Config
@@ -367,16 +374,17 @@
    #+END_SRC
 
 * Dired Config
+  - Configuring loadpath:
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'load-path "~/.emacs.d/dired/")
+    #+END_SRC
   - Loading up
     #+BEGIN_SRC emacs-lisp
+      (require 'dired+)
       (require 'dired-x)
       (require 'dired-details+)
       (require 'dired-rainbow)
       (require 'dired-filter)
-    #+END_SRC
-  - Configuring loadpath:
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'load-path "~/.emacs.d/dired/")
     #+END_SRC
   - Startup dired within home directory by S-<F1>
     #+BEGIN_SRC emacs-lisp
@@ -543,6 +551,17 @@
   - Define default info directory
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+    #+END_SRC
+  - Setup Interactive haskell mode
+    #+BEGIN_SRC emacs-lisp
+      (require 'haskell-interactive-mode)
+      (require 'haskell-process)
+      (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
+      (custom-set-variables
+        '(haskell-process-suggest-remove-import-lines t)
+        '(haskell-process-auto-import-loaded-modules t)
+        '(haskell-process-log t))
     #+END_SRC
 * Flyspell
   - Define flyspell switch language function
@@ -859,6 +878,8 @@
   ;;       browse-url-generic-program "/home/frosch03/bin/conky")
   (setq browse-url-browser-function 'browse-url-generic
         browse-url-generic-program "/usr/bin/firefox")
+  (setq browse-url-browser-function 'browse-url-default-browser
+        browse-url-generic-program "/usr/bin/firefox")
   ;; (setq browse-url-browser-function 'browse-url-generic
   ;;       browse-url-generic-program "/usr/bin/chromium")
 #+END_SRC
@@ -1087,7 +1108,8 @@
 
   (setq
      ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-     mu4e-get-mail-command "~/bin/offlineimap-notify.py"
+     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
+     mu4e-get-mail-command "mbsync -a"
      mu4e-update-interval 300)             ;; update every 5 minutes
 
   ;; tell message-mode how to send mail
