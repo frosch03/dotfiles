@@ -125,12 +125,12 @@
 ** ox-md
    #+BEGIN_SRC emacs-lisp
    (use-package ox-md
-   :ensure f)
+   :ensure f
    :init
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
    (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
+   )
    #+END_SRC
 ** org-mu4e
    #+BEGIN_SRC emacs-lisp
@@ -142,7 +142,8 @@
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
 
    :config 
-   (setq org-mu4e-convert-to-html t))
+   (setq org-mu4e-convert-to-html t)
+   )
    #+END_SRC
 ** org-protocol
    #+BEGIN_SRC emacs-lisp
@@ -182,22 +183,22 @@
 ** org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
    (use-package org-capture-pop-frame
-   :ensure f)
+   :ensure f
    :init
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
    (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
+   )
    #+END_SRC
 ** org-install
    #+BEGIN_SRC emacs-lisp
    (use-package org-install
-   :ensure f)
+   :ensure f
    :init
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
    (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
+   )
    #+END_SRC
 ** org-jira
    #+BEGIN_SRC emacs-lisp
