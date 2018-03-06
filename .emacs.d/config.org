@@ -6,7 +6,7 @@
   (add-to-list 'package-archives '("elpy" . "http://jorgenschaefer.github.io/packages/"))
   #+END_SRC
 
-* Interface Tweaks
+* Interface Tweaks & Server
   - custom-set-faces was added by Custom. 
     If you edit it by hand, you could mess it up, so be careful. Your
     init file should contain only one such instance. If there is more
@@ -55,6 +55,12 @@
       (setq shr-width 80)
     #+END_SRC
 
+   - Make sure the server is running, in order to let other connect to
+     this instance
+     #+BEGIN_SRC emacs-lisp
+       (server-start)
+     #+END_SRC
+
 * Loadpaths
   Add folders to the load-path
   #+BEGIN_SRC emacs-lisp
@@ -64,11 +70,7 @@
     (add-to-list 'load-path "~/.emacs.d/elim/")
     (add-to-list 'load-path "~/.emacs.d/elim/elisp/")
     (add-to-list 'load-path "~/.emacs.d/flycheck/")
-    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-    (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
     (add-to-list 'load-path "~/.emacs.d/neotree/")
-    (add-to-list 'load-path "~/.emacs.d/frogblogmode/")
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
     (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
   #+END_SRC
@@ -98,36 +100,71 @@
     #+END_SRC
 
 * Org-Mode Config
-** exports
+** ox-latex
    #+BEGIN_SRC emacs-lisp
-     (require 'ox-latex)
-     (require 'ox-md)
-   #+END_SRC
+   (use-package ox-latex
+   :ensure f
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
 
-** mu4e
-   #+BEGIN_SRC emacs-lisp
-     (require 'org-mu4e)
-     (setq org-mu4e-convert-to-html t)
+   :config
+   ;; Org's Latex Exporter configurations sction
+   (setq org-latex-pdf-process
+  			 '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+   (setq org-export-latex-listings 'minted)
+   (add-to-list 'org-latex-packages-alist '("" "minted"))
+  
+   ;; for bigger latex preview in org-mode (C-c C-x C-l)
+   (plist-put org-format-latex-options :scale 1.8)
+   )
    #+END_SRC
-** agenda
-   To Capture things into orgmode via various methods, we need these:
+** ox-md
    #+BEGIN_SRC emacs-lisp
-     (require 'org-protocol)
-     (require 'org-capture)
-     (require 'org-capture-pop-frame)
-   #+END_SRC
+   (use-package ox-md
+   :ensure f)
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
 
-   Set the agenda files to my GTD fileset:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files '("~/gtd/inbox.org"
-                              "~/gtd/current.org"
-                              "~/gtd/timed.org"))
    #+END_SRC
-
-   Define capture templates, 'i' and 'T' are for direct usage, 'w' and
-   'W' are for org protocol inputs
+** org-mu4e
    #+BEGIN_SRC emacs-lisp
-     (setq org-capture-templates '(("i" "Item [inbox]" entry
+   (use-package org-mu4e
+   :ensure f
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   :config 
+   (setq org-mu4e-convert-to-html t))
+   #+END_SRC
+** org-protocol
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-protocol
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   :ensure f)
+   #+END_SRC
+** org-capture
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-capture
+   :ensure f
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   :config 
+   (setq org-capture-templates '(("i" "Item [inbox]" entry
                                     (file "~/gtd/inbox.org")
                                     "* TODO %i%?")
                                    ("T" "Timed" entry
@@ -140,6 +177,71 @@
                                     (file "~/gtd/inbox.org")
                                     "* TODO %?[[%:link][%:description]] \n  %:initial")
                                    ))
+                                   )
+   #+END_SRC
+** org-capture-pop-frame
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-capture-pop-frame
+   :ensure f)
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   #+END_SRC
+** org-install
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-install
+   :ensure f)
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   #+END_SRC
+** org-jira
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-jira
+   :ensure f
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   :config
+   ;; you need make sure whether the "/jira" at the end is necessary or
+   ;; not, see discussion at the end of this page
+   (setq jiralib-url "http://jira.frosch03.de")
+   )
+   #+END_SRC
+** org-gcal
+   #+BEGIN_SRC emacs-lisp
+   (use-package org-gcal
+   :ensure f
+   :init
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+   :config
+   (setq package-check-signature nil)
+  
+   ;; configuration within private_config.org
+   ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
+   ;; 	org-gcal-client-secret "<password>"
+   ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
+  
+   (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
+   ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
+   )
+   #+END_SRC
+
+** agenda
+   Set the agenda files to my GTD fileset:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-files '("~/gtd/inbox.org"
+                              "~/gtd/current.org"
+                              "~/gtd/timed.org"))
    #+END_SRC
 
    Define the files one is able to refile stuff into:
@@ -154,12 +256,6 @@
    Set the default todo types:
    #+BEGIN_SRC emacs-lisp
      (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-   #+END_SRC
-
-   Make sure the server is running, in order to let other connect to
-   this instance
-   #+BEGIN_SRC emacs-lisp
-     (server-start)
    #+END_SRC
 
    Start emacs within Org's Agenda mode. 
@@ -210,47 +306,25 @@
           )
        )
 
-     (global-set-key (kbd "C-S-<f10>")   'org-agenda-list)
-     (global-set-key (kbd "C-S-<f11>")   'org-mobile-push)
-     (global-set-key (kbd "C-S-<f12>")   'org-mobile-pull)
    #+END_SRC
 
 ** mobile
    - Automaticall pull mobile while starting and push while ending
      #+BEGIN_SRC emacs-lisp
-       (add-hook 'after-init-hook 'org-mobile-pull)
-       (add-hook 'kill-emacs-hook 'org-mobile-push)
+     (add-hook 'after-init-hook 'org-mobile-pull)
+     (add-hook 'kill-emacs-hook 'org-mobile-push)
      #+END_SRC
-
-** install
-   #+BEGIN_SRC emacs-lisp
-     (require 'org-install)
-   #+END_SRC
-
-** latex
-   #+BEGIN_SRC emacs-lisp
-   ;; Org's Latex Exporter configurations sction
-   (setq org-latex-pdf-process
-  			 '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-   (setq org-export-latex-listings 'minted)
-   (add-to-list 'org-latex-packages-alist '("" "minted"))
-  
-   ;; for bigger latex preview in org-mode (C-c C-x C-l)
-   (plist-put org-format-latex-options :scale 1.8)
-   #+END_SRC
 
 ** bullets
    Org-Mode Bullets - for nice looking org-mode bullet items
-   # #+BEGIN_SRC emacs-lisp
-   #   (use-package org-bullets
-   #     :ensure t
-   #     :config
-   #     (autoload 'org-bullets "org-bullets")
-   #     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-   #     )
-   # #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-bullets
+       :ensure f
+       :config
+       (autoload 'org-bullets "org-bullets")
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+       )
+   #+END_SRC
 
 ** ditaa & plantuml
    - setup paths
@@ -296,38 +370,6 @@
      (setq org-confirm-babel-evaluate nil)
      #+END_SRC
 
-** jira
-  you need make sure whether the "/jira" at the end is necessary or
-  not, see discussion at the end of this page
-  #+BEGIN_SRC emacs-lisp
-    (setq jiralib-url "http://jira.frosch03.de")
-  #+END_SRC
-
-  jiralib is not explicitly required, since org-jira will load it.
-  #+BEGIN_SRC emacs-lisp
-    (require 'org-jira) 
-  #+END_SRC  
-
-** gcal
-   #+BEGIN_SRC emacs-lisp
-     (setq package-check-signature nil)
-  
-     (require 'org-gcal)
-     ;; configuration within private_config.org
-     ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-     ;; 	org-gcal-client-secret "<password>"
-     ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
-  
-     (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-     ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
-   #+END_SRC
-
-** taskjuggler
-   Org's taskjuggler exporter
-   #+BEGIN_SRC emacs-lisp
-     ;; (require 'ox-taskjuggler)
-   #+END_SRC
-
 ** image handling
    #+BEGIN_SRC emacs-lisp
      (setq org-image-actual-width 300)
@@ -345,16 +387,10 @@
      ;; set keys to link
      (global-set-key (kbd "C-c C-l") 'org-store-link)
      (global-set-key (kbd "C-c l") 'org-insert-link)
-
-     ;; Remember-settings (or is it capture?)
-     ;; (require 'org-remember)
-     ;; (require 'remember)
-     ;; (org-remember-insinuate)
-     ;; (add-hook 'remember-mode-hook 'org-remember-apply-template)
      (define-key global-map "\C-cc" 'org-capture)
-     ;; (define-key global-map "\C-cr" 'org-remember)
-
-
+     (global-set-key (kbd "C-S-<f10>")   'org-agenda-list)
+     (global-set-key (kbd "C-S-<f11>")   'org-mobile-push)
+     (global-set-key (kbd "C-S-<f12>")   'org-mobile-pull)
    #+END_SRC
 ** file associations
    #+BEGIN_SRC emacs-lisp
@@ -374,422 +410,441 @@
    #+END_SRC
 
 * Dired Config
-  - Configuring loadpath:
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'load-path "~/.emacs.d/dired/")
-    #+END_SRC
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-      (require 'dired+)
-      (require 'dired-x)
-      (require 'dired-details+)
-      (require 'dired-rainbow)
-      (require 'dired-filter)
-    #+END_SRC
-  - Startup dired within home directory by S-<F1>
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "S-<f1>")
-                      (lambda ()
-                        (interactive)
-                        (dired "~/")))
-    #+END_SRC
-  - Omit some file \\
-    dired-omit-files contains the regex of the files to hide in Dired
-    Mode. For example, if you want to hide the files that begin with
-    . and #, set that variable like this
-    #+BEGIN_SRC emacs-lisp
-      (setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.")
-      (add-to-list 'dired-omit-extensions ".hi") ;; hide haskell .hi files
-    #+END_SRC
-  - Always copy & delete directories recursively
-    #+BEGIN_SRC emacs-lisp
-      (setq dired-recursive-copies 'always)
-      (setq dired-recursive-deletes 'always)
-    #+END_SRC
-  - Auto guess target \\
-    Set this variable to non-nil, Dired will try to guess a default
-    target directory. This means: if there is a dired buffer displayed
-    in the next window, use its current subdir, instead of the current
-    subdir of this dired buffer. The target is used in the prompt for
-    file copy, rename etc.
-    #+BEGIN_SRC emacs-lisp
-      (setq dired-dwim-target t)
-    #+END_SRC
-  - Delete by moving to Trash
-    #+BEGIN_SRC emacs-lisp
-      (setq delete-by-moving-to-trash t
-            trash-directory "/tmp/trash")
-    #+END_SRC
-  - Show dired detils like sym-links
-    #+BEGIN_SRC emacs-lisp
-      (setq dired-details-hide-link-targets nil)
-    #+END_SRC
-  - Configure the listing of files \\
-    The variable dired-listing-switches specifies the extra argument
-    that you want to pass to ls command. For example, calling ls
-    –group-directories-first will result in ls sort the directories
-    first in the output. To let Emacs pass that argument to ls, use
-    this code
-    #+BEGIN_SRC emacs-lisp
-      (setq dired-listing-switches "--group-directories-first -alh")
-    #+END_SRC
-  - Configure extensions of audio files
-    #+BEGIN_SRC emacs-lisp
-      (defconst dired-audio-files-extensions
-        '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")
-        "Dired Audio files extensions")
-      (dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
-    #+END_SRC
-  - Configure extensions of video files
-    #+BEGIN_SRC emacs-lisp
-      (defconst dired-video-files-extensions
-        '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts"
-          "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
-        "Dired Video files extensions")
-      (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
-    #+END_SRC
+** Configuring loadpath:
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'load-path "~/.emacs.d/dired/")
+   #+END_SRC
+** dired+
+   #+BEGIN_SRC emacs-lisp
+   (use-package dired+
+   :ensure f
+   :config
+   ;; Omit some file \\
+   ;; dired-omit-files contains the regex of the files to hide in Dired
+   ;; Mode. For example, if you want to hide the files that begin with
+   ;; . and #, set that variable like this
+   (setq-default dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.")
+   (add-to-list 'dired-omit-extensions ".hi") ;; hide haskell .hi files
+
+   ;; Always copy & delete directories recursively
+   (setq dired-recursive-copies 'always)
+   (setq dired-recursive-deletes 'always)
+
+   ;; Auto guess target \\
+   ;; Set this variable to non-nil, Dired will try to guess a default
+   ;; target directory. This means: if there is a dired buffer displayed
+   ;; in the next window, use its current subdir, instead of the current
+   ;; subdir of this dired buffer. The target is used in the prompt for
+   ;; file copy, rename etc.
+   (setq dired-dwim-target t)
+
+   ;; Delete by moving to Trash
+   (setq delete-by-moving-to-trash t
+         trash-directory "/tmp/trash")
+
+   ;; Configure the listing of files \\
+   ;; The variable dired-listing-switches specifies the extra argument
+   ;; that you want to pass to ls command. For example, calling ls
+   ;; –group-directories-first will result in ls sort the directories
+   ;; first in the output. To let Emacs pass that argument to ls, use
+   ;; this code
+   (setq dired-listing-switches "--group-directories-first -alh")
+   )
+   #+END_SRC
+** dired-x
+   #+BEGIN_SRC emacs-lisp
+   (use-package dired-x
+   :ensure f)
+   #+END_SRC
+** dired-details+
+   #+BEGIN_SRC emacs-lisp
+   (use-package dired-details+
+   :ensure t
+   :config
+   ;; Show dired detils like sym-links
+   (setq dired-details-hide-link-targets nil)
+   )
+   #+END_SRC
+** dired-rainbow
+   #+BEGIN_SRC emacs-lisp
+   (use-package dired-rainbow
+   :ensure t
+   :config
+   ;; Configure extensions of audio files
+   (defconst dired-audio-files-extensions
+     '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")
+     "Dired Audio files extensions")
+   (dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
+
+   ;; Configure extensions of video files
+   (defconst dired-video-files-extensions
+     '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts"
+       "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
+     "Dired Video files extensions")
+   (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
+   )
+   #+END_SRC
+** dired-filter
+   #+BEGIN_SRC emacs-lisp
+   (use-package dired-filter
+   :ensure t)
+   #+END_SRC
+** Startup dired within home directory by S-<F1>
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "S-<f1>")
+                     (lambda ()
+                       (interactive)
+                       (dired "~/")))
+   #+END_SRC
 * ERC irc
   #+BEGIN_SRC emacs-lisp
-    (autoload 'erc "erc")
+    (use-package erc
+    :ensure t)
   #+END_SRC
 * Latex Config
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-    (autoload 'reftex "reftex" "RefTeX")
-    (load "auctex.el" nil t t)
-    #+END_SRC
-  - Configure some load-hooks
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'TeX-language-de-hook 
-                (lambda () (ispell-change-dictionary "german")))
-      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-
-      (defun fill-latex-mode-hook ()
-        "LaTeX setup."
-        (setq fill-column 130))
-      (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
-
-      (fset 'my-latex-write-and-view
-            [?\C-x ?\C-s ?\C-c ?\C-c return])
-      (add-hook 'LaTeX-mode-hook (lambda () 
-                                   (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
-
-      (defun my-latex-highlight-owninlinecode ()
-        "Highlight own inline code"
-        (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
-      (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
-
-      (defun my-latex-highlight-todos ()
-        "Highlight Todo's"
-        (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
-      (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
-
-      (add-hook 'LaTeX-mode-hook (lambda () 
-                                   (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
-
-    #+END_SRC
-  - Query for master file
-    #+BEGIN_SRC emacs-lisp
-      (setq-default TeX-master nil)
-    #+END_SRC
-  - Highlight special words within latex files
-    #+BEGIN_SRC emacs-lisp
-      (defface my-green-b '((t  (:foreground  "green"               
-                                              )))  "green-face")
-
-      (font-lock-add-keywords 'latex-mode 
-        										  '( ("\\\\hs"   0 'my-green-b prepend)
-        											   ("\\\\todo" 0 'hi-red     prepend)
-                                 )
-                              )
-    #+END_SRC
-  - Add the -shell-escape to the compiling command for the minted
-    sourcecode package
-    #+BEGIN_SRC emacs-lisp
-      (eval-after-load "tex" 
-        '(setcdr (assoc "LaTeX" TeX-command-list)
-                 '("%`%l%(mode) -shell-escape%' %t"
-                   TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX")
-                 )
-        )
-    #+END_SRC
-  - Disable narrowing to latex environment
-    #+BEGIN_SRC emacs-lisp
-      (put 'LaTeX-narrow-to-environment 'disabled nil)
-    #+END_SRC
+- Loading up
+  #+BEGIN_SRC emacs-lisp
+  (autoload 'reftex "reftex" "RefTeX")
+  (load "auctex.el" nil t t)
+  #+END_SRC
+- Configure some load-hooks
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'TeX-language-de-hook 
+              (lambda () (ispell-change-dictionary "german")))
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+   (defun fill-latex-mode-hook ()
+      "LaTeX setup."
+      (setq fill-column 130))
+    (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
+   (fset 'my-latex-write-and-view
+          [?\C-x ?\C-s ?\C-c ?\C-c return])
+    (add-hook 'LaTeX-mode-hook (lambda () 
+                                 (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
+   (defun my-latex-highlight-owninlinecode ()
+      "Highlight own inline code"
+      (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
+    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
+   (defun my-latex-highlight-todos ()
+      "Highlight Todo's"
+      (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
+    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
+   (add-hook 'LaTeX-mode-hook (lambda () 
+                                 (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
+ #+END_SRC
+- Query for master file
+  #+BEGIN_SRC emacs-lisp
+    (setq-default TeX-master nil)
+  #+END_SRC
+- Highlight special words within latex files
+  #+BEGIN_SRC emacs-lisp
+    (defface my-green-b '((t  (:foreground  "green"               
+                                            )))  "green-face")
+   (font-lock-add-keywords 'latex-mode 
+      										  '( ("\\\\hs"   0 'my-green-b prepend)
+      											   ("\\\\todo" 0 'hi-red     prepend)
+                               )
+                            )
+  #+END_SRC
+- Add the -shell-escape to the compiling command for the minted
+  sourcecode package
+  #+BEGIN_SRC emacs-lisp
+    (eval-after-load "tex" 
+      '(setcdr (assoc "LaTeX" TeX-command-list)
+               '("%`%l%(mode) -shell-escape%' %t"
+                 TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX")
+               )
+      )
+  #+END_SRC
+- Disable narrowing to latex environment
+  #+BEGIN_SRC emacs-lisp
+    (put 'LaTeX-narrow-to-environment 'disabled nil)
+  #+END_SRC
 * Markdown-Mode
-  #+BEGIN_SRC emacs-lisp
-    (autoload 'markdown-mode "markdown-mode.el"
-      "Major mode for editing Markdown files" t)
-    (setq auto-mode-alist
-          (cons '("\\.md" . markdown-mode) auto-mode-alist))
-  #+END_SRC
-* Magit
-  #+BEGIN_SRC emacs-lisp
-  (require 'magit)
-  (global-set-key (kbd "C-<f9>") 'magit-status)
-  #+END_SRC
-
-* Haskell
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-      (require 'haskell-mode)
-      (require 'haskell-cabal)
-    #+END_SRC
-  - Configure loadpath
-    #+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "~/.emacs.d/haskell-mode/")
-    #+END_SRC
-  - Setup some hooks
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-      (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-      (add-hook 'haskell-mode-hook (lambda () 
-                                   (local-set-key (kbd "M-.") 'haskell-mode-tag-find)))
-
-    #+END_SRC
-  - Define default info directory
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
-    #+END_SRC
-  - Setup Interactive haskell mode
-    #+BEGIN_SRC emacs-lisp
-      (require 'haskell-interactive-mode)
-      (require 'haskell-process)
-      (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-
-      (custom-set-variables
-        '(haskell-process-suggest-remove-import-lines t)
-        '(haskell-process-auto-import-loaded-modules t)
-        '(haskell-process-log t))
-    #+END_SRC
-* Flyspell
-  - Define flyspell switch language function
-    #+BEGIN_SRC emacs-lisp
-      (defun fd-switch-dictionary()
-        (interactive)
-        (let* ((dic ispell-current-dictionary)
-               (change (if (string= dic "deutsch8") "english" "deutsch8")))
-          (ispell-change-dictionary change)
-          (message "Dictionary switched from %s to %s" dic change)
-          ))
-    #+END_SRC
-  - Define function that checks next highlighted word
-    #+BEGIN_SRC emacs-lisp
-      (defun flyspell-check-next-highlighted-word ()
-        "Custom function to spell check next highlighted word"
-        (interactive)
-        (flyspell-goto-next-error)
-        (ispell-word)
-        )
-    #+END_SRC
-  - Setup keybindings
-    #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
-      (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
-      (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
-      (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
-      (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
-    #+END_SRC
-* Flymake
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-    (require 'flymake)
-    #+END_SRC
-  - Define function to make haskell code on the fly
-    #+BEGIN_SRC emacs-lisp
-      (defun flymake-Haskell-init ()
-    	  (flymake-simple-make-init-impl
-    	   'flymake-create-temp-with-folder-structure nil nil
-    	   (file-name-nondirectory buffer-file-name)
-    	   'flymake-get-Haskell-cmdline))
-
-      (defun flymake-get-Haskell-cmdline (source base-dir)
-    	  (list "flycheck_haskell.pl"
-    				  (list source base-dir)))
-    #+END_SRC
-  - Attach functionality to filetypes
-    #+BEGIN_SRC emacs-lisp
-      (push '(".+\\.hs$" flymake-Haskell-init flymake-simple-java-cleanup)
-    			  flymake-allowed-file-name-masks)
-      (push '(".+\\.lhs$" flymake-Haskell-init flymake-simple-java-cleanup)
-    			  flymake-allowed-file-name-masks)
-      (push
-       '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)"
-    	   1 2 3 4) flymake-err-line-patterns)
-    #+END_SRC
-* GNUS
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-      (autoload 'gnus-load "gnus-load")
-    #+END_SRC
-  - Configure loadpath
-    #+BEGIN_SRC emacs-lisp
-      (setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
-    #+END_SRC
-  - Configure info directory
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
-    #+END_SRC
-  - Setup emacss mail user agent
-    #+BEGIN_SRC emacs-lisp
-      (setq mail-user-agent 'gnus-user-agent)
-    #+END_SRC
-  - Attach bbdb hook
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-    #+END_SRC
-  - Configure S/MIME\\
-    This configuration might not just be for gnus but also for mu4e,
-    but i need to further confirm that
-    #+BEGIN_SRC emacs-lisp
-      (setq mm-decrypt-option 'always)
-      (setq mm-verify-option 'always)
-      (setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
-
-      (add-hook 'message-send-hook 'mml-secure-message-sign-smime)
-
-      (setq password-cache t) ; default is true, so no need to set this actually
-      (setq password-cache-expiry 86400); default is 16 seconds
-
-      ;; (setq mml-signencrypt-style-alist '(("smime" combined)
-      ;;                                     ("pgp" combined)
-      ;;                                     ("pgpmime" combined)))
-
-      (setq mml-signencrypt-style-alist '(("smime" separate)
-                                          ("pgp" separate)
-                                          ("pgpauto" separate)
-                                          ("pgpmime" separate)))
-    #+END_SRC
-* BBDB 
-  - Configuring loadpath
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'load-path "~/.emacs.d/bbdb/lisp/")
-    #+END_SRC
-  - Configuring Info directory
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'Info-default-directory-list "~/.emacs.d/bbdb/texinfo/")
-    #+END_SRC
-  - Loading up
-    #+BEGIN_SRC emacs-lisp
-      (require 'bbdb) 
-      (bbdb-initialize 'gnus 'message)
-    #+END_SRC
-  - Configuring bbdb
-    #+BEGIN_SRC emacs-lisp
-      (setq 
-       bbdb-offer-save 1                        ;; 1 means save-without-asking
-
-
-       bbdb-use-pop-up t                        ;; allow popups for addresses
-       bbdb-electric-p t                        ;; be disposable with SPC
-       bbdb-popup-target-lines  1               ;; very small
-       bbdb-dwim-net-address-allow-redundancy t ;; always use full name
-       bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
-       bbdb-always-add-address t                ;; add new addresses to existing...
-       ;; ...contacts automatically
-       ;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
-       bbdb-completion-type nil                 ;; complete on anything
-       bbdb-complete-name-allow-cycling t       ;; cycle through matches
-       ;; this only works partially
-       bbbd-message-caching-enabled t           ;; be fast
-       bbdb-use-alternate-names t               ;; use AKA
-       bbdb-elided-display t                    ;; single-line addresses
-
-       ;; auto-create addresses from mail
-       bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
-       bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
-       ;; NOTE: there can be only one entry per header (such as To, From)
-       ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
-
-       '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))
-       )
-    #+END_SRC
-** Additional Functions
-   - Extract SMime Certificates
-     #+BEGIN_SRC emacs-lisp
-       (defun DE-get-certificate-files-from-bbdb () 
-         (let ((certfiles nil))
-           (save-excursion
-             (save-restriction
-               (message-narrow-to-headers-or-head)
-               (let ((names (remq nil (mapcar 'message-fetch-field '("To" "Cc" "From")))))
-                 (mapc (function (lambda (arg)
-                                   (let ((rec (bbdb-search-simple nil (cdr arg))))
-                                     (when rec
-                                       (let ((cert (bbdb-get-field rec 'certfile)))
-                                         (when (and (> (length cert) 0) (not (member cert certfiles)))
-                                           (push cert certfiles)(push 'certfile certfiles)))))))
-                       (mail-extract-address-components (mapconcat 'identity names ",") t)))
-               (if (y-or-n-p (concat (mapconcat 'file-name-nondirectory (remq 'certfile certfiles) ", ") ".  Add more certificates? "))
-                   (nconc (mml-smime-encrypt-query) certfiles)
-                 certfiles)))))
-
-       (add-to-list 'mml-encrypt-alist '("smime" mml-smime-encrypt-buffer DE-get-certificate-files-from-bbdb))
-
-       (defun DE-snarf-smime-certificate ()
-         (interactive)
-         (if (or (assoc "certfile" (bbdb-propnames))
-                 (progn (when (y-or-n-p "Field 'certfile' does not exist in BBDB. Define it? ")
-                          (bbdb-set-propnames 
-                           (append (bbdb-propnames) (list (list "certfile"))))
-                          t)))
-             (if (get-buffer gnus-article-buffer)
-                 (progn 
-                   (set-buffer gnus-article-buffer)
-                   (beginning-of-buffer)
-                   (if (search-forward "S/MIME Signed Part:Ok" nil t)
-                       (let* ((data (mm-handle-multipart-ctl-parameter 
-                                     (get-text-property (point) 'gnus-data) 'gnus-details))
-                              (address (progn (string-match "^Sender claimed to be: \\(.*\\)$" data)
-                                              (substring data (match-beginning 1) (match-end 1))))
-                              (rec (bbdb-search-simple nil address)))
-                         (if rec
-                             (let* ((certfile (bbdb-get-field rec 'certfile))
-                                    (filename (bbdb-record-name rec))
-                                    (dowrite (or (zerop (length certfile)) 
-                                                 (y-or-n-p "User already has a certfile entry. Overwrite? ")))
-                                    (begincert nil))
-                               (when dowrite
-                                 (string-match (concat "\\(emailAddress=\\|email:\\)" address) data)
-                                 (setq begincert (string-match "^-----BEGIN CERTIFICATE-----$" data (match-end 0)))
-                                 (if (and smime-certificate-directory
-                                          (file-directory-p smime-certificate-directory))
-                                     (progn
-                                       (setq filename (concat (file-name-as-directory smime-certificate-directory) 
-                                                              (mm-file-name-replace-whitespace filename) ".pem"))
-                                       (when (or (not (file-exists-p filename))
-                                                 (y-or-n-p (concat "Filename " filename " already exists. Overwrite? "))) 
-                                         (string-match "^-----END CERTIFICATE-----$" data begincert)
-                                         (write-region (substring data begincert (+ (match-end 0) 1)) nil filename)
-                                         (bbdb-record-putprop rec 'certfile filename)
-                                         (bbdb-change-record rec t)
-                                         (bbdb-redisplay-one-record rec)
-                                         (message (concat "Saved certificate and updated BBDB record for " address))))
-                                   (progn
-                                     (ding)(message "smime-certificate-directory not correctly set.")))
-                                 ))
-                           (progn
-                             (ding)
-                             (message (concat "No entry for address " address " in the BBDB.")))))
-                     (progn (ding)
-                            (message "No valid S/MIME signed message found.")))
-                   )  
-               (progn
-                 (ding)(message "No article buffer available.")))
-           (progn
-             (ding)(message "No field 'certfile' defined in BBDB."))))
-     #+END_SRC
-* ACE Jump mode
 #+BEGIN_SRC emacs-lisp
-;; ace quick jump feature 
-(autoload
-	'ace-jump-mode
-	"ace-jump-mode"
-	"Emacs quick move minor mode"
-	t)
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+(use-package markdown-mode
+:ensure t
+:config
+(setq auto-mode-alist
+      (cons '("\\.md" . markdown-mode) auto-mode-alist))
+)
 
+#+END_SRC
+* Magit
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+:ensure t
+:config
+(global-set-key (kbd "C-<f9>") 'magit-status)
+)
+#+END_SRC
+* Haskell
+** Configure loadpath
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/haskell-mode/")
+#+END_SRC
+
+** haskell-mode
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+:ensure t
+:config
+;; Setup some hooks
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(add-hook 'haskell-mode-hook (lambda () 
+                             (local-set-key (kbd "M-.") 'haskell-mode-tag-find))))
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+
+;; Define default info directory
+(add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+#+END_SRC
+
+** haskell-cabal
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-cabal
+:ensure f)
+#+END_SRC
+
+** haskell-interactive-mode
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-interactive-mode
+:ensure f)
+#+END_SRC
+
+** haskell-process
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-process
+:ensure f
+:config
+(custom-set-variables
+  '(haskell-process-suggest-remove-import-lines t)
+  '(haskell-process-auto-import-loaded-modules t)
+  '(haskell-process-log t))
+)
+#+END_SRC
+* Flyspell
+- Define flyspell switch language function
+  #+BEGIN_SRC emacs-lisp
+    (defun fd-switch-dictionary()
+      (interactive)
+      (let* ((dic ispell-current-dictionary)
+             (change (if (string= dic "deutsch8") "english" "deutsch8")))
+        (ispell-change-dictionary change)
+        (message "Dictionary switched from %s to %s" dic change)
+        ))
+  #+END_SRC
+- Define function that checks next highlighted word
+  #+BEGIN_SRC emacs-lisp
+    (defun flyspell-check-next-highlighted-word ()
+      "Custom function to spell check next highlighted word"
+      (interactive)
+      (flyspell-goto-next-error)
+      (ispell-word)
+      )
+  #+END_SRC
+- Setup keybindings
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
+    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
+    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
+    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
+    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
+  #+END_SRC
+* Flymake
+#+BEGIN_SRC emacs-lisp
+(use-package flymake
+:ensure t
+:config
+;; Define function to make haskell code on the fly
+(defun flymake-Haskell-init ()
+  (flymake-simple-make-init-impl
+   'flymake-create-temp-with-folder-structure nil nil
+   (file-name-nondirectory buffer-file-name)
+   'flymake-get-Haskell-cmdline))
+
+(defun flymake-get-Haskell-cmdline (source base-dir)
+  (list "flycheck_haskell.pl"
+        (list source base-dir)))
+
+;; Attach functionality to filetypes
+(push '(".+\\.hs$" flymake-Haskell-init flymake-simple-java-cleanup)
+      flymake-allowed-file-name-masks)
+(push '(".+\\.lhs$" flymake-Haskell-init flymake-simple-java-cleanup)
+      flymake-allowed-file-name-masks)
+(push '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)" 1 2 3 4) 
+      flymake-err-line-patterns)
+)
+#+END_SRC
+* GNUS
+#+BEGIN_SRC emacs-lisp
+;; (use-package gnus-load
+;; :ensure f
+;; :config 
+;; ;; Configure loadpath
+;; (setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
+;; 
+;; ;; Configure info directory
+;; (add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
+;; 
+;; ;; Setup emacss mail user agent
+;; (setq mail-user-agent 'gnus-user-agent)
+;; 
+;; ;; Attach bbdb hook
+;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+;; 
+;; ;; Configure S/MIME\\
+;; ;; This configuration might not just be for gnus but also for mu4e,
+;; ;; but i need to further confirm that
+;; (setq mm-decrypt-option 'always)
+;; (setq mm-verify-option 'always)
+;; (setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
+;; 
+;; (add-hook 'message-send-hook 'mml-secure-message-sign-smime)
+;; 
+;; (setq password-cache t) ; default is true, so no need to set this actually
+;; (setq password-cache-expiry 86400); default is 16 seconds
+;; 
+;; ;; (setq mml-signencrypt-style-alist '(("smime" combined)
+;; ;;                                     ("pgp" combined)
+;; ;;                                     ("pgpmime" combined)))
+;; 
+;; (setq mml-signencrypt-style-alist '(("smime" separate)
+;;                                     ("pgp" separate)
+;;                                     ("pgpauto" separate)
+;;                                     ("pgpmime" separate)))
+;; 
+;; )
+#+END_SRC
+* BBDB 
+** Configuring loadpath
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/bbdb/lisp/")
+#+END_SRC
+** Configuring Info directory
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'Info-default-directory-list "~/.emacs.d/bbdb/texinfo/")
+#+END_SRC
+
+** bbdb
+#+BEGIN_SRC emacs-lisp
+(use-package bbdb
+:ensure t
+:config
+(bbdb-initialize 'gnus 'message)
+
+(setq 
+ bbdb-offer-save 1                        ;; 1 means save-without-asking
+
+
+ bbdb-use-pop-up t                        ;; allow popups for addresses
+ bbdb-electric-p t                        ;; be disposable with SPC
+ bbdb-popup-target-lines  1               ;; very small
+ bbdb-dwim-net-address-allow-redundancy t ;; always use full name
+ bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
+ bbdb-always-add-address t                ;; add new addresses to existing...
+ ;; ...contacts automatically
+ ;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
+ bbdb-completion-type nil                 ;; complete on anything
+ bbdb-complete-name-allow-cycling t       ;; cycle through matches
+ ;; this only works partially
+ bbbd-message-caching-enabled t           ;; be fast
+ bbdb-use-alternate-names t               ;; use AKA
+ bbdb-elided-display t                    ;; single-line addresses
+
+ ;; auto-create addresses from mail
+ bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
+ bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
+ ;; NOTE: there can be only one entry per header (such as To, From)
+ ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
+
+ '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))
+ )
+
+;; Extract SMime Certificates
+(defun DE-get-certificate-files-from-bbdb () 
+  (let ((certfiles nil))
+    (save-excursion
+      (save-restriction
+        (message-narrow-to-headers-or-head)
+        (let ((names (remq nil (mapcar 'message-fetch-field '("To" "Cc" "From")))))
+          (mapc (function (lambda (arg)
+                            (let ((rec (bbdb-search-simple nil (cdr arg))))
+                              (when rec
+                                (let ((cert (bbdb-get-field rec 'certfile)))
+                                  (when (and (> (length cert) 0) (not (member cert certfiles)))
+                                    (push cert certfiles)(push 'certfile certfiles)))))))
+                (mail-extract-address-components (mapconcat 'identity names ",") t)))
+        (if (y-or-n-p (concat (mapconcat 'file-name-nondirectory (remq 'certfile certfiles) ", ") ".  Add more certificates? "))
+            (nconc (mml-smime-encrypt-query) certfiles)
+          certfiles)))))
+
+(add-to-list 'mml-encrypt-alist '("smime" mml-smime-encrypt-buffer DE-get-certificate-files-from-bbdb))
+
+(defun DE-snarf-smime-certificate ()
+  (interactive)
+  (if (or (assoc "certfile" (bbdb-propnames))
+          (progn (when (y-or-n-p "Field 'certfile' does not exist in BBDB. Define it? ")
+                   (bbdb-set-propnames 
+                    (append (bbdb-propnames) (list (list "certfile"))))
+                   t)))
+      (if (get-buffer gnus-article-buffer)
+          (progn 
+            (set-buffer gnus-article-buffer)
+            (beginning-of-buffer)
+            (if (search-forward "S/MIME Signed Part:Ok" nil t)
+                (let* ((data (mm-handle-multipart-ctl-parameter 
+                              (get-text-property (point) 'gnus-data) 'gnus-details))
+                       (address (progn (string-match "^Sender claimed to be: \\(.*\\)$" data)
+                                       (substring data (match-beginning 1) (match-end 1))))
+                       (rec (bbdb-search-simple nil address)))
+                  (if rec
+                      (let* ((certfile (bbdb-get-field rec 'certfile))
+                             (filename (bbdb-record-name rec))
+                             (dowrite (or (zerop (length certfile)) 
+                                          (y-or-n-p "User already has a certfile entry. Overwrite? ")))
+                             (begincert nil))
+                        (when dowrite
+                          (string-match (concat "\\(emailAddress=\\|email:\\)" address) data)
+                          (setq begincert (string-match "^-----BEGIN CERTIFICATE-----$" data (match-end 0)))
+                          (if (and smime-certificate-directory
+                                   (file-directory-p smime-certificate-directory))
+                              (progn
+                                (setq filename (concat (file-name-as-directory smime-certificate-directory) 
+                                                       (mm-file-name-replace-whitespace filename) ".pem"))
+                                (when (or (not (file-exists-p filename))
+                                          (y-or-n-p (concat "Filename " filename " already exists. Overwrite? "))) 
+                                  (string-match "^-----END CERTIFICATE-----$" data begincert)
+                                  (write-region (substring data begincert (+ (match-end 0) 1)) nil filename)
+                                  (bbdb-record-putprop rec 'certfile filename)
+                                  (bbdb-change-record rec t)
+                                  (bbdb-redisplay-one-record rec)
+                                  (message (concat "Saved certificate and updated BBDB record for " address))))
+                            (progn
+                              (ding)(message "smime-certificate-directory not correctly set.")))
+                          ))
+                    (progn
+                      (ding)
+                      (message (concat "No entry for address " address " in the BBDB.")))))
+              (progn (ding)
+                     (message "No valid S/MIME signed message found.")))
+            )  
+        (progn
+          (ding)(message "No article buffer available.")))
+    (progn
+      (ding)(message "No field 'certfile' defined in BBDB."))))
+)
+#+END_SRC
+* ACE Jump mode
+** ace-jump-mode
+#+BEGIN_SRC emacs-lisp
+(use-package ace-jump-mode
+:ensure t
+:config
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 ;; more powerfull jump back feature
 (autoload
 	'ace-jump-mode-pop-mark
@@ -800,74 +855,78 @@
 	'(ace-jump-mode-enable-mark-sync))
 (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 #+END_SRC
-
 * Hackernews
+Simple Hackernews-frontend
+
 #+BEGIN_SRC emacs-lisp
-(autoload 
-	'hackernews
-	"hackernews"
-	"Simple Hackernews-frontend"
-	t)
+(use-package hackernews
+:ensure t)
 #+END_SRC
 
 * Autopair
+Automatically set the Brackets
+
 #+BEGIN_SRC emacs-lisp
-(require 'autopair)
-;; (autoload 
-;; 	'autopair
-;; 	"autopair"
-;; 	"Automatically set the Brackets"
-;; 	t)
+(use-package autopair
+:ensure t
+:config 
 (autopair-global-mode)
+)
 #+END_SRC
 
 * iedit
+Change multiple occurences
+
 #+BEGIN_SRC emacs-lisp
-(require 'iedit)
-;; (autoload 
-;; 	'iedit
-;; 	"iedit"
-;; 	"Change multiple occurences"
-;; 	t)
+(use-package iedit
+:ensure t)
 #+END_SRC
 
 * frogblogmode
+frogblog major mode
+
 #+BEGIN_SRC emacs-lisp
-;; load frogblog mode
-(autoload 'frogblogmode "frogblogmode" "frogblog major mode" t)
+;;(use-package frogblogmode
+;;:ensure f
+;;:init
+;;(add-to-list 'load-path "~/.emacs.d/frogblogmode/")
+;;)
 #+END_SRC
 
 * multiple cursors
 #+BEGIN_SRC emacs-lisp
-; Multiple Cursors Mode
-; (require 'multiple-cursors)
-(autoload 'multiple-cursors "Multiple Cursors")
-; ... and some key-bindings
+(use-package multiple-cursors
+:ensure t
+:config
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+)
 #+END_SRC
 
 * popup windows
 #+BEGIN_SRC emacs-lisp
-;; Popup Windows
+(use-package popwin
+:ensure t
+:init
 (add-to-list 'load-path "~/.emacs.d/popwin-el")
 (add-to-list 'load-path "~/.emacs.d/popwin-el/misc")
-(require 'popwin)
+
+:config
+;; Popup Windows
 (popwin-mode 1)
 (global-set-key (kbd "C-=") popwin:keymap)
 (global-set-key (kbd "C-= t") 'popwin-term:term)
-; unbreak my undo
-; (global-set-key (kbd "C-z C-z") 'undo)
 
-;; (require 'popwin-term)
 (push '(term-mode :position :top :height 16 :stick t) popwin:special-display-config)
+)
 #+END_SRC
 
 * winner mode
+to switch back to window configurations
+
 #+BEGIN_SRC emacs-lisp
-;; Winner-Mode (to switch back to window configurations)
 (winner-mode 1) 
 #+END_SRC
 
@@ -886,11 +945,8 @@
 
 * elpy
 #+BEGIN_SRC emacs-lisp
-;; Elpy 
 (package-initialize)
 (elpy-enable)
-;; (autopair-mode)
-;; (iedit-mode)
 #+END_SRC
 
 * flymake
@@ -909,7 +965,9 @@
 
 * projectile
 #+BEGIN_SRC emacs-lisp
-(require 'projectile)
+(use-package projectile
+:ensure t
+:config
 ;; (projectile-global-mode)
 (setq projectile-mode-line " Projectile")
 (setq projectile-indexing-method 'native)
@@ -917,52 +975,48 @@
 ;; For Tramp to work with projectile
 ;; (add-hook 'text-mode-hook 'projectile-mode)
 ;; ^^ won't work, disable projectile-global-mode for it to work
+)
 #+END_SRC
 
 * recentf
 #+BEGIN_SRC emacs-lisp
-(require 'recentf)
+(use-package recentf
+:ensure t)
 #+END_SRC
 
 * neotree
 #+BEGIN_SRC emacs-lisp
-(require 'neotree)
+(use-package neotree
+:ensure t
+:config
 (global-set-key (kbd "C-<f8>") 'neotree-toggle)
+)
 #+END_SRC
 
 * ido mode
 #+BEGIN_SRC emacs-lisp
-(require 'ido-vertical-mode)
+(use-package ido-vertical-mode
+:ensure t
+:config
 (ido-mode 1)
 (ido-vertical-mode 1)
+)
 #+END_SRC
 
 * helm
+** helm
 #+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; PACKAGE: helm              ;;
-;;                            ;;
-;; GROUP: Convenience -> Helm ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'helm)
-
+(use-package helm
+:ensure t
+:config
 ;; must set before helm-config,  otherwise helm use defaut
 ;; prefix "C-x c", which is inconvenient because you can
 ;; accidentially pressed "C-x C-c"
 (setq helm-command-prefix-key "C-c h")
 
-(require 'helm-config)
-(require 'helm-eshell)
-(require 'helm-files)
-(require 'helm-grep)
-
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
 (setq
  helm-google-suggest-use-curl-p t
@@ -974,8 +1028,8 @@
 
  helm-split-window-default-side 'other ;; open helm buffer in another window
  helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
- helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                                     '(picture-mode artist-mode))
+ ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+ ;;                                     '(picture-mode artist-mode))
  helm-candidate-number-limit 200 ; limit the number of displayed canidates
  helm-M-x-requires-pattern 0     ; show all candidates when set to 0
  helm-boring-file-regexp-list
@@ -992,31 +1046,65 @@
 (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
 (helm-mode 1)
+)
+#+END_SRC
+
+** helm-config
+#+BEGIN_SRC emacs-lisp
+(use-package helm-config
+:ensure f
+:config)
+#+END_SRC
+
+** helm-eshell
+#+BEGIN_SRC emacs-lisp
+(use-package helm-eshell
+:ensure f
+:config)
+#+END_SRC
+
+** helm-files
+#+BEGIN_SRC emacs-lisp
+(use-package helm-files
+:ensure f
+:config)
+#+END_SRC
+
+** helm-grep
+#+BEGIN_SRC emacs-lisp
+(use-package helm-grep
+:ensure f
+:config
+(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+)
 #+END_SRC
 
 * calfw
+** calfw-cal
 #+BEGIN_SRC emacs-lisp
-  ;; calendar calfw
-  (require 'calfw-cal)
-  (require 'calfw-ical)
-  ;; (require 'calfw-howm)
-  (require 'calfw-org)
-
-  (setq calendar-week-start-day 1)
-  ;; configuration within private_config.org
-  ;; (defun my-open-calendar ()
-  ;;   (interactive)
-  ;;   (cfw:open-calendar-buffer
-  ;;    :contents-sources
-  ;;    (list
-  ;;     (cfw:org-create-source "Green")  ; orgmode source
-  ;;     ;; (cfw:howm-create-source "Blue")  ; howm source
-  ;;     ;; (cfw:cal-create-source "Orange") ; diary source
-  ;;     ;; (cfw:ical-create-source "Moon" "~/moon.ics" "Gray")  ; ICS source1
-  ;;     (cfw:ical-create-source "gcal" "https://www.google.com/calendar/ical/xxxxxxxxxxxxxxxxxxxxxxxxxx%40group.calendar.google.com/private-00000000000000000000000000000000/basic.ics" "IndianRed") ; google calendar ICS
-  ;;     (cfw:ical-create-source "gcal" "https://www.google.com/calendar/ical/<user>%40gmail.com/private-00000000000000000000000000000000/basic.ics" "Blue") ; google calendar ICS
-  ;;     ))
-  ;; )
+(use-package calfw-cal
+:ensure t
+:config
+(setq calendar-week-start-day 1)
+)
+#+END_SRC
+** calfw-ical
+#+BEGIN_SRC emacs-lisp
+(use-package calfw-ical
+:ensure t
+:config
+(setq calendar-week-start-day 1)
+)
+#+END_SRC
+** calfw-org
+#+BEGIN_SRC emacs-lisp
+(use-package calfw-org
+:ensure t
+:config
+(setq calendar-week-start-day 1)
+)
 #+END_SRC
 
 * isearch
@@ -1036,9 +1124,22 @@
 * rcirc
 #+BEGIN_SRC emacs-lisp
 ;; rcirc config
-(require 'tls)
-;; (require 'rcirc)
+(use-package tls
+:ensure t
+:config
+(setq rcirc-server-alist
+      '(("irc.freenode.net"
+         :port 6667
+         :channels ("#emacs" "#haskell" ;; "#clojure #emacs"
+                    ))))
+(put 'narrow-to-region 'disabled nil)
+)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+;;(use-package rcirc
+;;:ensure t
+;;:config
 ;; configuration within private_config.org
 ;; (setq rcirc-default-nick "<user>")
 ;; (setq rcirc-default-full-name "<fullname>")
@@ -1057,19 +1158,16 @@
  ;; Don't forget to add (require 'tls) first
 
 ;; Without SSL
-(setq rcirc-server-alist
-      '(("irc.freenode.net"
-         :port 6667
-         :channels ("#emacs" "#haskell" ;; "#clojure #emacs"
-                    ))))
-(put 'narrow-to-region 'disabled nil)
+;;)
 #+END_SRC
-
 * rvm el
 #+BEGIN_SRC emacs-lisp
 ;; rvm el
-(require 'rvm)
+(use-package rvm
+:ensure t
+:config
 (rvm-use-default) ;; use rvm's default ruby for the current Emacs session
+)
 #+END_SRC
 
 * w3m
@@ -1094,95 +1192,95 @@
 
 * mu4e
 #+BEGIN_SRC emacs-lisp
-  ;;;;;;;;;;;;;
-  ;; Begin mu4e
+(use-package mu4e
+:ensure f
+:config
+(setq
+    mu4e-maildir       "~/Mail"   ;; top-level Maildir
+    mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
+    mu4e-drafts-folder "/drafts"     ;; unfinished messages
+    mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
+    mu4e-refile-folder "/archive")   ;; saved messages
 
-  (require 'mu4e)
+(setq
+   ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
+   mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
+   mu4e-get-mail-command "mbsync -a"
+   mu4e-update-interval 300)             ;; update every 5 minutes
 
-  (setq
-      mu4e-maildir       "~/Mail"   ;; top-level Maildir
-      mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
-      mu4e-drafts-folder "/drafts"     ;; unfinished messages
-      mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
-      mu4e-refile-folder "/archive")   ;; saved messages
+;; tell message-mode how to send mail
+(setq user-mail-address "frosch03@frosch03.de")
+(setq user-full-name "Matthias Brettschneider")
+(setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
+(setq mu4e-compose-signature "open source, open minds, open future")
 
-  (setq
-     ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
-     mu4e-get-mail-command "mbsync -a"
-     mu4e-update-interval 300)             ;; update every 5 minutes
+;; configuration within: private_config.org
+;; (setq message-send-mail-function 'smtpmail-send-it
+;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
+;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
+;;       smtpmail-default-smtp-server "<servername>"
+;;       smtpmail-smtp-server "<servername>"
+;;       smtpmail-smtp-service <port>
+;;       smtpmail-local-domain "<domain>")
 
-  ;; tell message-mode how to send mail
-  (setq user-mail-address "frosch03@frosch03.de")
-  (setq user-full-name "Matthias Brettschneider")
-  (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-  (setq mu4e-compose-signature "open source, open minds, open future")
+(add-to-list 'mu4e-view-actions
+             '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+(add-to-list 'mu4e-bookmarks
+             '("((date:7d..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
+(add-to-list 'mu4e-bookmarks
+             '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
+(add-to-list 'mu4e-bookmarks
+             '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
 
-  ;; configuration within: private_config.org
-  ;; (setq message-send-mail-function 'smtpmail-send-it
-  ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
-  ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
-  ;;       smtpmail-default-smtp-server "<servername>"
-  ;;       smtpmail-smtp-server "<servername>"
-  ;;       smtpmail-smtp-service <port>
-  ;;       smtpmail-local-domain "<domain>")
-
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-
-  (add-to-list 'mu4e-bookmarks
-               '("((date:7d..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-  (add-to-list 'mu4e-bookmarks
-               '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
-  (add-to-list 'mu4e-bookmarks
-               '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
-
-  ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
-  (setq mu4e-html2text-command "w3m -T text/html")
-
-  ;; End mu4e
-  ;;;;;;;;;;;
+;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+(setq mu4e-html2text-command "w3m -T text/html")
+)
 #+END_SRC
 
 In order to generate html mails from org-mode, this function helps to
 add some org configurations before the output is created. Here:
+
 - imagemagick is selected for cutting the latex formulas into little
   snippits. Also
 - the table of content is disabled
-#+BEGIN_SRC lisp
-(defun frog/mu4e-org-compose ()
-  "Switch to/from mu4e-compose-mode and org-mode"
-   (interactive)
-   ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
-   (let ((p (point)))
-     (goto-char (point-min))
-     (let ((case-fold-search t))
-       (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
-         (goto-char (point-max))
-         (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
-     (goto-char p))
-   (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
-       (org~mu4e-mime-switch-headers-or-body)
-     (mu4e-compose-mode)))
-(global-set-key "\M-@" 'frog/mu4e-org-compose)
-#+END_SRC
+  #+BEGIN_SRC lisp
+  (defun frog/mu4e-org-compose ()
+    "Switch to/from mu4e-compose-mode and org-mode"
+     (interactive)
+     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
+     (let ((p (point)))
+       (goto-char (point-min))
+       (let ((case-fold-search t))
+         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
+           (goto-char (point-max))
+           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
+       (goto-char p))
+     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
+         (org~mu4e-mime-switch-headers-or-body)
+       (mu4e-compose-mode)))
+  (global-set-key "\M-@" 'frog/mu4e-org-compose)
+  #+END_SRC
 
 * autshine
 #+BEGIN_SRC emacs-lisp
 ;; outshine tests
-(require 'outshine)
+(use-package outshine
+:ensure t
+:config
 (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
 (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
 (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
 (add-hook 'haskell-mode-hook 'outline-minor-mode)
+)
 #+END_SRC
 
 * jekyll
 #+BEGIN_SRC emacs-lisp
-(require 'hyde)
+(use-package hyde
+:ensure t
+:config
 (setq hyde/hyde-list-posts-command "/bin/ls -ltr *.md"
       hyde-home "/home/frosch03/Documents/Blog")
-
 ;; (setq hyde/hyde-list-posts-command "/bin/ls -ltr *.md"
 ;;       hyde/git/remote "master"   ; The name of the branch on which your blog resides
 ;;       hyde/deploy-command  "rsync -vr _site/* nkv@ssh.hcoop.net:/afs/hcoop.net/user/n/nk/nkv/public_html/nibrahim.net.in/" ; Command to deploy
@@ -1191,6 +1289,7 @@ add some org configurations before the output is created. Here:
 ;; 			   ("cover" "false")
 ;; 			   ("cover-image" ""))
 ;;       )
+)
 #+END_SRC
 
 * gnugol
@@ -1218,95 +1317,94 @@ add some org configurations before the output is created. Here:
 #+END_SRC
 
 * weechat
-  #+BEGIN_SRC emacs-lisp
-    ;; (require 'weechat)
-    (use-package weechat)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package weechat
+:ensure t)
+#+END_SRC
 
 * tramp
 #+BEGIN_SRC emacs-lisp
-;; Tramp config
-;;;;;;;;;;;;;;;
-(require 'tramp)
+(use-package tramp
+:ensure t
+:config
 (setq tramp-default-method "ssh")
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+)
 #+END_SRC
 
 * nginxmode
 #+BEGIN_SRC emacs-lisp
-;; NGINX Mode
-;;;;;;;;;;;;;
-
-(require 'nginx-mode)
+(use-package nginx-mode
+:ensure t)
 #+END_SRC
 
 * elfeed
 #+BEGIN_SRC emacs-lisp
-;; elfeed
 (global-set-key (kbd "C-x w") 'elfeed)
 (elfeed-org)
 (setq rmh-elfeed-org-files (list "~/Org/feeds.org"))
 #+END_SRC
 
 * eww
-  This here is to toggle images in eww buffers on and off
-
+- This here is to toggle images in eww buffers on and off
   #+BEGIN_SRC emacs-lisp
-    (defvar-local endless/display-images t)
+  (defvar-local endless/display-images t)
 
-    (defun endless/toggle-image-display ()
-      "Toggle images display on current buffer."
-      (interactive)
-      (setq endless/display-images
-            (null endless/display-images))
-      (endless/backup-display-property endless/display-images))
+  (defun endless/toggle-image-display ()
+    "Toggle images display on current buffer."
+    (interactive)
+    (setq endless/display-images
+          (null endless/display-images))
+    (endless/backup-display-property endless/display-images))
 
-    (defun endless/backup-display-property (invert &optional object)
-      "Move the 'display property at POS to 'display-backup.
-    Only applies if display property is an image.
-    If INVERT is non-nil, move from 'display-backup to 'display
-    instead.
-    Optional OBJECT specifies the string or buffer. Nil means current
-    buffer."
-      (let* ((inhibit-read-only t)
-             (from (if invert 'display-backup 'display))
-             (to (if invert 'display 'display-backup))
-             (pos (point-min))
-             left prop)
-        (while (and pos (/= pos (point-max)))
-          (if (get-text-property pos from object)
-              (setq left pos)
-            (setq left (next-single-property-change pos from object)))
-          (if (or (null left) (= left (point-max)))
-              (setq pos nil)
-            (setq prop (get-text-property left from object))
-            (setq pos (or (next-single-property-change left from object)
-                          (point-max)))
-            (when (eq (car prop) 'image)
-              (add-text-properties left pos (list from nil to prop) object))))))
+  (defun endless/backup-display-property (invert &optional object)
+    "Move the 'display property at POS to 'display-backup.
+  Only applies if display property is an image.
+  If INVERT is non-nil, move from 'display-backup to 'display
+  instead.
+  Optional OBJECT specifies the string or buffer. Nil means current
+  buffer."
+    (let* ((inhibit-read-only t)
+           (from (if invert 'display-backup 'display))
+           (to (if invert 'display 'display-backup))
+           (pos (point-min))
+           left prop)
+      (while (and pos (/= pos (point-max)))
+        (if (get-text-property pos from object)
+            (setq left pos)
+          (setq left (next-single-property-change pos from object)))
+        (if (or (null left) (= left (point-max)))
+            (setq pos nil)
+          (setq prop (get-text-property left from object))
+          (setq pos (or (next-single-property-change left from object)
+                        (point-max)))
+          (when (eq (car prop) 'image)
+            (add-text-properties left pos (list from nil to prop) object))))))
   #+END_SRC
 
-  Bind that endless/display-images function to a key
-
+- Bind that endless/display-images function to a key
   #+BEGIN_SRC emacs-lisp
-    (add-hook 'eww-mode-hook
-              (lambda ()
-                (local-set-key (kbd "C-c C-t") 'endless/toggle-image-display)))
+  (add-hook 'eww-mode-hook
+            (lambda ()
+              (local-set-key (kbd "C-c C-t") 'endless/toggle-image-display)))
   #+END_SRC
 
 * Ur/Web mode
-  Ur/Web mode is a mode for the programming environment of Ur/Web.
+Ur/Web mode is a mode for the programming environment of Ur/Web.
 
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "~/.emacs.d/urweb-mode/")
-    (load "urweb-mode-startup")
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/urweb-mode/")
+(load "urweb-mode-startup")
+#+END_SRC
 
 * Atomic Chrome
-  I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] extension within firefox
+I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] extension within firefox
 
-  #+BEGIN_SRC emacs-lisp
-  (require 'atomic-chrome)
-  (atomic-chrome-start-server)
-  (setq atomic-chrome-buffer-open-style 'frame)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package atomic-chrome
+:ensure t
+:config
+(atomic-chrome-start-server)
+(setq atomic-chrome-buffer-open-style 'frame)
+)
+#+END_SRC
