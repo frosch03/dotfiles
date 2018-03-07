@@ -100,6 +100,14 @@
     #+END_SRC
 
 * Org-Mode Config
+** org
+#+BEGIN_SRC emacs-lisp
+(use-package org
+:ensure f
+:config
+(setq org-startup-indented t)
+)
+#+END_SRC
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
    (use-package ox-latex
