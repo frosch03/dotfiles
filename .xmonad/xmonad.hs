@@ -141,7 +141,9 @@ projects =
 
     , Project   { projectName       = wsMail
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -nw -e '(mu4e)'"
+                -- , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -nw -e '(mu4e)'"
+                -- , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -c -e '(mu4e)'"
+                , projectStartHook  = Just $ do spawnOn wsMail "emacsclient -q -c -e '(mu4e)'"
                 }
 
     ]
@@ -717,7 +719,8 @@ xK_XF86AudioLowerVolume = 0x1008ff11
 xK_FroggersPause = 0x1008ff12
 
 
-myTerminal = "/usr/bin/urxvt"
+-- myTerminal = "/usr/bin/urxvt"
+myTerminal = "/home/frosch03/bin/terminal"
 myFirefox  = "/usr/bin/firefox"
 myChrome   = "/usr/bin/chromium"
 myBrowser  = myFirefox
@@ -737,10 +740,16 @@ whatsappInfix       = "whatsapp"
 whatsappResource    = "web.whatsapp.com"
 isWhatsapp          = (resource =? whatsappResource)
 
+frogchatCommand     = "dex $HOME/.local/share/applications/frogchat.desktop"
+frogchatInfix       = "frogchat"
+frogchatResource    = "c.frosch03.de"
+isFrogchat          = (resource =? frogchatResource)
+
 scratchpads =
     [   (NS "jira"     jiraCommand     isJira     defaultFloating)
     ,   (NS "threema"  threemaCommand  isThreema  defaultFloating)
     ,   (NS "whatsapp" whatsappCommand isWhatsapp defaultFloating)
+    ,   (NS "frogchat" frogchatCommand isFrogchat defaultFloating)
     ] 
 
 -- My additional keybindings
@@ -878,6 +887,7 @@ myKeys' conf = let
     , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
     , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
     , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
+    , ("M-c"                    , addName "NSP frogchat"                    $ namedScratchpadAction scratchpads "frogchat")
     -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
     -- , ("M-n"                    , addName "NSP Console"                     $ namedScratchpadAction scratchpads "console")
     , ("M-s s"                  , addName "Cancel submap"                   $ return ())
@@ -990,7 +1000,7 @@ myKeys' conf = let
     subKeys "System"
     [ ("M-q"          , addName "Restart XMonad"            $ spawn "xmonad --restart")
     , ("M-i"          , addName "Run a programm"            $ shellPrompt myXPConfig)
-    , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
+    -- , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
     -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
     -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
