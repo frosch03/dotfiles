@@ -367,10 +367,10 @@
      #+END_SRC
 
 ** babel
-   - Make babel results blocks lowercase
-     #+BEGIN_SRC emacs-lisp
-     (setq org-babel-results-keyword "results")
-     #+END_SRC
+   # - Make babel results blocks lowercase
+     # #+BEGIN_SRC emacs-lisp
+     # (setq org-babel-results-keyword "results")
+     # #+END_SRC
 
    - list of loaded languages
      #+BEGIN_SRC emacs-lisp
@@ -384,12 +384,14 @@
                 (ruby . t)
                 (gnuplot . t)
                 (clojure . t)
-                ;; (sh . t)
+                (shell . t)
                 (ledger . t)
                 (org . t)
                 (plantuml . t)
                 (latex . t))))
      #+END_SRC
+
+                #+results:
 
    - inhibit prompt to confirm evaluation
 
@@ -681,6 +683,11 @@
       (flyspell-goto-next-error)
       (ispell-word)
       )
+  #+END_SRC
+- Disable in Haskell mode
+  #+BEGIN_SRC emacs-lisp
+    (dolist (hook '(haskell-mode-hook))
+          (add-hook hook (lambda () (flyspell-mode -1))))
   #+END_SRC
 - Setup keybindings
   #+BEGIN_SRC emacs-lisp
@@ -1457,4 +1464,41 @@ I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] exten
   (use-package restclient
     :ensure t
     )
+#+END_SRC
+
+* ejira
+#+BEGIN_SRC emacs-lisp
+  (use-package ejira
+    :load-path "/home/frosch03/.emacs.d/ejira"
+    :init
+    (setq jiralib2-url             "http://jira.frosch03.de"
+          jiralib2-user-login-name "frosch03"
+          ejira-projects           '("SA")
+          ejira-main-project       "SA"
+          ejira-my-org-directory   "/home/frosch03/Org/JIRA"
+          ejira-done-states        '("Done")
+          ejira-in-progress-states '("In Progress" "In Review" "Testing")
+          ejira-high-priorities    '("High" "Highest")
+          ejira-low-priorities     '("Low" "Lowest")
+
+          ;; Customize these based on your JIRA server configuration
+          ejira-sprint-field                     'customfield_10003
+          ejira-epic-field                       'customfield_10003
+          ejira-epic-summary-field               'customfield_10005
+          ;; ejira-no-epic-postfix                  ""
+          )
+
+    :config
+    (require 'ejira)
+    (require 'org-agenda)
+    )
+#+END_SRC
+
+* mpdel
+Using mpdel mode for navigation of mpd
+#+BEGIN_SRC emacs-lisp
+  (use-package mpdel
+    :init
+    (mpdel-mode)
+  )
 #+END_SRC

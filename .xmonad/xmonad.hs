@@ -15,7 +15,7 @@ import XMonad.Actions.WithAll               -- action all the things
 import XMonad.Layout.Accordion
 import XMonad.Layout.BinarySpacePartition
 import XMonad.Layout.ComboP                 -- SwapWindow
-import XMonad.Layout.Fullscreen
+import XMonad.Layout.Fullscreen hiding (fullscreenEventHook)
 import XMonad.Layout.Hidden                 -- for popOldestHiddenWindow
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
@@ -157,6 +157,7 @@ curLayout = gets windowset >>= return . description . S.layout . S.workspace . S
 main = do
   spawnPipe "/home/frosch03/bin/xStartup"
   xmonad
+       -- $ ewmh
        $ dynamicProjects projects
        $ withUrgencyHook NoUrgencyHook
        $ addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
@@ -166,6 +167,7 @@ main = do
              , focusedBorderColor = "#999999"
              , modMask            = myModMask
              , workspaces         = myWorkspaces
+             -- , handleEventHook    = myEventHook <+> fullscreenEventHook
              , manageHook         = myManagedHook
              , layoutHook         = myLayoutHook
              , logHook            = dynamicLogWithPP $ myLemonbarPP
@@ -802,6 +804,22 @@ myManagedHook =
 
 
 myModMask = mod4Mask
+
+
+
+------------------------------------------------------------------------
+-- Event handling
+
+-- * EwmhDesktops users should change this to ewmhDesktopsEventHook
+--
+-- Defines a custom handler function for X Events. The function should
+-- return (All True) if the default handler is to be run afterwards. To
+-- combine event hooks use mappend or mconcat from Data.Monoid.
+--
+--myEventHook = mempty
+myEventHook = ewmhDesktopsEventHook
+
+
 
 -- Display keyboard mappings using zenity
 -- from https://github.com/thomasf/dotfiles-thomasf-xmonad/
