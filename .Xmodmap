@@ -6,7 +6,8 @@ keycode 66 = Escape
 ! Set CapsLock to Ctrl (for Emacs)
 ! keycode 66 = Control_L
 
-
+! keycode 43 = Hyper_R Hyper_R
+! keycode 171 = backslash bar
 keycode 49 = grave asciitilde degree
 keycode 108 = Mode_switch
 keysym e = e E EuroSign
@@ -20,3 +21,4 @@ keysym m = m M mu
 
 keycode 133 = Super_L
 add mod4 = Super_L
+! add mod4 = Hyper_R
