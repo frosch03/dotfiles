@@ -45,3 +45,5 @@ URxvt.keysym.C-2: command:\033]11;rgba:ffff/ffff/ffff/ffff\007\033]10;rgba:0000/
 ! xfig always special fonts
 Fig.latexfonts: true 
 Fig.specialtext: true
+
+xclock*background: #222222
