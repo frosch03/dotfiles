@@ -23,6 +23,7 @@
       ;; (set-face-attribute 'default nil :font "") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
       (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "terminusicons2") ;; Icon Font
       ;; (set-default-font "Inconsolata 10")
     #+END_SRC
   - set the font size
