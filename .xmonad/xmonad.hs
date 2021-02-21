@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes, DeriveDataTypeable, TypeSynonymInstances, MultiParamTypeClasses #-}
 import XMonad
 
-import XMonad.Actions.ConditionalKeys       -- bindings per workspace or layout (for bindOn)
+-- import XMonad.Actions.ConditionalKeys       -- bindings per workspace or layout (for bindOn)
 import XMonad.Actions.CopyWindow            -- like cylons, except x windows
 import XMonad.Actions.CycleWS
 import XMonad.Actions.DynamicProjects
@@ -33,6 +33,7 @@ import XMonad.Layout.WindowNavigation
 
 import qualified XMonad.StackSet as W       -- myManageHookShift
 
+--import Data.Default
 import XMonad.Prompt                        -- to get my old key bindings working
 import XMonad.Prompt.ConfirmPrompt          -- don't just hard quit
 import XMonad.Prompt.Input                  -- for the capture window
