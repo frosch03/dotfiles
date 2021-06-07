@@ -1,0 +1,24 @@
+#!/bin/bash
+
+KILLCMD="/usr/bin/killall"
+
+`$KILLCMD bash`
+`$KILLCMD xplanet`
+`$KILLCMD cat`
+`$KILLCMD dmplex`
+`$KILLCMD gcpubar`
+`$KILLCMD dropboxd`
+`$KILLCMD dunst`
+`$KILLCMD dhcpcd-gtk`
+
+if [ -p /tmp/dmpipe1 ] ; 
+then 
+    rm /tmp/dmpipe1
+fi
+
+if [ -p /tmp/dmpipe2 ] ; 
+then 
+    rm /tmp/dmpipe2
+fi
+
+killall bash dunst xbindkeys conky lemonbar sh ./.lemonbar/i3_lemonbar.sh xplanet cat dmplex gcpubar
