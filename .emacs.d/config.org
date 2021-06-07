@@ -440,7 +440,76 @@
 
      (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
    #+END_SRC
-
+** org publish
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-publish)
+  (setq org-publish-project-alist
+        '(
+          ("newblog-posts"
+           :base-directory "~/Documents/NewBlog/"
+           :base-extension "org"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4             ; Just the default for this project.
+           :auto-preamble t
+           ;; :auto-sitemap t
+           ;; :sitemap-title "frosch03.de/posts"
+           ;; :sitemap-filename "index.org"
+           ;; :sitemap-style list
+           ;; :author "Matthias Brettschneider"
+           ;; :email "frosch03@frosch03.de"
+           ;; :with-creator t
+           )
+          ("newblog-img"
+           :base-directory "~/Documents/NewBlog/img/"
+           :base-extension "png\\|jpg\\|gif\\|svg"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/img/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("newblog-data"
+           :base-directory "~/Documents/NewBlog/data/"
+           :base-extension "pdf"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/data/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("local-newblog-posts"
+           :base-directory "~/Documents/NewBlog/"
+           :base-extension "org"
+           :publishing-directory "~/Documents/NewBlog/local/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4             ; Just the default for this project.
+           :auto-preamble t
+           :auto-sitemap t
+           :sitemap-title "frosch03.de/posts"
+           :sitemap-filename "sitemap.org"
+           :sitemap-style list
+           :author "Matthias Brettschneider"
+           :email "frosch03@frosch03.de"
+           :with-creator t
+          )
+          ("local-newblog-img"
+           :base-directory "~/Documents/NewBlog/img/"
+           :base-extension "png\\|jpg\\|gif\\|svg"
+           :publishing-directory "~/Documents/NewBlog/local/img/"
+           :recursive t
+           :publishing-function org-publish-attachment
+          )
+          ("local-newblog-data"
+           :base-directory "~/Documents/NewBlog/data/"
+           :base-extension "pdf"
+           :publishing-directory "~/Documents/NewBlog/local/data/"
+           :recursive t
+           :publishing-function org-publish-attachment
+          )
+          ("newblog" :components ("newblog-posts" "newblog-img" "newblog-data"))
+          ("local-newblog" :components ("local-newblog-posts" "local-newblog-img" "local-newblog-data"))
+         )
+  )
+#+END_SRC
 * Dired Config
 ** Configuring loadpath:
    #+BEGIN_SRC emacs-lisp
