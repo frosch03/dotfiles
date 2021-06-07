@@ -92,32 +92,33 @@ import Data.List (isPrefixOf)
 wmName       = stringProperty "WM_NAME"
 wmWindowRole = stringProperty "WM_WINDOW_ROLE"
 
-floatClass = []
-floatTitle = []
-hacking    = ["Happy Hacking"]
-coding     = ["Happy Coding"]
-webApps    = ["Firefox", "Google-chrome", "Chromium"]
-comApps    = ["Pidgin", "jabber", "Jabber", "Empathy"]
-mailApps   = ["OUTLOOK.EXE", "Wine", "mutt", "mail", "evolution", "Evolution"]
-gimpApp    = ["Gimp", "gimp"]
-skypeApp   = ["Skype", "skype", "MainWindow"]
-ircApps    = ["workies", "irc"]
+floatClass  = []
+floatTitle  = []
+hacking     = ["Happy Hacking"]
+configuring = ["Happy Configuring"]
+webApps     = ["Firefox", "Google-chrome", "Chromium"]
+comApps     = ["Pidgin", "jabber", "Jabber", "Empathy"]
+mailApps    = ["OUTLOOK.EXE", "Wine", "mutt", "mail", "evolution", "Evolution"]
+gimpApp     = ["Gimp", "gimp"]
+skypeApp    = []
+ircApps     = []
 
 wmSkypeMain x = do x1 <- className    =? x
                    x2 <- wmWindowRole =? "MainWindow"
                    return (x1 && x2)
 
-wsOne   = "one"
-wsCode  = "code"
-wsWeb   = "web"
-wsIm    = "im"
-wsMail  = "mail"
-wsSkype = "skype"
-wsGimp  = "gimp"
-wsMusi  = "musi"
-wsIrc   = "irc"
+wsOne   = "HACKING"
+wsCode  = "CONFIGURING"
+wsWeb   = "BROWSING"
+wsComm  = "COMM"
+wsMail  = "MAIL"
+wsSkype = "SIX"
+wsGimp  = "SEVEN"
+wsMusi  = "EIGHT"
+wsIrc   = "NINE"
 
-myWorkspaces = [wsOne, wsCode, wsWeb, wsIm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
+
+myWorkspaces = [wsOne, wsCode, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
 
 
 
@@ -131,19 +132,25 @@ projects =
 
     , Project   { projectName       = wsCode
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsCode "/usr/bin/pavucontrol"
-                                                spawnOn wsCode myTerminal
+                , projectStartHook  = Just $ do spawnOn wsCode myTmuxTerminal
+                                                spawnOn wsCode "/usr/bin/xclock"
+                                                spawnOn wsCode "/usr/bin/pavucontrol"
+                                                spawnOn wsCode "/usr/bin/signal-desktop"
                 }
 
     , Project   { projectName       = wsWeb
                 , projectDirectory  = "~/"
                 , projectStartHook  = Just $ do spawnOn wsWeb myBrowser
+                                                spawnOn wsWeb "emacsclient -c -F '(quote (name . \"Notizen\"))' ~/Dropbox/Apps/SimpleTxtEditor/Notizen.org"
+                }
+
+    , Project   { projectName       = wsComm
+                , projectDirectory  = "~/"
+                , projectStartHook  = Just $ do spawnOn wsComm "emacsclient -q -c -e '(start-irc)'"
                 }
 
     , Project   { projectName       = wsMail
                 , projectDirectory  = "~/"
-                -- , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -nw -e '(mu4e)'"
-                -- , projectStartHook  = Just $ do spawnOn wsMail "/usr/bin/urxvt -e emacsclient -q -c -e '(mu4e)'"
                 , projectStartHook  = Just $ do spawnOn wsMail "emacsclient -q -c -e '(mu4e)'"
                 }
 
@@ -156,7 +163,7 @@ curLayout :: X String
 curLayout = gets windowset >>= return . description . S.layout . S.workspace . S.current
 
 main = do
-  spawnPipe "/home/frosch03/bin/xStartup"
+  spawn "xStartup &"
   xmonad
        -- $ ewmh
        $ dynamicProjects projects
@@ -171,9 +178,13 @@ main = do
              -- , handleEventHook    = myEventHook <+> fullscreenEventHook
              , manageHook         = myManagedHook
              , layoutHook         = myLayoutHook
-             , logHook            = dynamicLogWithPP $ myLemonbarPP
+             , logHook            = (dynamicLogWithPP $ myLemonbarPP) <+> myLogHook
              } 
  
+myLogHook :: X ()
+myLogHook = fadeInactiveLogHook fadeAmount
+     where fadeAmount = 0xcccccccc
+     
 -- The pretty printed layout for my lemonbar 
 myLemonbarPP = defaultPP 
                  { ppTitle   =  ("WIN" ++)
@@ -347,7 +358,7 @@ myLayoutHook = hiddenWindows
     -- Disadvantages
     --
     --   * layout starts without any tabs (could be considered a feature
-    --     since in that case the layout performs exactly as the parent/
+    --     since in that case the layout performs exactly as the parent or
     --     container layout does)
     --
     --   * To move a window into or out of the tabbed group requires
@@ -396,7 +407,7 @@ myLayoutHook = hiddenWindows
     --  myLayout = addTabs shrinkText def
     --           $ subLayout [0,1,2] (Simplest ||| Tall 1 0.2 0.5 ||| Circle)
     --                    $ Tall 1 0.2 0.5 ||| Full
-   
+    -- 
     -- this is a flexible sublayout layout that has only one container
     -- layout style (depending on screen)
     --     flexiSub = named "Flexi SubLayouts"
@@ -411,7 +422,7 @@ myLayoutHook = hiddenWindows
     --               where
     --                   wideLayout = ThreeColMid 1 (1/100) (1/2)
     --                   standardLayout = ResizableTall 1 (1/50) (2/3) []
-
+    --
     -- retained during development: safe to remove later
 
     flex = trimNamed 5 "Flex"
@@ -420,7 +431,9 @@ myLayoutHook = hiddenWindows
               -- we need windowNavigation for merging to sublayouts
               $ windowNavigation
               $ addTopBar
+	      $ myGaps
               $ addTabs shrinkText myTabTheme
+	      $ mySpacing
               -- $ subLayout [] (Simplest ||| (mySpacing $ Accordion))
               $ subLayout [] (Simplest ||| Accordion)
               $ ifWider smallMonResWidth wideLayouts standardLayouts
@@ -723,10 +736,11 @@ xK_FroggersPause = 0x1008ff12
 
 
 -- myTerminal = "/usr/bin/urxvt"
-myTerminal = "/home/frosch03/bin/terminal"
-myFirefox  = "/usr/bin/firefox"
-myChrome   = "/usr/bin/chromium"
-myBrowser  = myFirefox
+myTerminal     = "/home/frosch03/bin/terminal"
+myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux"
+myFirefox      = "/usr/bin/firefox"
+myChrome       = "/usr/bin/chromium"
+myBrowser      = myFirefox
 
 jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
 jiraInfix           = "jira"
@@ -738,21 +752,27 @@ threemaInfix        = "threema"
 threemaResource     = "t.frosch03.de"
 isThreema           = (resource =? threemaResource)
 
+imCommand      = "dex $HOME/.local/share/applications/ferdi.desktop"
+imInfix        = "im"
+imResource     = "ferdi"
+isIm           = (resource =? imResource)
+
 whatsappCommand     = "dex $HOME/.local/share/applications/whatsapp.desktop"
 whatsappInfix       = "whatsapp"
 whatsappResource    = "web.whatsapp.com"
 isWhatsapp          = (resource =? whatsappResource)
 
-frogchatCommand     = "dex $HOME/.local/share/applications/frogchat.desktop"
-frogchatInfix       = "frogchat"
-frogchatResource    = "c.frosch03.de"
-isFrogchat          = (resource =? frogchatResource)
+orgCaptureCommand     = "dex $HOME/.local/share/applications/org-capture.desktop"
+orgCaptureInfix       = "capture"
+orgCaptureResource    = "orgCapture"
+isOrgCapture          = (resource =? orgCaptureResource)
 
 scratchpads =
-    [   (NS "jira"     jiraCommand     isJira     defaultFloating)
-    ,   (NS "threema"  threemaCommand  isThreema  defaultFloating)
-    ,   (NS "whatsapp" whatsappCommand isWhatsapp defaultFloating)
-    ,   (NS "frogchat" frogchatCommand isFrogchat defaultFloating)
+    [   (NS "im"       imCommand         isIm         defaultFloating)
+    ,   (NS "jira"     jiraCommand       isJira       defaultFloating)
+    ,   (NS "threema"  threemaCommand    isThreema    defaultFloating)
+    ,   (NS "whatsapp" whatsappCommand   isWhatsapp   defaultFloating)
+    ,   (NS "capture"  orgCaptureCommand isOrgCapture defaultFloating)
     ] 
 
 -- My additional keybindings
@@ -790,8 +810,8 @@ myManagedHook =
     where manageSpecific = composeAll . concat $
                            [ [ className =? c --> doFloat               | c <- floatClass ]
                            , [ title     =? t --> doFloat               | t <- floatTitle ]
-                           , [ title     =? x --> doF (S.shift "1")     | x <- hacking]
-                           , [ title     =? x --> doF (S.shift "code")  | x <- coding]
+                           , [ title     =? x --> doF (S.shift "hack")  | x <- hacking]
+                           , [ title     =? x --> doF (S.shift "conf")  | x <- configuring]
                            , [ className =? x --> doF (S.shift "web")   | x <- webApps ]
                            , [ className =? x --> doF (S.shift "im")    | x <- comApps ]
                            , [ title     =? x --> doF (S.shift "im")    | x <- comApps ]
@@ -906,7 +926,8 @@ myKeys' conf = let
     , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
     , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
     , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
-    , ("M-c"                    , addName "NSP frogchat"                    $ namedScratchpadAction scratchpads "frogchat")
+    , ("M-c"                    , addName "NSP im"                          $ namedScratchpadAction scratchpads "im")
+    , ("M-o"                    , addName "NSP orgCapture"                  $ namedScratchpadAction scratchpads "capture")
     -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
     -- , ("M-n"                    , addName "NSP Console"                     $ namedScratchpadAction scratchpads "console")
     , ("M-s s"                  , addName "Cancel submap"                   $ return ())
@@ -939,8 +960,8 @@ myKeys' conf = let
     , ("M-S-w"                  , addName "Focus up"                        $ windows W.focusUp)
     , ("M-S-s"              	, addName "Focus down"                      $ windows W.focusDown)
 
-    , ("M-'"                    , addName "Cycle current tabs D"            $ bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
-    , ("M-;"                    , addName "Cycle current tabs U"            $ bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
+    -- , ("M-'"                    , addName "Cycle current tabs D"            $ bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
+    -- , ("M-;"                    , addName "Cycle current tabs U"            $ bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
 
     -- ComboP specific (can remove after demo)
     , ("M-C-S-m"                , addName "Combo swap"                      $ sendMessage $ SwapWindow)
@@ -1033,7 +1054,7 @@ myKeys' conf = let
     -- , ("M-S-l"        ,	addName "" $ spawn "/home/frosch03/bin/lock")
 
     , ("M-C-q"        , addName "Rebuild & restart XMonad"  $ spawn "xmonad --recompile && xmonad --restart")
-    , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ io (exitWith ExitSuccess))
+    , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ (spawn "xShutdown") >> io (exitWith ExitSuccess))
     -- , ("M-x"          , addName "Lock screen"               $ spawn "xset s activate")
     -- , ("M-<F4>"       , addName "Print Screen"              $ return ())
   --, ("M-F1"            , addName "Show Keybindings"          $ return ())
@@ -1108,7 +1129,7 @@ myKeys' conf = let
 
 focusColor   = myGray -- base03
 unfocusColor = myGray -- base00
-active       = myGray -- base03
+active       = green  -- base03
 inactive     = myGray -- base00
 activeWarn   = red
 
@@ -1135,17 +1156,22 @@ magenta = "#d33682"
 violet  = "#6c71c4"
 blue    = "#268bd2"
 cyan    = "#2aa198"
-green   = "#859900"
+-- green   = "#859900"
+green   = "#00cc00"
+
+frogs_blue = "#003366"
+frogs_blue_dark = "#0a1f34"
+
+frogs_grey = "#d3d3d3"                  
+
+gap    = 12
+topbar = 12
 
 
-
-gap    = 6
-topbar = 6
-
-
-myFont      = "xft:Inconsolata:antialias=true:pixelsize=14:autohint=true"
-myBigFont   = "xft:Inconsolata:antialias=true:pixelsize=20:autohint=true"
-myWideFont  = "xft:Inconsolata:antialias=true:pixelsize=180:autohint=true"
+myFontSmall = "xft:DejaVuSansMono:antialias=true:pixelsize=10:autohint=true"
+myFont      = "xft:DejaVuSansMono:antialias=true:pixelsize=14:autohint=true"
+myBigFont   = "xft:DejaVuSansMono:antialias=true:pixelsize=20:autohint=true"
+myWideFont  = "xft:DejaVuSansMono:antialias=true:pixelsize=180:autohint=true"
 -- myFont      = "-*-terminus-medium-*-*-*-*-160-*-*-*-*-*-*"
 -- myBigFont   = "-*-terminus-medium-*-*-*-*-240-*-*-*-*-*-*"
 -- myWideFont  = "xft:Eurostar Black Extended:"
@@ -1154,15 +1180,16 @@ myGray = "#333333"
 
 
 topBarTheme = def
-    { fontName              = myFont
-    , activeBorderColor     = myGray -- "white"
-    , inactiveBorderColor   = "black"
+    { fontName              = myFontSmall
 
-    , activeColor           = myGray -- "white"
-    , inactiveColor         = "black"
+    , activeColor           = frogs_blue -- green -- "white"
+    , activeBorderColor     = frogs_blue
 
-    , activeTextColor       = myGray -- "white"
-    , inactiveTextColor     = "black" -- "white"
+    , inactiveColor         = frogs_blue_dark -- "black"
+    , inactiveBorderColor   = frogs_blue_dark -- "black"
+
+    , activeTextColor       = frogs_grey -- myGray -- "white"
+    , inactiveTextColor     = frogs_grey -- "black" -- "white"
 
     , urgentBorderColor     = red
     , urgentTextColor       = yellow
