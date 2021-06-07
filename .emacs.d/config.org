@@ -49,8 +49,8 @@
     #+END_SRC
   - set theme
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package moe-theme)
-      (load-theme 'leuven)
+      (use-package moe-theme)
+      ;; (load-theme 'leuven)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -541,27 +541,27 @@
   #+END_SRC
 - Configure some load-hooks
   #+BEGIN_SRC emacs-lisp
-    (add-hook 'TeX-language-de-hook 
-              (lambda () (ispell-change-dictionary "german")))
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-   (defun fill-latex-mode-hook ()
-      "LaTeX setup."
-      (setq fill-column 130))
-    (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
-   (fset 'my-latex-write-and-view
-          [?\C-x ?\C-s ?\C-c ?\C-c return])
+     ;; (add-hook 'TeX-language-de-hook 
+     ;;           (lambda () (ispell-change-dictionary "german")))
+     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (defun fill-latex-mode-hook ()
+       "LaTeX setup."
+       (setq fill-column 130))
+     (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
+    (fset 'my-latex-write-and-view
+           [?\C-x ?\C-s ?\C-c ?\C-c return])
+     (add-hook 'LaTeX-mode-hook (lambda () 
+                                  (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
+    (defun my-latex-highlight-owninlinecode ()
+       "Highlight own inline code"
+       (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
+     (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
+    (defun my-latex-highlight-todos ()
+       "Highlight Todo's"
+       (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
+     (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
     (add-hook 'LaTeX-mode-hook (lambda () 
-                                 (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
-   (defun my-latex-highlight-owninlinecode ()
-      "Highlight own inline code"
-      (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
-    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
-   (defun my-latex-highlight-todos ()
-      "Highlight Todo's"
-      (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
-    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
-   (add-hook 'LaTeX-mode-hook (lambda () 
-                                 (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
+                                  (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
  #+END_SRC
 - Query for master file
   #+BEGIN_SRC emacs-lisp
@@ -670,37 +670,37 @@
 #+END_SRC
 * Flyspell
 - Define flyspell switch language function
-  #+BEGIN_SRC emacs-lisp
-    (defun fd-switch-dictionary()
-      (interactive)
-      (let* ((dic ispell-current-dictionary)
-             (change (if (string= dic "deutsch8") "english" "deutsch8")))
-        (ispell-change-dictionary change)
-        (message "Dictionary switched from %s to %s" dic change)
-        ))
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (defun fd-switch-dictionary()
+#      (interactive)
+#      (let* ((dic ispell-current-dictionary)
+#             (change (if (string= dic "deutsch8") "english" "deutsch8")))
+#        (ispell-change-dictionary change)
+#        (message "Dictionary switched from %s to %s" dic change)
+#        ))
+#  #+END_SRC
 - Define function that checks next highlighted word
-  #+BEGIN_SRC emacs-lisp
-    (defun flyspell-check-next-highlighted-word ()
-      "Custom function to spell check next highlighted word"
-      (interactive)
-      (flyspell-goto-next-error)
-      (ispell-word)
-      )
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (defun flyspell-check-next-highlighted-word ()
+#      "Custom function to spell check next highlighted word"
+#      (interactive)
+#      (flyspell-goto-next-error)
+#      (ispell-word)
+#      )
+#  #+END_SRC
 - Disable in Haskell mode
-  #+BEGIN_SRC emacs-lisp
-    (dolist (hook '(haskell-mode-hook))
-          (add-hook hook (lambda () (flyspell-mode -1))))
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (dolist (hook '(haskell-mode-hook))
+#          (add-hook hook (lambda () (flyspell-mode -1))))
+#  #+END_SRC
 - Setup keybindings
-  #+BEGIN_SRC emacs-lisp
-    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
-    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
-    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
-    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
-    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
+#    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
+#    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
+#    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
+#    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
+#  #+END_SRC
 * Flymake
 #+BEGIN_SRC emacs-lisp
 (use-package flymake
@@ -913,7 +913,6 @@ Simple Hackernews-frontend
 (use-package hackernews
 :ensure t)
 #+END_SRC
-
 
 * Autopair
 Automatically set the Brackets
@@ -1507,3 +1506,32 @@ Using mpdel mode for navigation of mpd
     (mpdel-mode)
   )
 #+END_SRC
+
+* Disabled: org-roam
+The configuration of org roam is done as it is suggested on the [[https://org-roam.readthedocs.io/en/master/installation/][org
+roam page]]
+# #+BEGIN_SRC emacs-lisp
+#   (use-package org-roam
+#     :hook
+#     (after-init . org-roam-mode)
+#     :custom
+#     (org-roam-directory "~/Org/roam/")
+#     :bind (:map org-roam-mode-map
+#                 (("C-c n l" . org-roam)
+#                  ("C-c n f" . org-roam-find-file)
+#                  ("C-c n j" . org-roam-jump-to-index)
+#                  ("C-c n b" . org-roam-switch-to-buffer)
+#                  ("C-c n g" . org-roam-graph))
+#                 :map org-mode-map
+#                 (("C-c n i" . org-roam-insert))))
+# #+END_SRC
+
+** company-org-roam
+In order to get link completion, company org roam is used. As I don't
+want to jump currently also into straight.el, I'm using require syntax
+here and cloned the git repositry by hand.
+# #+BEGIN_SRC emacs-lisp
+#   (add-to-list 'load-path "~/.emacs.d/company-org-roam/")
+#   (require 'company-org-roam)
+#   (push 'company-org-roam company-backends)
+# #+END_SRC
