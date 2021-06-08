@@ -1,0 +1,234 @@
+#!/bin/bash
+
+### /usr/bin/xmodmap /home/frosch03/.Xmodmap &
+# /usr/bin/gnome-screensaver &
+# /usr/bin/gnome-settings-daemon &
+# /usr/bin/gnome-volume-control-applet &
+
+# FONT=-windows-proggytinysz-medium-r-normal--10-80-96-96-c-60-iso8859-1
+# FONT=xft:SourceCodePro-Regular:pixelsize=10:autohint=true
+
+SHUTDOWN_CMD="killall bash dunst xbindkeys conky lemonbar sh ./.lemonbar/i3_lemonbar.sh xplanet cat dmplex gcpubar && rm /tmp/dmpipe*"
+
+TWIDTH=130
+
+# Set initial bg image
+############
+echo "> Set initial bg image"
+feh --bg-scale /home/frosch03/Pictures/background.jpg &
+
+# configure local fonts
+############
+echo "> configure local fonts"
+for i in $HOME/.locale/share/fonts/*;
+do
+    /usr/bin/xset +fp $i
+done
+/usr/bin/xset fp rehash
+
+
+
+# dunst - notifier for libnotify (notify-send "hello world")
+############
+echo "> dunst - notifier for libnotify (notify-send \"hello world\")"
+if [ `ps ax | grep "dunst" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall dunst
+    sleep 1
+fi
+/usr/bin/dunst &
+
+
+# startup keybindings with xbindkeys
+###################
+echo "> startup keybindings with xbindkeys"
+if [ `ps ax | grep "xbindkeys" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall xbindkeys
+    sleep 1
+fi
+xbindkeys &
+
+
+# startup the statusbar lemonbar 
+###################
+echo "> startup the statusbar lemonbar "
+# if [ `ps ax | grep "i3_lemonbar" | grep -v grep | wc -l` -ge 1 ] ; then
+#     killall i3_lemonbar.sh
+# fi
+if [ `ps ax | grep "conky" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall conky
+    killall lemonbar
+    # killall sh ./.lemonbar/i3_lemonbar.sh
+    sleep 1
+fi
+$HOME/.lemonbar/i3_lemonbar.sh & 
+
+
+
+# Start an Emacs-Daemon
+#######################
+echo "> Start an Emacs-Daemon"
+# emacs --daemon & 
+
+# trayer
+########
+# echo "> trayer"
+# if [ `ps ax | grep trayer | grep -v grep | wc -l` -lt 1 ] ; then
+# 	/usr/bin/trayer --edge top --align right --width $TWIDTH --widthtype pixel --height 13 --heighttype pixel --margin 0  --transparent true --tint 0x333333 &
+# fi
+
+
+# set monitor layouting
+#######################
+# echo "> set monitor layouting"
+# xrandr --output VGA1 --left-of HDMI2
+# sleep 2
+
+# /usr/bin/xrandr --output HDMI2 --mode 1920x1200 && xrandr --output LVDS1 --off
+
+# Get Screen resolution
+#######################
+# echo "> Get Screen resolution"
+# sum=0;
+# tmp=`xrandr | grep "\*" | cut -d" " -f4 | cut -d"x" -f1` 
+# for i in $tmp; 
+# do 
+#     sum=$(($sum + $i)); 
+# done;
+# FROML=0
+# WIDTHL=$(($(($sum - $TWIDTH)) / 2))
+# FROMR=$(($(($sum - $TWIDTH)) / 2))
+# WIDTHR=$(($(($sum - $TWIDTH)) / 2))
+
+
+# dzen2 left side
+#################
+# echo "> dzen2 left side"
+# if [ `ps ax | grep dzen2 | grep "\-ta l" | grep -v grep | wc -l` -lt 1 ] ; then
+    # if [ -e "/tmp/dmpipe1" ] ; then
+    #     rm /tmp/dmpipe1
+    # fi
+    # mkfifo /tmp/dmpipe1
+    # while true; do cat /tmp/dmpipe1; done | dmplex | dzen2 -fn $FONT -h 16 -x $FROML -w $WIDTHL -ta l -e 'button3=' &
+# fi
+
+# dzen2 right side
+##################
+# echo "> dzen2 right side"
+# if [ `ps ax | grep dzen2 | grep "\-ta r" | grep -v grep | wc -l` -lt 1 ] ; then
+    # if [ -e "/tmp/dmpipe2" ] ; then
+    #     rm /tmp/dmpipe2
+    # fi
+    # mkfifo /tmp/dmpipe2
+    # while true; do cat /tmp/dmpipe2; done | dmplex | dzen2 -fn $FONT -h 16 -x $FROMR -w $WIDTHR -ta r -e 'button3=' &
+
+
+    # # also pass the middle of the available screen-space 
+    # if [ `ps ax | grep 'status.sh' | grep -v grep | wc -l` -lt 1 ] ; then
+    #     /usr/bin/killall 'status.sh'
+    # fi
+    # /home/frosch03/.dzen2/status.sh $FROMR > /tmp/dmpipe2 &
+
+    # # don't forget the cpu-meter
+    # if [ `ps ax | grep 'gcpubar' | grep -v grep | wc -l` -lt 1 ] ; then
+    #     /usr/bin/killall 'gcpubar'
+    # fi
+    # gcpubar -s g -fg grey -w 30 -h 14 -gw 1 -gs 0 -l "15 " > /tmp/dmpipe2 &
+# fi
+
+
+
+# network Manager
+#################
+# echo "> network Manager"
+# /usr/bin/nm-applet &
+
+# dhcpcd-gtk gui 
+############
+# echo "> dhcpcd-gtk gui "
+# if [ `ps ax | grep "dhcpcd-gtk" | grep -v grep | wc -l` -lt 1 ] ; then
+#     /usr/bin/dhcpcd-gtk &
+# fi
+
+
+# WPA Supplicant QT gui in tray mode
+####################################
+# echo "> WPA Supplicant QT gui in tray mode"
+# /usr/sbin/wpa_gui -t &
+
+
+# pulseAudio
+############
+# echo "> pulseAudio"
+# if [ `ps ax | grep "pulseaudio -D" | grep -v grep | wc -l` -ge 1 ] ; then
+#     /usr/bin/pulseaudio --kill
+# fi
+# /usr/bin/pulseaudio --start
+
+
+# paDevChooser
+##############
+# echo "> paDevChooser"
+# if [ `ps ax | grep "padevchooser" | grep -v grep | wc -l` -lt 1 ] ; then
+#    /usr/bin/padevchooser &
+# fi
+
+
+# xPlanet
+#########
+echo "> xPlanet"
+# wget http://xplanet.sourceforge.net/clouds/clouds_2048.jpg -O /home/frosch03/.xplanet/images/clouds.jpg.tmp && mv /home/frosch03/.xplanet/images/clouds.jpg.tmp /home/frosch03/.xplanet/images/clouds.jpg
+### wget http://xplanetclouds.com/free/local/clouds_2048.jpg -O /home/frosch03/.xplanet/images/clouds.jpg.tmp && mv /home/frosch03/.xplanet/images/clouds.jpg.tmp /home/frosch03/.xplanet/images/clouds.jpg
+if [ `ps ax | grep "xplanet" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall xplanet 
+    sleep 1
+fi
+nice -19 xplanet -transparency -latitude 28.00 -longitude -20.00 -projection orthographic -starfreq 0.001 &
+# nice -19 xplanet -transparency -latitude -10.00 -longitude +20.00 -projection orthographic -starfreq 0.001 &
+
+
+# composite Manager
+###################
+# echo "> composite Manager"
+if [ `ps ax | grep "xcompmgr" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall xcompmgr 
+    sleep 2
+fi
+/usr/bin/xcompmgr -c -t 1 -l 1 -o .5 -r 3 &
+
+
+# dropdox deamon
+############
+# echo "> dropdox deamon"
+if [ `ps ax | grep "dropbox" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall dropbox
+    sleep 2
+fi
+/usr/bin/dropbox &
+
+# initialize the keyboard for Hyper_L & Hyper_R on Tab & Backslash
+##################################################################
+# echo "> initialize the keyboard for Hyper_L & Hyper_R on Tab & Backslash"
+/home/frosch03/bin/init-keyboard
+/usr/bin/xmodmap $HOME/.Xmodmap
+    
+
+# set the mouse pointer speeds
+##############################
+# echo "> set the mouse pointer speeds"
+# echo 50 | sudo tee $(find /sys/devices/platform/i8042 -name name | xargs grep -Fl TrackPoint | sed 's/\/input\/input[0-9]*\/name$//')/speed
+# echo 150 | sudo tee $(find /sys/devices/platform/i8042 -name name | xargs grep -Fl TrackPoint | sed 's/\/input\/input[0-9]*\/name$//')/sensitivity
+
+
+
+# fireup some programms
+#######################
+# /usr/bin/firefox &
+# /usr/local/bin/google-chrome &
+# /usr/bin/pidgin &
+# /home/frosch03/bin/em &
+#/usr/bin/urxvt & 
+
+#export DISPLAY=:0.0
+#/usr/local/bin/mail &
+#/usr/bin/evolution &
+

@@ -23,6 +23,7 @@
       ;; (set-face-attribute 'default nil :font "") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
       (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "terminusicons2") ;; Icon Font
       ;; (set-default-font "Inconsolata 10")
     #+END_SRC
   - set the font size
@@ -48,8 +49,8 @@
     #+END_SRC
   - set theme
     #+BEGIN_SRC emacs-lisp
-      ;; (use-package moe-theme)
-      (load-theme 'leuven)
+      (use-package moe-theme)
+      ;; (load-theme 'leuven)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -367,10 +368,10 @@
      #+END_SRC
 
 ** babel
-   - Make babel results blocks lowercase
-     #+BEGIN_SRC emacs-lisp
-     (setq org-babel-results-keyword "results")
-     #+END_SRC
+   # - Make babel results blocks lowercase
+     # #+BEGIN_SRC emacs-lisp
+     # (setq org-babel-results-keyword "results")
+     # #+END_SRC
 
    - list of loaded languages
      #+BEGIN_SRC emacs-lisp
@@ -384,12 +385,14 @@
                 (ruby . t)
                 (gnuplot . t)
                 (clojure . t)
-                ;; (sh . t)
+                (shell . t)
                 (ledger . t)
                 (org . t)
                 (plantuml . t)
                 (latex . t))))
      #+END_SRC
+
+                #+results:
 
    - inhibit prompt to confirm evaluation
 
@@ -437,7 +440,76 @@
 
      (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
    #+END_SRC
-
+** org publish
+#+BEGIN_SRC emacs-lisp
+  (require 'ox-publish)
+  (setq org-publish-project-alist
+        '(
+          ("newblog-posts"
+           :base-directory "~/Documents/NewBlog/"
+           :base-extension "org"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4             ; Just the default for this project.
+           :auto-preamble t
+           ;; :auto-sitemap t
+           ;; :sitemap-title "frosch03.de/posts"
+           ;; :sitemap-filename "index.org"
+           ;; :sitemap-style list
+           ;; :author "Matthias Brettschneider"
+           ;; :email "frosch03@frosch03.de"
+           ;; :with-creator t
+           )
+          ("newblog-img"
+           :base-directory "~/Documents/NewBlog/img/"
+           :base-extension "png\\|jpg\\|gif\\|svg"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/img/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("newblog-data"
+           :base-directory "~/Documents/NewBlog/data/"
+           :base-extension "pdf"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/data/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("local-newblog-posts"
+           :base-directory "~/Documents/NewBlog/"
+           :base-extension "org"
+           :publishing-directory "~/Documents/NewBlog/local/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4             ; Just the default for this project.
+           :auto-preamble t
+           :auto-sitemap t
+           :sitemap-title "frosch03.de/posts"
+           :sitemap-filename "sitemap.org"
+           :sitemap-style list
+           :author "Matthias Brettschneider"
+           :email "frosch03@frosch03.de"
+           :with-creator t
+          )
+          ("local-newblog-img"
+           :base-directory "~/Documents/NewBlog/img/"
+           :base-extension "png\\|jpg\\|gif\\|svg"
+           :publishing-directory "~/Documents/NewBlog/local/img/"
+           :recursive t
+           :publishing-function org-publish-attachment
+          )
+          ("local-newblog-data"
+           :base-directory "~/Documents/NewBlog/data/"
+           :base-extension "pdf"
+           :publishing-directory "~/Documents/NewBlog/local/data/"
+           :recursive t
+           :publishing-function org-publish-attachment
+          )
+          ("newblog" :components ("newblog-posts" "newblog-img" "newblog-data"))
+          ("local-newblog" :components ("local-newblog-posts" "local-newblog-img" "local-newblog-data"))
+         )
+  )
+#+END_SRC
 * Dired Config
 ** Configuring loadpath:
    #+BEGIN_SRC emacs-lisp
@@ -538,27 +610,27 @@
   #+END_SRC
 - Configure some load-hooks
   #+BEGIN_SRC emacs-lisp
-    (add-hook 'TeX-language-de-hook 
-              (lambda () (ispell-change-dictionary "german")))
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-   (defun fill-latex-mode-hook ()
-      "LaTeX setup."
-      (setq fill-column 130))
-    (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
-   (fset 'my-latex-write-and-view
-          [?\C-x ?\C-s ?\C-c ?\C-c return])
+     ;; (add-hook 'TeX-language-de-hook 
+     ;;           (lambda () (ispell-change-dictionary "german")))
+     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (defun fill-latex-mode-hook ()
+       "LaTeX setup."
+       (setq fill-column 130))
+     (add-hook 'LaTeX-mode-hook 'fill-latex-mode-hook)
+    (fset 'my-latex-write-and-view
+           [?\C-x ?\C-s ?\C-c ?\C-c return])
+     (add-hook 'LaTeX-mode-hook (lambda () 
+                                  (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
+    (defun my-latex-highlight-owninlinecode ()
+       "Highlight own inline code"
+       (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
+     (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
+    (defun my-latex-highlight-todos ()
+       "Highlight Todo's"
+       (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
+     (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
     (add-hook 'LaTeX-mode-hook (lambda () 
-                                 (local-set-key (kbd "<f5>") 'my-latex-write-and-view)))
-   (defun my-latex-highlight-owninlinecode ()
-      "Highlight own inline code"
-      (highlight-regexp "\\hs{[^\}]*}" 'hi-green-b))
-    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-owninlinecode)
-   (defun my-latex-highlight-todos ()
-      "Highlight Todo's"
-      (highlight-regexp "\\todo{[^\}]*}" 'hi-red-b))
-    (add-hook 'LaTeX-mode-hook 'my-latex-highlight-todos)
-   (add-hook 'LaTeX-mode-hook (lambda () 
-                                 (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
+                                  (local-set-key (kbd "<f12>") 'highlight-changes-mode)))
  #+END_SRC
 - Query for master file
   #+BEGIN_SRC emacs-lisp
@@ -614,29 +686,32 @@
 
 ** haskell-mode
 #+BEGIN_SRC emacs-lisp
-(use-package haskell-mode
-:ensure t
-:config
-;; Setup some hooks
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-(add-hook 'haskell-mode-hook (lambda () 
-                             (local-set-key (kbd "M-.") 'haskell-mode-tag-find))))
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-;; Enable Speedbar also for haskell
-(speedbar-add-supported-extension ".hs")
-(setq haskell-hasktags-path "/home/frosch03/.cabal/bin/hasktags")
-;; Set C-c C-c to compile haskell with the haskell mode compile options
-(eval-after-load "haskell-mode"
-    '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
-(eval-after-load "haskell-cabal"
-    '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
+  (use-package haskell-mode
+  :ensure t
+  :config
+  ;; Setup some hooks
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+  (add-hook 'haskell-mode-hook (lambda () 
+                                 (local-set-key (kbd "M-.") 'haskell-mode-tag-find)))
+  ;; (add-hook 'haskell-mode-hook (lambda ()
+  ;;                                (set-variable 'projectile-tags-command "hasktags --etags %s")))
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  ;; Enable Speedbar also for haskell
+  (speedbar-add-supported-extension ".hs")
+  ;; (setq haskell-hasktags-path "/home/frosch03/.cabal/bin/hasktags")
+  ;; Set C-c C-c to compile haskell with the haskell mode compile options
+  (eval-after-load "haskell-mode"
+      '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
+  (eval-after-load "haskell-cabal"
+      '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
 
-;; Enable spell checking for comments and strings only 
-(add-hook 'haskell-mode-hook 'flyspell-prog-mode)
+  ;; Enable spell checking for comments and strings only 
+  ;; (add-hook 'haskell-mode-hook 'flyspell-prog-mode)
 
-;; Define default info directory
-(add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+  ;; Define default info directory
+  (add-to-list 'Info-default-directory-list "~/.emacs.d/haskell-mode/")
+  )
 #+END_SRC
 
 ** haskell-cabal
@@ -664,32 +739,37 @@
 #+END_SRC
 * Flyspell
 - Define flyspell switch language function
-  #+BEGIN_SRC emacs-lisp
-    (defun fd-switch-dictionary()
-      (interactive)
-      (let* ((dic ispell-current-dictionary)
-             (change (if (string= dic "deutsch8") "english" "deutsch8")))
-        (ispell-change-dictionary change)
-        (message "Dictionary switched from %s to %s" dic change)
-        ))
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (defun fd-switch-dictionary()
+#      (interactive)
+#      (let* ((dic ispell-current-dictionary)
+#             (change (if (string= dic "deutsch8") "english" "deutsch8")))
+#        (ispell-change-dictionary change)
+#        (message "Dictionary switched from %s to %s" dic change)
+#        ))
+#  #+END_SRC
 - Define function that checks next highlighted word
-  #+BEGIN_SRC emacs-lisp
-    (defun flyspell-check-next-highlighted-word ()
-      "Custom function to spell check next highlighted word"
-      (interactive)
-      (flyspell-goto-next-error)
-      (ispell-word)
-      )
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (defun flyspell-check-next-highlighted-word ()
+#      "Custom function to spell check next highlighted word"
+#      (interactive)
+#      (flyspell-goto-next-error)
+#      (ispell-word)
+#      )
+#  #+END_SRC
+- Disable in Haskell mode
+#  #+BEGIN_SRC emacs-lisp
+#    (dolist (hook '(haskell-mode-hook))
+#          (add-hook hook (lambda () (flyspell-mode -1))))
+#  #+END_SRC
 - Setup keybindings
-  #+BEGIN_SRC emacs-lisp
-    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
-    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
-    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
-    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
-    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
-  #+END_SRC
+#  #+BEGIN_SRC emacs-lisp
+#    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
+#    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
+#    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
+#    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
+#    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
+#  #+END_SRC
 * Flymake
 #+BEGIN_SRC emacs-lisp
 (use-package flymake
@@ -1458,3 +1538,69 @@ I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] exten
     :ensure t
     )
 #+END_SRC
+
+* ejira
+#+BEGIN_SRC emacs-lisp
+  (use-package ejira
+    :load-path "/home/frosch03/.emacs.d/ejira"
+    :init
+    (setq jiralib2-url             "http://jira.frosch03.de"
+          jiralib2-user-login-name "frosch03"
+          ejira-projects           '("SA")
+          ejira-main-project       "SA"
+          ejira-my-org-directory   "/home/frosch03/Org/JIRA"
+          ejira-done-states        '("Done")
+          ejira-in-progress-states '("In Progress" "In Review" "Testing")
+          ejira-high-priorities    '("High" "Highest")
+          ejira-low-priorities     '("Low" "Lowest")
+
+          ;; Customize these based on your JIRA server configuration
+          ejira-sprint-field                     'customfield_10003
+          ejira-epic-field                       'customfield_10003
+          ejira-epic-summary-field               'customfield_10005
+          ;; ejira-no-epic-postfix                  ""
+          )
+
+    :config
+    (require 'ejira)
+    (require 'org-agenda)
+    )
+#+END_SRC
+
+* mpdel
+Using mpdel mode for navigation of mpd
+#+BEGIN_SRC emacs-lisp
+  (use-package mpdel
+    :config
+    (mpdel-mode)
+  )
+#+END_SRC
+
+* Disabled: org-roam
+The configuration of org roam is done as it is suggested on the [[https://org-roam.readthedocs.io/en/master/installation/][org
+roam page]]
+# #+BEGIN_SRC emacs-lisp
+#   (use-package org-roam
+#     :hook
+#     (after-init . org-roam-mode)
+#     :custom
+#     (org-roam-directory "~/Org/roam/")
+#     :bind (:map org-roam-mode-map
+#                 (("C-c n l" . org-roam)
+#                  ("C-c n f" . org-roam-find-file)
+#                  ("C-c n j" . org-roam-jump-to-index)
+#                  ("C-c n b" . org-roam-switch-to-buffer)
+#                  ("C-c n g" . org-roam-graph))
+#                 :map org-mode-map
+#                 (("C-c n i" . org-roam-insert))))
+# #+END_SRC
+
+** company-org-roam
+In order to get link completion, company org roam is used. As I don't
+want to jump currently also into straight.el, I'm using require syntax
+here and cloned the git repositry by hand.
+# #+BEGIN_SRC emacs-lisp
+#   (add-to-list 'load-path "~/.emacs.d/company-org-roam/")
+#   (require 'company-org-roam)
+#   (push 'company-org-roam company-backends)
+# #+END_SRC
