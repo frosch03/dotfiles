@@ -1,10 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
-# Input parser for i3 bar
-# 14 ago 2015 - Electro7
+# Input parser for status bar
 
 # config
-. $(dirname $0)/i3_lemonbar_config
+. $(dirname $0)/frogs_lemonbar_config
 
 # min init
 irc_n_high=0
@@ -38,10 +37,27 @@ while read -r line ; do
             mem="%{F${cpu_cicon}}${sep_l_left} %{T2}${icon_mem}%{F${cpu_cfore} T1} ${sys_arr[6]} ${sys_arr[7]}"
             # disk /
             diskused="%{F${color_sec_b1}}${sep_left}%{F${color_icon} B${color_sec_b1}} %{T2}${icon_hd}%{F- T1} ${sys_arr[8]}%"
+            # eth
+            if [ "${sys_arr[9]}" == "down" ]; then
+                ethd_v="×"; ethu_v="×";
+                eth_cback=${color_sec_b1}; eth_cicon=${color_disable}; eth_cfore=${color_disable};
+                net_seperator="%{F${eth_cback}}${sep_left}"
+            else
+                ethd_v=${sys_arr[9]}K; ethu_v=${sys_arr[10]}K;
+                if [ ${ethd_v:0:-3} -gt ${net_alert} ] || [ ${ethu_v:0:-3} -gt ${net_alert} ]; then
+                    eth_cback=${color_net}; eth_cicon=${color_back}; eth_cfore=${color_back};
+                else
+                    eth_cback=${color_sec_b2}; eth_cicon=${color_icon}; eth_cfore=${color_fore};
+                fi
+                net_seperator="%{F${eth_cicon}}${sep_l_left}"
+            fi
+            ethd="${net_seperator}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}" # "%{F${eth_cback}}${sep_left}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}"
+            ethu="%{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}" # "%{F${eth_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}"
             # wlan
             if [ "${sys_arr[11]}" == "down" ]; then
                 wland_v="×"; wlanu_v="×";
-                wlan_cback=${color_sec_b2}; wlan_cicon=${color_disable}; wlan_cfore=${color_disable};
+                wlan_cback=${color_sec_b1}; wlan_cicon=${color_disable}; wlan_cfore=${color_disable};
+                net_seperator="%{F${color_icon}}${sep_left}"
             else
                 wland_v=${sys_arr[11]}K; wlanu_v=${sys_arr[12]}K;
                 if [[ ${wland_v:0:-3} -gt ${net_alert} ]] || [[ ${wlanu_v:0:-3} -gt ${net_alert} ]]; then
@@ -49,23 +65,10 @@ while read -r line ; do
                 else
                     wlan_cback=${color_sec_b2}; wlan_cicon=${color_icon}; wlan_cfore=${color_fore};
                 fi
+                net_seperator="%{F${color_icon}}${sep_left}"
             fi
             wland="%{F${wlan_cback}}${sep_left}%{F${wlan_cicon} B${wlan_cback}} %{T2}${icon_wlan}%{T2}${icon_dl}%{F${wlan_cfore} T1} ${wland_v}"
-            wlanu="%{F${wlan_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}"
-            # eth
-            if [ "${sys_arr[9]}" == "down" ]; then
-                ethd_v="×"; ethu_v="×";
-                eth_cback=${color_sec_b1}; eth_cicon=${color_disable}; eth_cfore=${color_disable};
-            else
-                ethd_v=${sys_arr[9]}K; ethu_v=${sys_arr[10]}K;
-                if [ ${ethd_v:0:-3} -gt ${net_alert} ] || [ ${ethu_v:0:-3} -gt ${net_alert} ]; then
-                    eth_cback=${color_net}; eth_cicon=${color_back}; eth_cfore=${color_back};
-                else
-                    eth_cback=${color_sec_b1}; eth_cicon=${color_icon}; eth_cfore=${color_fore};
-                fi
-            fi
-            ethd="%{F${eth_cback}}${sep_left}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}"
-            ethu="%{F${eth_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}"
+            wlanu="%{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}" # "%{F${wlan_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}"
             # Battery 0
             if [ ! "${sys_arr[13]}" == "off" ]; then
                 bat0_cfore=${color_batM}
@@ -140,7 +143,7 @@ while read -r line ; do
             ;;
         WSP*)
             # I3 Workspaces
-            wsp="%{F${color_back} B${color_head}} %{T2}${icon_arch}%{T1}"
+            wsp="%{F${color_back} B${color_head}} %{T2}${icon_os}%{T1}"
             set -- ${line#???}
             while [ $# -gt 0 ] ; do
                 case $1 in

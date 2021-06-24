@@ -8,14 +8,14 @@
 # FONT=-windows-proggytinysz-medium-r-normal--10-80-96-96-c-60-iso8859-1
 # FONT=xft:SourceCodePro-Regular:pixelsize=10:autohint=true
 
-SHUTDOWN_CMD="killall bash dunst xbindkeys conky lemonbar sh ./.lemonbar/i3_lemonbar.sh xplanet cat dmplex gcpubar && rm /tmp/dmpipe*"
+SHUTDOWN_CMD="killall bash dunst xbindkeys conky lemonbar bash bash /home/frosch03/.lemonbar/frogs_lemonbar.sh xplanet cat dmplex gcpubar && rm /tmp/dmpipe*"
 
 TWIDTH=130
 
 # Set initial bg image
 ############
-echo "> Set initial bg image"
-feh --bg-scale /home/frosch03/Pictures/background.jpg &
+# echo "> Set initial bg image"
+# feh --bg-scale /home/frosch03/Pictures/background.jpg &
 
 # configure local fonts
 ############
@@ -57,10 +57,10 @@ echo "> startup the statusbar lemonbar "
 if [ `ps ax | grep "conky" | grep -v grep | wc -l` -ge 1 ] ; then
     killall conky
     killall lemonbar
-    # killall sh ./.lemonbar/i3_lemonbar.sh
+    killall "bash /home/frosch03/.lemonbar/frogs_lemonbar.sh"
     sleep 1
 fi
-$HOME/.lemonbar/i3_lemonbar.sh & 
+$HOME/.lemonbar/frogs_lemonbar.sh & 
 
 
 
