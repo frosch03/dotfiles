@@ -2,12 +2,16 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/frosch03/.oh-my-zsh
+  # export ZSH=/home/frosch03/.oh-my-zsh
+  export ZSH=~/.nix-profile/share/oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="frogmuse"
+# ZSH_THEME="frogmuse"
+# ZSH_THEME="xiong-chiamiov-plus"
+# ZSH_THEME="fino"
+ZSH_THEME=random
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -129,11 +133,16 @@ fpath=(~/.zsh/complete $fpath)
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
-/usr/bin/keychain $HOME/.ssh/id_rsa
+keychain $HOME/.ssh/id_rsa
 source $HOME/.keychain/$(hostname)-sh
 ### End-Keychain ###
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 ### Include Nix into Shell ###
-source /etc/profile.d/nix{,-daemon}.sh
+# source nix{,-daemon}.sh
+
+### colorize the output of ls
+### LS_COLORS comes via: https://raw.githubusercontent.com/trapd00r/LS_COLORS/master/LS_COLORS
+eval $(dircolors ~/.LS_COLORS)
+alias ls="ls --color=auto -F"

@@ -127,15 +127,15 @@ projects =
 
     [ Project   { projectName       = wsOne
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsOne "/usr/bin/emacs"
+                , projectStartHook  = Just $ do spawnOn wsOne "emacs"
                 }
 
     , Project   { projectName       = wsCode
                 , projectDirectory  = "~/"
                 , projectStartHook  = Just $ do spawnOn wsCode myTmuxTerminal
-                                                spawnOn wsCode "/usr/bin/xclock"
-                                                spawnOn wsCode "/usr/bin/pavucontrol"
-                                                spawnOn wsCode "/usr/bin/signal-desktop"
+                                                spawnOn wsCode "xclock"
+                                                spawnOn wsCode "pavucontrol"
+                                                spawnOn wsCode "signal-desktop"
                 }
 
     , Project   { projectName       = wsWeb
@@ -163,7 +163,7 @@ curLayout :: X String
 curLayout = gets windowset >>= return . description . S.layout . S.workspace . S.current
 
 main = do
-  spawn "xStartup &"
+  spawn "/home/frosch03/bin/xStartup &"
   xmonad
        -- $ ewmh
        $ dynamicProjects projects
@@ -735,11 +735,11 @@ xK_XF86AudioLowerVolume = 0x1008ff11
 xK_FroggersPause = 0x1008ff12
 
 
--- myTerminal = "/usr/bin/urxvt"
+-- myTerminal = "urxvt"
 myTerminal     = "/home/frosch03/bin/terminal"
 myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux"
-myFirefox      = "/usr/bin/firefox"
-myChrome       = "/usr/bin/chromium"
+myFirefox      = "firefox"
+myChrome       = "chromium"
 myBrowser      = myFirefox
 
 jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
@@ -778,10 +778,10 @@ scratchpads =
 -- My additional keybindings
 myKeys x = M.fromList $
   [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_r), spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-  , ((modMask x .|. shiftMask,   xK_e), spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
+  , ((modMask x .|. shiftMask,   xK_r), spawn "urxvt -e emacsclient -q -nw -e '(remember)'")
+  , ((modMask x .|. shiftMask,   xK_e), spawn "urxvt -e emacsclient -q -nw -e '(eshell)'")
   , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "urxvt")
-  , ((modMask x,                 xK_m), spawn "/usr/bin/dmpc")
+  , ((modMask x,                 xK_m), spawn "dmpc")
   , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_s), sshPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_f), focusUrgent)
@@ -790,10 +790,10 @@ myKeys x = M.fromList $
   , ((modMask x,                 xK_m), windows shiftMaster)
   , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
   , ((modMask x .|. controlMask, xK_l),	spawn "/home/frosch03/bin/lock")
-  , ((0        ,          xK_XF86Play), spawn "/usr/bin/mpc toggle")
-  , ((0        ,          xK_XF86Stop), spawn "/usr/bin/mpc stop")
-  , ((0        ,          xK_XF86Fwrd), spawn "/usr/bin/mpc next")
-  , ((0        ,          xK_XF86Bwrd), spawn "/usr/bin/mpc prev")
+  , ((0        ,          xK_XF86Play), spawn "mpc toggle")
+  , ((0        ,          xK_XF86Stop), spawn "mpc stop")
+  , ((0        ,          xK_XF86Fwrd), spawn "mpc next")
+  , ((0        ,          xK_XF86Bwrd), spawn "mpc prev")
   , ((0        ,          xK_XF86Thnk), spawn "/home/frosch03/whatIsThisPlace")
   , ((0        ,         xK_XF86Sleep),	spawn "sudo pm-suspend")
   , ((0        ,   xK_XF86ScreenSaver),	spawn "gnome-screensaver-command --lock")
@@ -1041,8 +1041,8 @@ myKeys' conf = let
     [ ("M-q"          , addName "Restart XMonad"            $ spawn "xmonad --restart")
     , ("M-i"          , addName "Run a programm"            $ shellPrompt myXPConfig)
     -- , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
-    -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
+    -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "urxvt -e emacsclient -q -nw -e '(remember)'")
+    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "urxvt -e emacsclient -q -nw -e '(eshell)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
     -- , ("M-S-m"        , addName "" $ manPrompt myXPConfig)
     -- , ("M-S-s"        , addName "" $ sshPrompt myXPConfig)
