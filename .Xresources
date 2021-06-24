@@ -22,10 +22,7 @@ URxvt.iso14755: false
 URxvt.iso14755_52: false
 
 
-URxvt*font: xft:DejaVuSansMono:pixelsize=11
-URxvt*boldFont: xft:DejaVuSansMono:bold:pixelsize=11
-URxvt*italicFont: xft:DejaVuSansMono:italic:autohint=true:pixelsize=11
-URxvt*boldItalicFont: xft:DejaVuSansMono:bold:italic:autohint=true:pixelsize=11
+URxvt*font: xft:Inconsolata Nerd Font Mono-11:style=Regular
 
 
 ! Bind C-0, C-+ and C-= to activate medium, big and small font size respectively.
