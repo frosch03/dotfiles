@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ -z $1 ];
 then
@@ -13,7 +13,7 @@ then
 fi
 
 HOME=/home/frosch03
-DOTDIR=$HOME/localStorage/DotFiles
+DOTDIR=$HOME/localStorage/dotfiles
 
 PATHLEN=${#1}
 PARPATH=""
