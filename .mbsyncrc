@@ -1,0 +1,82 @@
+# 
+# frosch03@gmail.com
+# 
+IMAPAccount gmail
+# Address to connect to
+Host imap.gmail.com
+User frosch03@gmail.com
+PassCmd "gpg --use-agent --quiet --batch -d /home/frosch03/.private/passwd/gmail.gpg"
+AuthMechs GSSAPI, CRAM-MD5, Plain, Login
+# To store the password in an encrypted file use PassCmd instead of Pass
+# PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mailpass.gpg"
+#
+# Use SSL
+SSLType IMAPS
+# The following line should work. If get certificate errors, uncomment the two following lines and read the "Troubleshooting" section.
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+#CertificateFile ~/.cert/imap.gmail.com.pem
+#CertificateFile ~/.cert/Equifax_Secure_CA.pem
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+# The trailing "/" is important
+Path ~/Mail/gmail/
+Inbox ~/Mail/gmail/INBOX
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+# Exclude everything under the internal [Gmail] folder, except the interesting folders
+Patterns * !* "INBOX" "[Gmail].Sent Mail" "[Gmail].Starred" "[Gmail].Important"
+# Or include everything
+#Patterns *
+# Automatically create missing mailboxes, both locally and on the server
+Create Both
+# Save the synchronization state files in the relevant directory
+Sync All
+Expunge None
+SyncState *
+
+
+# 
+# frosch03@frosch03.de
+# 
+IMAPAccount frosch03
+# Address to connect to
+Host mail.frosch03.de
+User frosch03@frosch03.de
+PassCmd "gpg --use-agent --quiet --batch -d /home/frosch03/.private/passwd/frosch03.gpg"
+AuthMechs CRAM-MD5
+# To store the password in an encrypted file use PassCmd instead of Pass
+# PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mailpass.gpg"
+#
+# Use SSL
+SSLType IMAPS
+# The following line should work. If get certificate errors, uncomment the two following lines and read the "Troubleshooting" section.
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+#CertificateFile ~/.cert/imap.frosch03.com.pem
+#CertificateFile ~/.cert/Equifax_Secure_CA.pem
+
+IMAPStore frosch03-remote
+Account frosch03
+
+MaildirStore frosch03-local
+# The trailing "/" is important
+Path ~/Mail/frosch03/
+Inbox ~/Mail/frosch03/INBOX
+
+Channel frosch03
+Far :frosch03-remote:
+Near :frosch03-local:
+# Exclude everything under the internal [Gmail] folder, except the interesting folders
+Patterns * !* "INBOX" "Sent" "Drafts" "Trash"
+# Or include everything
+#Patterns *
+# Automatically create missing mailboxes, both locally and on the server
+Create Both
+# Save the synchronization state files in the relevant directory
+Sync All
+Expunge None
+SyncState *
