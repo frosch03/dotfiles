@@ -203,7 +203,7 @@ myXPConfig = defaultXPConfig { bgColor     = "#000030" -- dark dark blue
                              , fgColor     = "white"
                              , borderColor = "#000060"
                              , position    = Top
-                             , font        = "xft:DejaVuSansMono:pixelsize=10:antialias=true:autohint=true"
+                             , font        = "xft:Inconsolata Nerd Font Mono-11:style=Regular"
                              }
 
 
