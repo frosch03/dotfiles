@@ -73,6 +73,7 @@ while read -r line ; do
             if [ ! "${sys_arr[13]}" == "off" ]; then
                 bat0_cfore=${color_batM}
                 bat0_cback=${color_batLoad}
+                bat0_icon=${icon_power}
             else
                 bat0_cfore=${color_disable}
                 if [ ${sys_arr[14]} -gt 50 ]; then
@@ -84,12 +85,14 @@ while read -r line ; do
                 else
                     bat0_cback=${color_batL}
                 fi
+                bat0_icon=${icon_battery}
             fi
-            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}}${icon_battery} 0:${sys_arr[14]} "
+            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}}${bat0_icon} 0:${sys_arr[14]} "
             # Battery 1
             if [ ! "${sys_arr[13]}" == "off" ]; then
                 bat1_cback=${color_batLoad}
                 bat1_cfore=${color_batM}
+                bat1_icon="" # ${icon_power}
             else
                 bat1_cfore=${color_disable}
                 if [ ${sys_arr[15]} -gt 50 ]; then
@@ -101,8 +104,9 @@ while read -r line ; do
                 else
                     bat1_cback=${color_batL}
                 fi
+                bat1_icon=${icon_battery}
             fi
-            bat1="%{B${bat1_cback}}1:${sys_arr[15]} "
+            bat1="%{B${bat1_cback}}${bat1_icon} 1:${sys_arr[15]} "
             ;;
         VOL*)
             # Volume

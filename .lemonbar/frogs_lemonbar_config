@@ -76,4 +76,5 @@ icon_os=""                         # os icon
 icon_wlan=""                       # wlan icon
 icon_eth=""                        # net icon
 icon_temp=""                       # temp icon
-icon_battery=""                    # battery icon (not functioning)
+icon_battery=""                    # battery icon
+icon_power=""                      # power plug icon
