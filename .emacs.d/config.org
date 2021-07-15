@@ -917,16 +917,10 @@ Simple Hackernews-frontend
 :ensure t)
 #+END_SRC
 
-* Autopair
-Automatically set the Brackets
-
-#+BEGIN_SRC emacs-lisp
-(use-package autopair
-:ensure t
-:config 
-(autopair-global-mode)
-)
-#+END_SRC
+* Electric Pair Mode
+#+begin_src emacs-lisp
+  (electric-pair-mode)
+#+end_src
 
 * iedit
 Change multiple occurences
