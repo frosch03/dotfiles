@@ -1,0 +1,4 @@
+#!/bin/sh
+
+urxvt -rv "$@"
+# urxvt -rv -e tmux a
