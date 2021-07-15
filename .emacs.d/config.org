@@ -1,11 +1,5 @@
 #+Startup: overview
 
-* Package Archives
-  #+BEGIN_SRC emacs-lisp
-  (add-to-list 'package-archives '("org"  . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives '("elpy" . "http://jorgenschaefer.github.io/packages/"))
-  #+END_SRC
-
 * Interface Tweaks & Server
   - custom-set-faces was added by Custom. 
     If you edit it by hand, you could mess it up, so be careful. Your
