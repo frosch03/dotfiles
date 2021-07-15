@@ -182,7 +182,7 @@
                                    ))
                                    )
    #+END_SRC
-** org-capture-pop-frame
+** COMMENT org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
    (use-package org-capture-pop-frame
    :ensure f
@@ -202,43 +202,6 @@
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
    )
    #+END_SRC
-** org-jira
-   #+BEGIN_SRC emacs-lisp
-   (use-package org-jira
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   ;; you need make sure whether the "/jira" at the end is necessary or
-   ;; not, see discussion at the end of this page
-   (setq jiralib-url "http://jira.frosch03.de")
-   )
-   #+END_SRC
-** org-gcal
-   #+BEGIN_SRC emacs-lisp
-   (use-package org-gcal
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   (setq package-check-signature nil)
-  
-   ;; configuration within private_config.org
-   ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-   ;; 	org-gcal-client-secret "<password>"
-   ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
-  
-   (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-   ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
-   )
-   #+END_SRC
-
 ** agenda
    Set the agenda files to my GTD fileset:
    #+BEGIN_SRC emacs-lisp
@@ -312,22 +275,20 @@
 
    #+END_SRC
 
-** mobile
-   - Automaticall pull mobile while starting and push while ending
-     #+BEGIN_SRC emacs-lisp
-     (add-hook 'after-init-hook 'org-mobile-pull)
-     (add-hook 'kill-emacs-hook 'org-mobile-push)
-     #+END_SRC
-
-** bullets
+** COMMENT bullets
    Org-Mode Bullets - for nice looking org-mode bullet items
    #+BEGIN_SRC emacs-lisp
      (use-package org-bullets
-       :ensure f
+       :hook (org-mode . org-bullets-mode)
        :config
-       (autoload 'org-bullets "org-bullets")
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-       )
+       (setq org-bullets-bullet-list '("◉" "⁑" "⁂" "❖" "✮" "✱" "✸")))
+     
+     ;; (use-package org-bullets
+     ;;   :ensure f
+     ;;   :config
+     ;;   (autoload 'org-bullets "org-bullets")
+     ;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+     ;;   )
    #+END_SRC
 
 ** ditaa & plantuml
@@ -489,7 +450,7 @@
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'load-path "~/.emacs.d/dired/")
    #+END_SRC
-** dired+
+** COMMENT dired+
    #+BEGIN_SRC emacs-lisp
    (use-package dired+
    :ensure f
@@ -531,7 +492,7 @@
    (use-package dired-x
    :ensure f)
    #+END_SRC
-** dired-details+
+** COMMENT dired-details+
    #+BEGIN_SRC emacs-lisp
    (use-package dired-details+
    :ensure t
@@ -576,7 +537,7 @@
     (use-package erc
     :ensure t)
   #+END_SRC
-* Latex Config
+* COMMENT Latex Config
 - Loading up
   #+BEGIN_SRC emacs-lisp
   (autoload 'reftex "reftex" "RefTeX")
@@ -671,8 +632,6 @@
   ;; (add-hook 'haskell-mode-hook (lambda ()
   ;;                                (set-variable 'projectile-tags-command "hasktags --etags %s")))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  ;; Enable Speedbar also for haskell
-  (speedbar-add-supported-extension ".hs")
   ;; (setq haskell-hasktags-path "/home/frosch03/.cabal/bin/hasktags")
   ;; Set C-c C-c to compile haskell with the haskell mode compile options
   (eval-after-load "haskell-mode"
@@ -1037,12 +996,6 @@ to switch back to window configurations
   ;;       browse-url-generic-program "/usr/bin/chromium")
 #+END_SRC
 
-* elpy
-#+BEGIN_SRC emacs-lisp
-(package-initialize)
-(elpy-enable)
-#+END_SRC
-
 * flymake
 #+BEGIN_SRC emacs-lisp
 (when (load "flymake" t)
@@ -1175,32 +1128,6 @@ to switch back to window configurations
 )
 #+END_SRC
 
-* calfw
-** calfw-cal
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-cal
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-** calfw-ical
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-ical
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-** calfw-org
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-org
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-
 * isearch
 #+BEGIN_SRC emacs-lisp
 ;; Bind C-Tab to make a highlightion from an isearch
@@ -1215,45 +1142,6 @@ to switch back to window configurations
 (define-key isearch-mode-map (kbd "C-<tab>") 'isearch-highlight-phrase)
 #+END_SRC
 
-* rcirc
-#+BEGIN_SRC emacs-lisp
-;; rcirc config
-(use-package tls
-:ensure t
-:config
-(setq rcirc-server-alist
-      '(("irc.freenode.net"
-         :port 6667
-         :channels ("#emacs" "#haskell" ;; "#clojure #emacs"
-                    ))))
-(put 'narrow-to-region 'disabled nil)
-)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;;(use-package rcirc
-;;:ensure t
-;;:config
-;; configuration within private_config.org
-;; (setq rcirc-default-nick "<user>")
-;; (setq rcirc-default-full-name "<fullname>")
-;; (setq rcirc-authinfo
-;;       ;; /msg NickServ identify <password>
-;;       '(("freenode" nickserv "<username>" "<password>")
-;;         ;; ("freenode" chanserv "your nick" "#hiddenchan" "ninjaisthepassword")
-;;         ))
- 
-;; With SSL
-;; (setq rcirc-server-alist
-;;       '(("irc.freenode.net"
-;;          :port 7000
-;;          :connect-function open-tls-stream
-;;          :channels ("#emacs" "#haskell"))))
- ;; Don't forget to add (require 'tls) first
-
-;; Without SSL
-;;)
-#+END_SRC
 * rvm el
 #+BEGIN_SRC emacs-lisp
 ;; rvm el
@@ -1277,14 +1165,7 @@ to switch back to window configurations
   ;; (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
 
-* pushbullet
-#+BEGIN_SRC emacs-lisp
-;; configuration within: private_config.org
-;; Pushbullet Api Key for frosch03
-;; (setq pushbullet-api-key "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#+END_SRC
-
-* mu4e
+* COMMENT mu4e
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
   :ensure t
@@ -1357,19 +1238,6 @@ add some org configurations before the output is created. Here:
        (mu4e-compose-mode)))
   (global-set-key "\M-@" 'frog/mu4e-org-compose)
   #+END_SRC
-
-* autshine
-#+BEGIN_SRC emacs-lisp
-;; outshine tests
-(use-package outshine
-:ensure t
-:config
-(add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-(add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
-(add-hook 'LaTeX-mode-hook 'outline-minor-mode)
-(add-hook 'haskell-mode-hook 'outline-minor-mode)
-)
-#+END_SRC
 
 * jekyll
 #+BEGIN_SRC emacs-lisp
@@ -1490,58 +1358,10 @@ add some org configurations before the output is created. Here:
               (local-set-key (kbd "C-c C-t") 'endless/toggle-image-display)))
   #+END_SRC
 
-* Ur/Web mode
-Ur/Web mode is a mode for the programming environment of Ur/Web.
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/urweb-mode/")
-(load "urweb-mode-startup")
-#+END_SRC
-
-* Atomic Chrome
-I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] extension within firefox
-
-#+BEGIN_SRC emacs-lisp
-(use-package atomic-chrome
-:ensure t
-:config
-(atomic-chrome-start-server)
-(setq atomic-chrome-buffer-open-style 'frame)
-)
-#+END_SRC
-
 * RESTclient
 #+BEGIN_SRC emacs-lisp
   (use-package restclient
     :ensure t
-    )
-#+END_SRC
-
-* ejira
-#+BEGIN_SRC emacs-lisp
-  (use-package ejira
-    :load-path "/home/frosch03/.emacs.d/ejira"
-    :init
-    (setq jiralib2-url             "http://jira.frosch03.de"
-          jiralib2-user-login-name "frosch03"
-          ejira-projects           '("SA")
-          ejira-main-project       "SA"
-          ejira-my-org-directory   "/home/frosch03/Org/JIRA"
-          ejira-done-states        '("Done")
-          ejira-in-progress-states '("In Progress" "In Review" "Testing")
-          ejira-high-priorities    '("High" "Highest")
-          ejira-low-priorities     '("Low" "Lowest")
-
-          ;; Customize these based on your JIRA server configuration
-          ejira-sprint-field                     'customfield_10003
-          ejira-epic-field                       'customfield_10003
-          ejira-epic-summary-field               'customfield_10005
-          ;; ejira-no-epic-postfix                  ""
-          )
-
-    :config
-    (require 'ejira)
-    (require 'org-agenda)
     )
 #+END_SRC
 
