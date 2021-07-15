@@ -43,8 +43,11 @@
     #+END_SRC
   - set theme
     #+BEGIN_SRC emacs-lisp
-      (use-package moe-theme)
+      (use-package moe-theme
+        :ensure t
+        )
       ;; (load-theme 'leuven)
+      (load-theme 'misterioso)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -98,84 +101,61 @@
 * Org-Mode Config
 ** org
 #+BEGIN_SRC emacs-lisp
-(use-package org
-:ensure f
-:config
-(setq org-startup-indented t)
-)
+  (use-package org
+    :ensure t
+    :config
+    (setq org-startup-indented t)
+    )
 #+END_SRC
+** org-plus-contrib
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
-   (use-package ox-latex
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   ;; Org's Latex Exporter configurations sction
-   (setq org-latex-pdf-process
-  			 '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-   (setq org-export-latex-listings 'minted)
-   (add-to-list 'org-latex-packages-alist '("" "minted"))
-  
-   ;; for bigger latex preview in org-mode (C-c C-x C-l)
-   (plist-put org-format-latex-options :scale 1.8)
-   )
+     (use-package ox-latex
+     :config
+     ;; Org's Latex Exporter configurations sction
+     (setq org-latex-pdf-process
+           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+     (setq org-export-latex-listings 'minted)
+     (add-to-list 'org-latex-packages-alist '("" "minted"))
+     
+     ;; for bigger latex preview in org-mode (C-c C-x C-l)
+     (plist-put org-format-latex-options :scale 1.8)
+     )
    #+END_SRC
 ** ox-md
    #+BEGIN_SRC emacs-lisp
-   (use-package ox-md
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-   )
+     (use-package ox-md
+     )
    #+END_SRC
-** os-koma-letter
-
+** ox-koma-letter
 #+BEGIN_SRC emacs-lisp
-    (use-package ox-koma-letter
-    :load-path "~/.emacs.d/ox-koma/"
+  (use-package ox-koma-letter
+    :ensure org-plus-contrib
     :config
     (add-to-list 'org-latex-classes
-                    '("my-letter"
-                      "\\documentclass\{scrlttr2\}
-       \\usepackage[english]{babel}
-       \\setkomavar{frombank}{(1234)\\,567\\,890}
-       \[DEFAULT-PACKAGES]
-       \[PACKAGES]
-       \[EXTRA]"))
+                 '("my-letter"
+                   "\\documentclass\{scrlttr2\}
+     \\usepackage[english]{babel}
+     \\setkomavar{frombank}{(1234)\\,567\\,890}
+     \[DEFAULT-PACKAGES]
+     \[PACKAGES]
+     \[EXTRA]"))
     (setq org-koma-letter-default-class "my-letter")
     )
 #+END_SRC
 
-** org-mu4e
+** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
    (use-package org-mu4e
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
    :config 
    (setq org-mu4e-convert-to-html t)
    )
    #+END_SRC
 ** org-protocol
    #+BEGIN_SRC emacs-lisp
-   (use-package org-protocol
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :ensure f)
+     (use-package org-protocol)
    #+END_SRC
 ** org-capture
    #+BEGIN_SRC emacs-lisp
@@ -1307,7 +1287,7 @@ to switch back to window configurations
 * mu4e
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-  :ensure f
+  :ensure t
   :config
   (setq
       mu4e-maildir       "~/Mail"   ;; top-level Maildir
@@ -1457,9 +1437,13 @@ add some org configurations before the output is created. Here:
 
 * elfeed
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x w") 'elfeed)
-(elfeed-org)
-(setq rmh-elfeed-org-files (list "~/Org/feeds.org"))
+  (use-package elfeed
+    :ensure elfeed-org
+    :config
+    (global-set-key (kbd "C-x w") 'elfeed)
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/Org/feeds.org"))
+    )
 #+END_SRC
 
 * eww
@@ -1565,9 +1549,10 @@ I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] exten
 Using mpdel mode for navigation of mpd
 #+BEGIN_SRC emacs-lisp
   (use-package mpdel
+    :ensure t
     :config
     (mpdel-mode)
-  )
+    )
 #+END_SRC
 
 * Disabled: org-roam
