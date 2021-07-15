@@ -168,16 +168,16 @@
 
    :config 
    (setq org-capture-templates '(("i" "Item [inbox]" entry
-                                    (file "~/gtd/inbox.org")
+                                    (file "~/Org/inbox.org")
                                     "* TODO %i%?")
                                    ("T" "Timed" entry
-                                    (file+headline "~/gtd/timed.org" "Timed")
+                                    (file+headline "~/Org/timed.org" "Timed")
                                     "* %i%? \n %U")
                                    ("w" "Url [inbox]" entry
-                                    (file "~/gtd/inbox.org")
+                                    (file "~/Org/inbox.org")
                                     "* TODO %?[[%:link][%:description]]")
                                    ("W" "Url with Text [inbox]" entry
-                                    (file "~/gtd/inbox.org")
+                                    (file "~/Org/inbox.org")
                                     "* TODO %?[[%:link][%:description]] \n  %:initial")
                                    ))
                                    )
@@ -203,21 +203,22 @@
    )
    #+END_SRC
 ** agenda
-   Set the agenda files to my GTD fileset:
+   Set the agenda files to my agenda fileset:
    #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files '("~/gtd/inbox.org"
-                              "~/gtd/current.org"
-                              "~/gtd/timed.org"
-                              "~/Dropbox/Apps/frosch03s org-web/Tasks.org"))
+     (setq org-agenda-files '("~/Org/inbox.org"
+                              "~/Org/current.org"
+                              "~/Org/timed.org"
+                              ;; "~/Dropbox/Apps/frosch03s org-web/Tasks.org"
+                              ))
    #+END_SRC
 
    Define the files one is able to refile stuff into:
    #+BEGIN_SRC emacs-lisp
      (setq org-refile-use-outline-path t)
 
-     (setq org-refile-targets '(("~/gtd/current.org" :maxlevel . 2)
-                                ("~/gtd/future.org" :level . 1)
-                                ("~/gtd/timed.org" :maxlevel . 2)))
+     (setq org-refile-targets '(("~/Org/current.org" :maxlevel . 2)
+                                ("~/Org/future.org" :level . 1)
+                                ("~/Org/timed.org" :maxlevel . 2)))
    #+END_SRC
 
    Set the default todo types:
