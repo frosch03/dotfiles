@@ -84,10 +84,5 @@ in
     (texlive.combine {
       inherit (texlive) scheme-medium koma-script capt-of minted fvextra upquote catchfile xstring framed xcolor latex-fonts collection-fontsrecommended biblatex biblatex-apa wrapfig ulem mathtools multirow beamer listings dvipng metafont datetime xltabular;
     })
-
-    # pidgin
-    # signald
-    # telegram-purple
-    # qrencode
   ];
 }
