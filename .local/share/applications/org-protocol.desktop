@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=org-protocol
+Exec=emacsclient -c -F '(quote (name . "capture"))' %u
+# Exec=emacsclient -c -F '(quote (name . "capture"))' -e '(org-roam-dailies-capture-today)' %u
+Type=Application
+Terminal=false
+Categories=System;Planning;
+MimeType=x-scheme-handler/org-protocol;

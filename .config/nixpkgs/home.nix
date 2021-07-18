@@ -37,6 +37,7 @@ in
     feh
     xbindkeys
     lxappearance
+    dex
     
     tmux
     rxvt-unicode
