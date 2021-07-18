@@ -752,9 +752,9 @@ threemaInfix        = "threema"
 threemaResource     = "t.frosch03.de"
 isThreema           = (resource =? threemaResource)
 
-imCommand      = "dex $HOME/.local/share/applications/ferdi.desktop"
+imCommand      = "dex $HOME/.local/share/applications/signal.desktop"
 imInfix        = "im"
-imResource     = "ferdi"
+imResource     = "signal"
 isIm           = (resource =? imResource)
 
 whatsappCommand     = "dex $HOME/.local/share/applications/whatsapp.desktop"
@@ -923,9 +923,9 @@ myKeys' conf = let
     -- , ("M-t"                    , addName "NSP Tasks"                       $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "trelloWork"),
     --                                                                           ("", namedScratchpadAction scratchpads "trello")])
     -- , ("M-m"                    , addName "NSP Music"                       $ namedScratchpadAction scratchpads "googleMusic")
-    , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
-    , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
-    , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
+    -- , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
+    -- , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
+    -- , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
     , ("M-c"                    , addName "NSP im"                          $ namedScratchpadAction scratchpads "im")
     , ("M-o"                    , addName "NSP orgCapture"                  $ namedScratchpadAction scratchpads "capture")
     -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
