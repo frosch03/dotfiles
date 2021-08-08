@@ -11,7 +11,9 @@
 # ZSH_THEME="frogmuse"
 # ZSH_THEME="xiong-chiamiov-plus"
 # ZSH_THEME="fino"
-ZSH_THEME=random
+# ZSH_THEME=random
+# ZSH_THEME="sonicradish"
+ZSH_THEME="itchy"
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -146,3 +148,6 @@ source $HOME/.keychain/$(hostname)-sh
 ### LS_COLORS comes via: https://raw.githubusercontent.com/trapd00r/LS_COLORS/master/LS_COLORS
 eval $(dircolors ~/.LS_COLORS)
 alias ls="ls --color=auto -F"
+alias emc="emacsclient -c"
+
+source /home/frosch03/.config/broot/launcher/bash/br
