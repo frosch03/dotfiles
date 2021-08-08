@@ -778,9 +778,9 @@ scratchpads =
 -- My additional keybindings
 myKeys x = M.fromList $
   [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_r), spawn "urxvt -e emacsclient -q -nw -e '(remember)'")
-  , ((modMask x .|. shiftMask,   xK_e), spawn "urxvt -e emacsclient -q -nw -e '(eshell)'")
-  , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "urxvt")
+  , ((modMask x .|. shiftMask,   xK_r), spawn "alacritty -e emacsclient -nw -e '(remember)'")
+  , ((modMask x .|. shiftMask,   xK_e), spawn "alacritty -e emacsclient -nw -e '(eshell)'")
+  , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "alacritty")
   , ((modMask x,                 xK_m), spawn "dmpc")
   , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_s), sshPrompt myXPConfig)

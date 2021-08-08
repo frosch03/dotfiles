@@ -41,6 +41,7 @@ in
     
     tmux
     rxvt-unicode
+    alacritty
     tree
     unixtools.killall
     neofetch
