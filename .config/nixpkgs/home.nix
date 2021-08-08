@@ -58,6 +58,8 @@ in
     mpd
     mpc_cli
     pavucontrol
+    mpv
+    ffmpeg
 
     zsh
     oh-my-zsh
@@ -80,8 +82,15 @@ in
     w3m
 
     ghc
+    python3
 
     restic
+    rclone
+
+    broot                       # file browser within console
+    amfora                      # gemini terminal client
+    evince
+    pandoc
 
     (texlive.combine {
       inherit (texlive) scheme-medium koma-script capt-of minted fvextra upquote catchfile xstring framed xcolor latex-fonts collection-fontsrecommended biblatex biblatex-apa wrapfig ulem mathtools multirow beamer listings dvipng metafont datetime xltabular;
