@@ -4,11 +4,11 @@
 "/home/frosch03/bin/incBacklight.sh"
   XF86MonBrightnessUp
 
-"pamixer --increase 5"
+"amixer set Master 5%+"
   XF86AudioRaiseVolume
 
-"pamixer --decrease 5"
+"amixer set Master 5%-"
   XF86AudioLowerVolume
 
-"pamixer --toggle-mute"
+"amixer sset Master toggle"
   XF86AudioMute

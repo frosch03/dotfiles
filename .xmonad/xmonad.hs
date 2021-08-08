@@ -789,14 +789,14 @@ myKeys x = M.fromList $
   , ((modMask x .|. shiftMask,   xK_k), windows swapUp)
   , ((modMask x,                 xK_m), windows shiftMaster)
   , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
-  , ((modMask x .|. controlMask, xK_l),	spawn "/home/frosch03/bin/lock")
-  , ((0        ,          xK_XF86Play), spawn "mpc toggle")
-  , ((0        ,          xK_XF86Stop), spawn "mpc stop")
-  , ((0        ,          xK_XF86Fwrd), spawn "mpc next")
-  , ((0        ,          xK_XF86Bwrd), spawn "mpc prev")
-  , ((0        ,          xK_XF86Thnk), spawn "/home/frosch03/whatIsThisPlace")
-  , ((0        ,         xK_XF86Sleep),	spawn "sudo pm-suspend")
-  , ((0        ,   xK_XF86ScreenSaver),	spawn "gnome-screensaver-command --lock")
+  , ((modMask x .|. controlMask, xK_l),	     spawn "/home/frosch03/bin/lock")
+  , ((0,        xK_XF86Play),      spawn "mpc toggle")
+  , ((0,        xK_XF86Stop),      spawn "mpc stop")
+  , ((0,        xK_XF86Fwrd),      spawn "mpc next")
+  , ((0,        xK_XF86Bwrd),      spawn "mpc prev")
+  , ((0,        xK_XF86Thnk),      spawn "/home/frosch03/whatIsThisPlace")
+  , ((0,       xK_XF86Sleep),      spawn "sudo pm-suspend")
+  , ((0, xK_XF86ScreenSaver),      spawn "gnome-screensaver-command --lock")
   ]
 newKeys x = myKeys x `M.union` keys defaultConfig x
 
