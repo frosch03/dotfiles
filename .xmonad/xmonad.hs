@@ -920,11 +920,9 @@ myKeys' conf = let
     , ("M-\\"                   , addName "Browser"                         $ spawn myBrowser)
     -- , ("M-c"                    , addName "NSP Chat"                        $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "hangoutsWork"),
     --                                                                           ("", namedScratchpadAction scratchpads "hangoutsPersonal")])
-    -- , ("M-t"                    , addName "NSP Tasks"                       $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "trelloWork"),
     --                                                                           ("", namedScratchpadAction scratchpads "trello")])
     -- , ("M-m"                    , addName "NSP Music"                       $ namedScratchpadAction scratchpads "googleMusic")
     -- , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
-    -- , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
     -- , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
     , ("M-c"                    , addName "NSP im"                          $ namedScratchpadAction scratchpads "im")
     , ("M-o"                    , addName "NSP orgCapture"                  $ namedScratchpadAction scratchpads "capture")
@@ -1043,6 +1041,7 @@ myKeys' conf = let
     -- , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
     -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "urxvt -e emacsclient -q -nw -e '(remember)'")
     -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "urxvt -e emacsclient -q -nw -e '(eshell)'")
+    , ("M-t"        , addName "Org Roam capture today"    $ spawn "alacritty -e emacsclient -c -e '(make-capture-today-frame)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
     -- , ("M-S-m"        , addName "" $ manPrompt myXPConfig)
     -- , ("M-S-s"        , addName "" $ sshPrompt myXPConfig)

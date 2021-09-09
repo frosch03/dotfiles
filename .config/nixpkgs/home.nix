@@ -3,8 +3,6 @@
 let
   dotfrog = (import ~/localStorage/dotfiles) {};
 
-  
-
 in
 {
   # Let Home Manager install and manage itself.
@@ -77,6 +75,7 @@ in
     arandr
     ispell
 
+    # Mail
     mu
     isync
     w3m
@@ -84,13 +83,25 @@ in
     ghc
     python3
 
+    # Utilities
     restic
     rclone
+    pass
+    wpa_supplicant_gui
 
     broot                       # file browser within console
     amfora                      # gemini terminal client
-    evince
+    toilet                      # for the crazy ascii art fonts
+    mupdf
     pandoc
+    imagemagick
+    librecad
+    gimp
+
+
+    # Photo
+    rawtherapee
+    darktable
 
     (texlive.combine {
       inherit (texlive) scheme-medium koma-script capt-of minted fvextra upquote catchfile xstring framed xcolor latex-fonts collection-fontsrecommended biblatex biblatex-apa wrapfig ulem mathtools multirow beamer listings dvipng metafont datetime xltabular;
