@@ -28,7 +28,7 @@ in
     gnumake
     pkg-config
 
-    dotfrog
+    # dotfrog
     xcompmgr
     xcape
     dunst
