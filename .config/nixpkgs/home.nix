@@ -70,6 +70,10 @@ in
     # pinentry-gtk2
     pinentry-emacs
 
+    # For gsettings
+    glib
+    arc-theme
+
     ag
     xscreensaver
     arandr
@@ -106,5 +110,7 @@ in
     (texlive.combine {
       inherit (texlive) scheme-medium koma-script capt-of minted fvextra upquote catchfile xstring framed xcolor latex-fonts collection-fontsrecommended biblatex biblatex-apa wrapfig ulem mathtools multirow beamer listings dvipng metafont datetime xltabular;
     })
+
+    haskell-language-server
   ];
 }

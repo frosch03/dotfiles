@@ -47,7 +47,7 @@
         :ensure t
         )
       ;; (load-theme 'leuven)
-      (load-theme 'misterioso)
+      (load-theme 'dracula)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -105,9 +105,9 @@
     :ensure t
     :config
     (setq org-startup-indented t)
+    :pin gnu
     )
 #+END_SRC
-** org-plus-contrib
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
      (use-package ox-latex
@@ -130,21 +130,22 @@
      )
    #+END_SRC
 ** ox-koma-letter
-#+BEGIN_SRC emacs-lisp
-  (use-package ox-koma-letter
-    :ensure org-plus-contrib
-    :config
-    (add-to-list 'org-latex-classes
-                 '("my-letter"
-                   "\\documentclass\{scrlttr2\}
-     \\usepackage[english]{babel}
-     \\setkomavar{frombank}{(1234)\\,567\\,890}
-     \[DEFAULT-PACKAGES]
-     \[PACKAGES]
-     \[EXTRA]"))
-    (setq org-koma-letter-default-class "my-letter")
-    )
-#+END_SRC
+# #+BEGIN_SRC emacs-lisp
+#   (use-package ox-koma-letter
+#     :ensure org-plus-contrib
+#     :config
+#     (add-to-list 'org-latex-classes
+#                  '("my-letter"
+#                    "\\documentclass\{scrlttr2\}
+#      \\usepackage[english]{babel}
+#      \\setkomavar{frombank}{(1234)\\,567\\,890}
+#      \[DEFAULT-PACKAGES]
+#      \[PACKAGES]
+#      \[EXTRA]"))
+#     (setq org-koma-letter-default-class "my-letter")
+#     :pin gnu
+#     )
+# #+END_SRC
 
 ** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
@@ -1288,7 +1289,7 @@ add some org configurations before the output is created. Here:
 :ensure t
 :config
 (setq tramp-default-method "ssh")
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))
 )
 #+END_SRC
 
@@ -1370,7 +1371,50 @@ Using mpdel mode for navigation of mpd
     )
 #+END_SRC
 
-* Disabled: org-roam
+* org-roam
+The configuration of org roam is done as it is suggested on the org
+roam page
+
+Define a function to call from the outside
+#+begin_src emacs-lisp
+  (defun make-capture-today-frame ()
+    "Create a new frame and run org-roam-dailies-capture-today."
+    (interactive)
+    (org-roam-dailies-capture-today)
+    (delete-other-windows)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n z")
+                  (lambda ()
+                    (interactive)
+                    (load-library "dired-x")
+                    (dired "~/Org/roam/")
+                    (dired-omit-mode)
+                    (dired-sort-other "-alhr --time-style=+ --group-directories-first")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-roam-v2-ack t)
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Org/roam/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; ("C-c n j" . org-roam-jump-to-index)
+           ;; Dailies
+           ("C-c n t" . org-roam-dailies-capture-today))
+    :config
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
+#+end_src
+
 The configuration of org roam is done as it is suggested on the [[https://org-roam.readthedocs.io/en/master/installation/][org
 roam page]]
 # #+BEGIN_SRC emacs-lisp

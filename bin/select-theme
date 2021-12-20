@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+PWDPATH=$(pwd)
+
+# update_colsep_value File-Name Target-Key Replacement-Value
+update_value() {
+    SEPERATOR=$1
+    CONFIG_FILE=$2
+    TARGET_KEY=$3
+    REPLACEMENT_VALUE=$4
+    sed -i "s/^\($TARGET_KEY *$SEPERATOR *\).*/\1$REPLACEMENT_VALUE/" $CONFIG_FILE
+}
+
+update_colsep_value() {
+    update_value ":" $1 $2 $3
+}
+
+update_eqsignsep_value() {
+    update_value "=" $1 $2 $3
+}
+
+update_config() {
+    FROM_FILE=$1
+    TO_FILE=$2
+
+    rm $TO_FILE;
+    cp $FROM_FILE $TO_FILE
+}
+
+update_alacritty() {
+    CONFIG_FILE=$1
+    update_colsep_value $CONFIG_FILE $2 $3
+    mv $CONFIG_FILE ${CONFIG_FILE}.tmp
+    cp ${CONFIG_FILE}.tmp $CONFIG_FILE
+    rm ${CONFIG_FILE}.tmp
+}
+
+restart_program () {
+    PROG_NAME=$1
+    if [ $(ps ax | grep "$PROG_NAME" | grep -v grep | wc -l) -ge 1 ] ; then
+        kill $(ps ax | grep "$PROG_NAME" | grep -v "grep" | sed -e "s/ *\([0-9]*\) .*/\1/") 2>/dev/null
+        sleep 1
+        $PROG_NAME &
+    fi
+}
+
+case  "${1}" in
+
+  light)
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'xclock\*background' "#DDDDDD"
+      update_eqsignsep_value ~/.config/gtk-3.0/settings.ini 'gtk-theme-name' "Arc"
+      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*light"
+    ;;
+
+  dark)
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'xclock\*background' "#222222"
+      update_eqsignsep_value ~/.config/gtk-3.0/settings.ini "gtk-theme-name" "Arc-Dark"
+      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*dark"
+    ;;
+
+  *)
+    echo "unknown theme, use:"
+    echo "- light"
+    echo "- dark"
+    exit -1
+    ;;
+
+esac
+
+# POST PROCESSING
+#################
+
+xrdb ~/.Xresources
+
+restart_program xeyes
+restart_program xclock
+restart_program pavucontrol
+
+cd $PWDPATH
