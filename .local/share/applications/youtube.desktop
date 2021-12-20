@@ -7,17 +7,16 @@ Type=Application
 Version=1.0
 
 # The name of the application
-Name=Signal Desktop
+Name=Youtube
 
 # A comment which can/will be used as a tooltip
-Comment=Chat via Signal
+Comment=Music via Youtube
 
 # The executable of the application, possibly with arguments.
-Exec=/bin/sh -c "$HOME/.nix-profile/bin/signal-desktop"
+Exec=chromium --app="https://www.youtube.com" --window-position=0,0 --start-fullscreen --class="www.youtube.com"
 
 # Describes whether this application needs to be run in a terminal or not
 Terminal=false
 
 # Describes the categories in which this entry should be shown
-Categories=Work;Planning;Web;
-MimeType=x-scheme-handler/signalcaptcha;x-scheme-handler/sgnl;
+Categories=Music;Web;

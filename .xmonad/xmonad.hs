@@ -747,10 +747,10 @@ jiraInfix           = "jira"
 jiraResource        = "jira.frosch03.de"
 isJira              = (resource =? jiraResource)
 
-threemaCommand      = "dex $HOME/.local/share/applications/threema.desktop"
-threemaInfix        = "threema"
-threemaResource     = "t.frosch03.de"
-isThreema           = (resource =? threemaResource)
+youtubeCommand      = "dex $HOME/.local/share/applications/youtube.desktop"
+youtubeInfix        = "youtube"
+youtubeResource     = "www.youtube.com"
+isYoutube           = (resource =? youtubeResource)
 
 imCommand      = "dex $HOME/.local/share/applications/signal.desktop"
 imInfix        = "im"
@@ -770,7 +770,7 @@ isOrgCapture          = (resource =? orgCaptureResource)
 scratchpads =
     [   (NS "im"       imCommand         isIm         defaultFloating)
     ,   (NS "jira"     jiraCommand       isJira       defaultFloating)
-    ,   (NS "threema"  threemaCommand    isThreema    defaultFloating)
+    ,   (NS "youtube"  youtubeCommand    isYoutube    defaultFloating)
     ,   (NS "whatsapp" whatsappCommand   isWhatsapp   defaultFloating)
     ,   (NS "capture"  orgCaptureCommand isOrgCapture defaultFloating)
     ] 
@@ -914,22 +914,16 @@ myKeys' conf = let
     -- Launchers
     -----------------------------------------------------------------------
     subKeys "Launchers"
-    [ -- ("M-<Space>"              , addName "Launcher"                        $ spawn myLauncher)
-    -- , 
-      ("M-<Return>"             , addName "Terminal"                        $ spawn myTerminal)
-    , ("M-\\"                   , addName "Browser"                         $ spawn myBrowser)
-    -- , ("M-c"                    , addName "NSP Chat"                        $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "hangoutsWork"),
-    --                                                                           ("", namedScratchpadAction scratchpads "hangoutsPersonal")])
-    --                                                                           ("", namedScratchpadAction scratchpads "trello")])
-    -- , ("M-m"                    , addName "NSP Music"                       $ namedScratchpadAction scratchpads "googleMusic")
-    -- , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
-    -- , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
-    , ("M-c"                    , addName "NSP im"                          $ namedScratchpadAction scratchpads "im")
-    , ("M-o"                    , addName "NSP orgCapture"                  $ namedScratchpadAction scratchpads "capture")
-    -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
-    -- , ("M-n"                    , addName "NSP Console"                     $ namedScratchpadAction scratchpads "console")
-    , ("M-s s"                  , addName "Cancel submap"                   $ return ())
-    , ("M-s M-s"                , addName "Cancel submap"                   $ return ())
+    [ -- ("M-<Space>", addName "Launcher"       $ spawn myLauncher)
+      ("M-<Return>"  , addName "Terminal"       $ spawn myTerminal)
+    , ("M-\\"        , addName "Browser"        $ spawn myBrowser)
+    , ("M-n"         , addName "NSP youtube"    $ namedScratchpadAction scratchpads "youtube")
+    , ("M-c"         , addName "NSP im"         $ namedScratchpadAction scratchpads "im")
+    , ("M-o"         , addName "NSP orgCapture" $ namedScratchpadAction scratchpads "capture")
+    -- , ("M1-x"     , addName "NSP Xawtv"      $ namedScratchpadAction scratchpads "xawtv")
+    -- , ("M-n"      , addName "NSP Console"    $ namedScratchpadAction scratchpads "console")
+    , ("M-s s"       , addName "Cancel submap"  $ return ())
+    , ("M-s M-s"     , addName "Cancel submap"  $ return ())
     ] ^++^
 
     -----------------------------------------------------------------------
