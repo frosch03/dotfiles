@@ -105,6 +105,34 @@
     :ensure t
     :config
     (setq org-startup-indented t)
+    (with-eval-after-load 'org       
+      (add-hook 'org-mode-hook #'visual-line-mode))
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Open new file within current window
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    (defun org-force-open-current-window ()
+      (interactive)
+      (let ((org-link-frame-setup (quote
+                                   ((vm . vm-visit-folder)
+                                    (vm-imap . vm-visit-imap-folder)
+                                    (gnus . gnus)
+                                    (file . find-file)
+                                    (wl . wl)))
+                                  ))
+        (org-open-at-point)))
+
+    ;; Depending on universal argument try opening link
+    (defun org-open-maybe (&optional arg)
+      (interactive "P")
+      (if arg
+          (org-open-at-point)
+        (org-force-open-current-window)
+        )
+      )
+    ;; Redefine file opening without clobbering universal argumnet
+    (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
+
     :pin gnu
     )
 #+END_SRC
@@ -1411,6 +1439,12 @@ Define a function to call from the outside
            ("C-c n t" . org-roam-dailies-capture-today))
     :config
     (org-roam-db-autosync-mode)
+    (add-hook 'org-roam-mode-hook
+              (lambda ()
+                (setq-local display-buffer--same-window-action
+                            '(display-buffer-use-some-window
+                              (main)))))
+
     ;; If using org-roam-protocol
     (require 'org-roam-protocol))
 #+end_src
@@ -1442,3 +1476,18 @@ here and cloned the git repositry by hand.
 #   (require 'company-org-roam)
 #   (push 'company-org-roam company-backends)
 # #+END_SRC
+
+* ebib
+Configuration of ebib together with roam within my dropbox folder
+#+begin_src emacs-lisp
+  (use-package ebib
+    :ensure t
+    :config
+    (global-set-key "\C-cne" 'ebib)
+    :custom
+    (ebib-preload-bib-files '("Literatur.bib"))
+    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/roam/"))
+    ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/roam/Literatur.bib"))
+    )
+#+end_src
+

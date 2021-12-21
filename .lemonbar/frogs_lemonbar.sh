@@ -63,6 +63,6 @@ done &
 # echo "${geometry}"
 
 cat "${panel_fifo}" | $(dirname $0)/frogs_lemonbar_parser.sh \
-  | lemonbar -p -f "${font}" -f "${iconfont}" -g "${geometry}" -B "${color_back}" -F "${color_fore}" &
+  | lemonbar -p -o -3 -f "${font}" -o 0 -f "${iconfont}" -g "${geometry}" -B "${color_back}" -F "${color_fore}" &
 wait
 

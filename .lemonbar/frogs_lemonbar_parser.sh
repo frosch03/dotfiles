@@ -21,7 +21,7 @@ while read -r line ; do
             else
                 date="${sys_arr[1]} ${sys_arr[2]}"
             fi
-            date="%{F${color_sec_b1}}${sep_left}%{F${color_icon} B${color_sec_b1}} %{T2}${icon_clock}%{F- T1} ${date}"
+            date="%{F${color_sec_b1}}${sep_left}%{F${color_icon} B${color_sec_b1}} %{T2} ${icon_clock}%{F- T1} ${date}"
             # time
             time="%{F${color_head}}${sep_left}%{F${color_back} B${color_head}} ${sys_arr[3]} %{F- B-}"
             # cpu
@@ -41,7 +41,7 @@ while read -r line ; do
             if [ "${sys_arr[9]}" == "down" ]; then
                 ethd_v="×"; ethu_v="×";
                 eth_cback=${color_sec_b1}; eth_cicon=${color_disable}; eth_cfore=${color_disable};
-                net_seperator="%{F${eth_cback}}${sep_left}"
+                net_seperator="%{F${eth_cback}} " #"${sep_left}"
             else
                 ethd_v=${sys_arr[9]}K; ethu_v=${sys_arr[10]}K;
                 if [ ${ethd_v:0:-3} -gt ${net_alert} ] || [ ${ethu_v:0:-3} -gt ${net_alert} ]; then
@@ -49,7 +49,7 @@ while read -r line ; do
                 else
                     eth_cback=${color_sec_b2}; eth_cicon=${color_icon}; eth_cfore=${color_fore};
                 fi
-                net_seperator="%{F${eth_cicon}}${sep_l_left}"
+                net_seperator="%{F${eth_cicon}}" #"${sep_l_left}"
             fi
             ethd="${net_seperator}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}" # "%{F${eth_cback}}${sep_left}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}"
             ethu="%{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}" # "%{F${eth_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}"
@@ -67,7 +67,7 @@ while read -r line ; do
                 fi
                 net_seperator="%{F${color_icon}}${sep_left}"
             fi
-            wland="%{F${wlan_cback}}${sep_left}%{F${wlan_cicon} B${wlan_cback}} %{T2}${icon_wlan}%{T2}${icon_dl}%{F${wlan_cfore} T1} ${wland_v}"
+            wland="%{F${wlan_cicon}}${sep_left}%{F${wlan_cicon} B${wlan_cback}} %{T2} ${icon_wlan}%{T2}${icon_dl}%{F${wlan_cfore} T1} ${wland_v}"
             wlanu="%{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}" # "%{F${wlan_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}"
             # Battery 0
             if [ ! "${sys_arr[13]}" == "off" ]; then
@@ -87,7 +87,7 @@ while read -r line ; do
                 fi
                 bat0_icon=${icon_battery}
             fi
-            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}}${bat0_icon} 0:${sys_arr[14]} "
+            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}} ${bat0_icon} 0:${sys_arr[14]} "
             # # Battery 1
             # if [ ! "${sys_arr[13]}" == "off" ]; then
             #     bat1_cback=${color_batLoad}
@@ -172,7 +172,9 @@ while read -r line ; do
 
     # And finally, output
     # printf "%s\n" "%{l}${wsp}${title} %{r}${mpd}${stab}${irc}${stab}${gmail}${stab}${cpu}${stab}${mem}${stab}${diskused}${stab}${diskh}${stab}${wland}${stab}${wlanu}${stab}${ethd}${stab}${ethu}${stab}${vol}${stab}${bat0}${bat1}${date}${stab}${time}"
+    # with mpd:
+    # printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${mpd}${stab}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${date}${stab}${time}"
     # without mpd:
-    printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${mpd}${stab}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${date}${stab}${time}"
+    printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${date}${stab}${time}"
     #printf "%s\n" "%{l}${wsp}${title}"
 done
