@@ -16,7 +16,8 @@
       ;; (set-face-attribute 'default nil :font "ProggyTinyTTSZ-14") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
-      (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      (set-face-attribute 'default nil :font "PragmataPro-6") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "terminusicons2") ;; Icon Font
       ;; (set-default-font "Inconsolata 10")
     #+END_SRC
@@ -71,7 +72,7 @@
     (add-to-list 'load-path "~/.emacs.d/flycheck/")
     (add-to-list 'load-path "~/.emacs.d/neotree/")
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e/")
   #+END_SRC
 
 * Key-Bindings
@@ -158,22 +159,22 @@
      )
    #+END_SRC
 ** ox-koma-letter
-# #+BEGIN_SRC emacs-lisp
-#   (use-package ox-koma-letter
-#     :ensure org-plus-contrib
-#     :config
-#     (add-to-list 'org-latex-classes
-#                  '("my-letter"
-#                    "\\documentclass\{scrlttr2\}
-#      \\usepackage[english]{babel}
-#      \\setkomavar{frombank}{(1234)\\,567\\,890}
-#      \[DEFAULT-PACKAGES]
-#      \[PACKAGES]
-#      \[EXTRA]"))
-#     (setq org-koma-letter-default-class "my-letter")
-#     :pin gnu
-#     )
-# #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-koma-letter
+    :ensure org-plus-contrib
+    :config
+    (add-to-list 'org-latex-classes
+                 '("my-letter"
+                   "\\documentclass\{scrlttr2\}
+     \\usepackage[english]{babel}
+     \\setkomavar{frombank}{(1234)\\,567\\,890}
+     \[DEFAULT-PACKAGES]
+     \[PACKAGES]
+     \[EXTRA]"))
+    (setq org-koma-letter-default-class "my-letter")
+    :pin gnu
+    )
+#+END_SRC
 
 ** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
@@ -399,7 +400,7 @@
               (setcdr (assoc "\\.txt\\'" org-file-apps) "notepad.exe %s") 
             (add-to-list 'org-file-apps '("\\.txt\\'" . "notepad.exe %s") t))
           ;; Change .pdf association directly within the alist
-          (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
+          (setcdr (assoc "\\.pdf\\'" org-file-apps) "mupdf %s")))
 
      (setq org-src-fontify-natively t)
 
@@ -1189,54 +1190,54 @@ to switch back to window configurations
   ;; (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
 
-* COMMENT mu4e
+* mu4e
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-  :ensure t
-  :config
-  (setq
-      mu4e-maildir       "~/Mail"   ;; top-level Maildir
-      mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
-      mu4e-drafts-folder "/drafts"     ;; unfinished messages
-      mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
-      mu4e-refile-folder "/archive"   ;; saved messages
-      mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
+    :ensure f
+    :config
+    (setq
+     mu4e-maildir       "~/Mail"   ;; top-level Maildir
+     mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
+     mu4e-drafts-folder "/drafts"     ;; unfinished messages
+     mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
+     mu4e-refile-folder "/archive"   ;; saved messages
+     mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
 
-  (setq
+    (setq
      ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
      mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
      mu4e-get-mail-command "mbsync -a"
      mu4e-update-interval 300)             ;; update every 5 minutes
 
-  ;; tell message-mode how to send mail
-  (setq user-mail-address "frosch03@frosch03.de")
-  (setq user-full-name "Matthias Brettschneider")
-  (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-  (setq mu4e-compose-signature "open source, open minds, open future")
+    ;; tell message-mode how to send mail
+    (setq user-mail-address "frosch03@frosch03.de")
+    (setq user-full-name "Matthias Brettschneider")
+    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
+    (setq mu4e-compose-signature "open source, open minds, open future")
 
-  ;; configuration within: private_config.org
-  ;; (setq message-send-mail-function 'smtpmail-send-it
-  ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
-  ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
-  ;;       smtpmail-default-smtp-server "<servername>"
-  ;;       smtpmail-smtp-server "<servername>"
-  ;;       smtpmail-smtp-service <port>
-  ;;       smtpmail-local-domain "<domain>")
+    ;; configuration within: private_config.org
+    ;; (setq message-send-mail-function 'smtpmail-send-it
+    ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
+    ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
+    ;;       smtpmail-default-smtp-server "<servername>"
+    ;;       smtpmail-smtp-server "<servername>"
+    ;;       smtpmail-smtp-service <port>
+    ;;       smtpmail-local-domain "<domain>")
 
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (add-to-list 'mu4e-bookmarks
-               '("((date:7d..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-  (add-to-list 'mu4e-bookmarks
-               '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
-  (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
-               flag:trashed) AND (maildir:/frosch03/INBOX OR
-               maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
-  (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
+    (add-to-list 'mu4e-view-actions
+                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("((date:7D..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
+    (add-to-list 'mu4e-bookmarks
+                 '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
+    ;; (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
+    ;;              flag:trashed) AND (maildir:/frosch03/INBOX OR
+    ;;              maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
+    ;; (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
 
-  ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
-  (setq mu4e-html2text-command "w3m -T text/html")
-  )
+    ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+    (setq mu4e-html2text-command "w3m -T text/html")
+    )
 #+END_SRC
 
 In order to generate html mails from org-mode, this function helps to
@@ -1437,6 +1438,8 @@ Define a function to call from the outside
            ;; ("C-c n j" . org-roam-jump-to-index)
            ;; Dailies
            ("C-c n t" . org-roam-dailies-capture-today))
+    :hook (after-init . org-roam-setup)
+
     :config
     (org-roam-db-autosync-mode)
     (add-hook 'org-roam-mode-hook
@@ -1488,6 +1491,64 @@ Configuration of ebib together with roam within my dropbox folder
     (ebib-preload-bib-files '("Literatur.bib"))
     (ebib-bib-search-dirs '("/home/frosch03/Dropbox/roam/"))
     ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/roam/Literatur.bib"))
+    )
+#+end_src
+
+* Haskell LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp)
+    :hook ((haskell-mode . lsp)
+           ;; if you want which-key integration
+           ;; (lsp-mode . lsp-enable-which-key-integration)
+           )
+    :commands lsp
+    )
+
+  (use-package lsp-ui
+    :ensure f
+    :commands lsp-ui-mode
+    )
+
+  (use-package lsp-haskell
+    :ensure t
+    :config
+    (setq lsp-haskell-process-path-hie "ghcide")
+    (setq lsp-haskell-process-args-hie '())
+    )
+#+end_src
+
+** Company Mode
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    )
+#+end_src
+
+** Ormolu
+#+begin_src emacs-lisp
+  (use-package ormolu
+    :ensure t
+    :hook (haskell-mode . ormolu-format-on-save-mode)
+    :bind
+    (:map haskell-mode-map
+          ("C-c r" . ormolu-format-buffer)))
+#+end_src
+
+** Fixme Mode
+#+begin_src emacs-lisp
+  (use-package fixme-mode
+    :ensure f
+    :load-path "~/.emacs.d/fixme-mode/"
+    :config
+    (setq fixme-highhlighted-words '("FIXME" "TODO" "BUG" "HACK"))
+    (add-hook 'prog-mode-hook #'fixme-mode)
     )
 #+end_src
 

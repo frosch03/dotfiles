@@ -75,5 +75,7 @@ xrdb ~/.Xresources
 restart_program xeyes
 restart_program xclock
 restart_program pavucontrol
+restart_program firefox
+restart_program signal-desktop
 
 cd $PWDPATH

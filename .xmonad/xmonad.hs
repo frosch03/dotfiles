@@ -127,7 +127,7 @@ projects =
 
     [ Project   { projectName       = wsOne
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsOne "emacs"
+                , projectStartHook  = Just $ do spawnOn wsOne myTmuxTerminal
                 }
 
     , Project   { projectName       = wsCode
@@ -203,7 +203,8 @@ myXPConfig = defaultXPConfig { bgColor     = "#000030" -- dark dark blue
                              , fgColor     = "white"
                              , borderColor = "#000060"
                              , position    = Top
-                             , font        = "xft:Inconsolata Nerd Font Mono-11:style=Regular"
+                             -- , font        = "xft:Inconsolata Nerd Font Mono-11:style=Regular"
+                             , font        = "xft:PragmataPro Mono-8:style=Regular"
                              }
 
 
@@ -737,9 +738,10 @@ xK_FroggersPause = 0x1008ff12
 
 -- myTerminal = "urxvt"
 myTerminal     = "/home/frosch03/bin/terminal"
-myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux"
+myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux attach-session -t frog"
 myFirefox      = "firefox"
 myChrome       = "chromium"
+myEditor       = "emacsclient -c"
 myBrowser      = myFirefox
 
 jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
@@ -779,7 +781,7 @@ scratchpads =
 myKeys x = M.fromList $
   [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_r), spawn "alacritty -e emacsclient -nw -e '(remember)'")
-  , ((modMask x .|. shiftMask,   xK_e), spawn "alacritty -e emacsclient -nw -e '(eshell)'")
+  , ((modMask x .|. shiftMask,   xK_e), spawn myEditor)
   , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "alacritty")
   , ((modMask x,                 xK_m), spawn "dmpc")
   , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
@@ -916,6 +918,7 @@ myKeys' conf = let
     subKeys "Launchers"
     [ -- ("M-<Space>", addName "Launcher"       $ spawn myLauncher)
       ("M-<Return>"  , addName "Terminal"       $ spawn myTerminal)
+    , ("M-S-<Return>", addName "Editor"         $ spawn myEditor)
     , ("M-\\"        , addName "Browser"        $ spawn myBrowser)
     , ("M-n"         , addName "NSP youtube"    $ namedScratchpadAction scratchpads "youtube")
     , ("M-c"         , addName "NSP im"         $ namedScratchpadAction scratchpads "im")

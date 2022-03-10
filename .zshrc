@@ -135,7 +135,7 @@ fpath=(~/.zsh/complete $fpath)
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
-keychain $HOME/.ssh/id_rsa
+keychain $HOME/.ssh/id_ed25519
 source $HOME/.keychain/$(hostname)-sh
 ### End-Keychain ###
 
