@@ -23,7 +23,7 @@
     #+END_SRC
   - set the font size
     #+BEGIN_SRC emacs-lisp
-      (set-face-attribute 'default nil :height 100)
+      (set-face-attribute 'default nil :height 75)
     #+END_SRC
   - inhibit splash screen
     #+BEGIN_SRC emacs-lisp
@@ -161,7 +161,7 @@
 ** ox-koma-letter
 #+BEGIN_SRC emacs-lisp
   (use-package ox-koma-letter
-    :ensure org-plus-contrib
+    :ensure org-contrib
     :config
     (add-to-list 'org-latex-classes
                  '("my-letter"
@@ -172,7 +172,7 @@
      \[PACKAGES]
      \[EXTRA]"))
     (setq org-koma-letter-default-class "my-letter")
-    :pin gnu
+    :pin nongnu
     )
 #+END_SRC
 
@@ -1037,17 +1037,19 @@ to switch back to window configurations
 
 * projectile
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-:ensure t
-:config
-;; (projectile-global-mode)
-(setq projectile-mode-line " Projectile")
-(setq projectile-indexing-method 'native)
-(setq projectile-enable-caching t)
-;; For Tramp to work with projectile
-;; (add-hook 'text-mode-hook 'projectile-mode)
-;; ^^ won't work, disable projectile-global-mode for it to work
-)
+  (use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode)
+  ;; (setq projectile-mode-line " Projectile")
+  ;; (setq projectile-indexing-method 'native)
+  ;; (setq projectile-enable-caching t)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq projectile-indexing-method 'hybrid)
+  ;; For Tramp to work with projectile
+  ;; (add-hook 'text-mode-hook 'projectile-mode)
+  ;; ^^ won't work, disable projectile-global-mode for it to work
+  )
 #+END_SRC
 
 * recentf
