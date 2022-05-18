@@ -149,5 +149,7 @@ source $HOME/.keychain/$(hostname)-sh
 eval $(dircolors ~/.LS_COLORS)
 alias ls="ls --color=auto -F"
 alias emc="emacsclient -c"
+alias poweroff="sudo shutdown -h now"
+alias reboot="sudo shutdown -r now"
 
-source /home/frosch03/.config/broot/launcher/bash/br
+source /home/mb/.config/broot/launcher/bash/br

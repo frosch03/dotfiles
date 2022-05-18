@@ -16,7 +16,8 @@
       ;; (set-face-attribute 'default nil :font "ProggyTinyTTSZ-14") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
-      (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      (set-face-attribute 'default nil :font "PragmataPro-6") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "terminusicons2") ;; Icon Font
       ;; (set-default-font "Inconsolata 10")
     #+END_SRC
@@ -46,8 +47,8 @@
       (use-package moe-theme
         :ensure t
         )
-      ;; (load-theme 'leuven)
-      (load-theme 'misterioso)
+      (load-theme 'leuven)
+      ;; (load-theme 'dracula)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -71,7 +72,8 @@
     (add-to-list 'load-path "~/.emacs.d/flycheck/")
     (add-to-list 'load-path "~/.emacs.d/neotree/")
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    ;; (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e/")
   #+END_SRC
 
 * Key-Bindings
@@ -105,6 +107,7 @@
     :ensure t
     :config
     (setq org-startup-indented t)
+    :pin gnu
     )
 #+END_SRC
 ** org-plus-contrib
@@ -129,22 +132,22 @@
      (use-package ox-md
      )
    #+END_SRC
-** ox-koma-letter
-#+BEGIN_SRC emacs-lisp
-  (use-package ox-koma-letter
-    :ensure org-plus-contrib
-    :config
-    (add-to-list 'org-latex-classes
-                 '("my-letter"
-                   "\\documentclass\{scrlttr2\}
-     \\usepackage[english]{babel}
-     \\setkomavar{frombank}{(1234)\\,567\\,890}
-     \[DEFAULT-PACKAGES]
-     \[PACKAGES]
-     \[EXTRA]"))
-    (setq org-koma-letter-default-class "my-letter")
-    )
-#+END_SRC
+** DISABLED ox-koma-letter
+# #+BEGIN_SRC emacs-lisp
+#   (use-package ox-koma-letter
+#     :ensure org-plus-contrib
+#     :config
+#     (add-to-list 'org-latex-classes
+#                  '("my-letter"
+#                    "\\documentclass\{scrlttr2\}
+#      \\usepackage[english]{babel}
+#      \\setkomavar{frombank}{(1234)\\,567\\,890}
+#      \[DEFAULT-PACKAGES]
+#      \[PACKAGES]
+#      \[EXTRA]"))
+#     (setq org-koma-letter-default-class "my-letter")
+#     )
+# #+END_SRC
 
 ** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
@@ -159,28 +162,31 @@
    #+END_SRC
 ** org-capture
    #+BEGIN_SRC emacs-lisp
-   (use-package org-capture
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config 
-   (setq org-capture-templates '(("i" "Item [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %i%?")
-                                   ("T" "Timed" entry
-                                    (file+headline "~/Org/timed.org" "Timed")
-                                    "* %i%? \n %U")
-                                   ("w" "Url [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %?[[%:link][%:description]]")
-                                   ("W" "Url with Text [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %?[[%:link][%:description]] \n  %:initial")
-                                   ))
-                                   )
+     (use-package org-capture
+       :ensure f
+       :init
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+     
+       :config 
+       (setq org-capture-templates '(("i" "Item [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %i%?")
+                                     ("T" "Timed" entry
+                                      (file+headline "~/Org/timed.org" "Timed")
+                                      "* %i%? \n %U")
+                                     ("l" "Link" entry
+                                      (file+headline "~/Dropbox/Apps/SimpleTxtEditor/Notizen.org" "Readit online")
+                                      "* %a %^g\n %?\n %T\n %i")
+                                     ("w" "Url [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %?[[%:link][%:description]]")
+                                     ("W" "Url with Text [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %?[[%:link][%:description]] \n  %:initial")
+                                     ))
+       )
    #+END_SRC
 ** COMMENT org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
@@ -376,7 +382,7 @@
 
      (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
    #+END_SRC
-** org publish
+** COMMENT org publish
 #+BEGIN_SRC emacs-lisp
   (require 'ox-publish)
   (setq org-publish-project-alist
@@ -608,13 +614,16 @@
 #+END_SRC
 * Magit
 #+BEGIN_SRC emacs-lisp
-(use-package magit
-:ensure t
-:config
-(global-set-key (kbd "C-<f9>") 'magit-status)
-)
+  (use-package magit
+    :ensure t
+    :init     
+    (setq auth-source-debug 'trivia)
+    :config
+    (global-set-key (kbd "C-<f9>") 'magit-status)
+    (add-hook 'magit-process-find-password-functions 'magit-process-password-auth-source)
+    )
 #+END_SRC
-* Haskell
+* COMMENT Haskell
 ** Configure loadpath
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/haskell-mode/")
@@ -982,13 +991,13 @@ to switch back to window configurations
 #+BEGIN_SRC emacs-lisp
   ;; Set the Conkeror as emacs default browser
   ;; (setq browse-url-browser-function 'browse-url-generic
-  ;;       browse-url-generic-program "/home/frosch03/bin/conky")
+  ;;       browse-url-generic-program "conky")
   (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "/usr/bin/firefox")
+        browse-url-generic-program "firefox")
   (setq browse-url-browser-function 'browse-url-default-browser
-        browse-url-generic-program "/usr/bin/firefox")
+        browse-url-generic-program "firefox")
   ;; (setq browse-url-browser-function 'browse-url-generic
-  ;;       browse-url-generic-program "/usr/bin/chromium")
+  ;;       browse-url-generic-program "chromium")
 #+END_SRC
 
 * flymake
@@ -1007,17 +1016,19 @@ to switch back to window configurations
 
 * projectile
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-:ensure t
-:config
-;; (projectile-global-mode)
-(setq projectile-mode-line " Projectile")
-(setq projectile-indexing-method 'native)
-(setq projectile-enable-caching t)
-;; For Tramp to work with projectile
-;; (add-hook 'text-mode-hook 'projectile-mode)
-;; ^^ won't work, disable projectile-global-mode for it to work
-)
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-global-mode)
+    ;; (setq projectile-mode-line " Projectile")
+    ;; (setq projectile-indexing-method 'native)
+    ;; (setq projectile-enable-caching t)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (setq projectile-indexing-method 'hybrid)
+    ;; For Tramp to work with projectile
+    ;; (add-hook 'text-mode-hook 'projectile-mode)
+    ;; ^^ won't work, disable projectile-global-mode for it to work
+    )
 #+END_SRC
 
 * recentf
@@ -1160,54 +1171,55 @@ to switch back to window configurations
   ;; (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
 
-* COMMENT mu4e
+* mu4e
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-  :ensure t
-  :config
-  (setq
-      mu4e-maildir       "~/Mail"   ;; top-level Maildir
-      mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
-      mu4e-drafts-folder "/drafts"     ;; unfinished messages
-      mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
-      mu4e-refile-folder "/archive"   ;; saved messages
-      mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
+    :ensure f
+    :config
+    (setq sendmail-program "msmtp"
+          send-mail-function 'smtpmail-send-it
+          message-sendmail-f-is-evil t
+          message-sendmail-extra-arguments '("--read-envelope-from")
+          send-mail-function 'message-send-mail-with-sendmail)
+    (setq
+     mu4e-maildir       "~/Mail"   ;; top-level Maildir
+     mu4e-sent-folder   "/gmail/Sent"       ;; folder for sent messages
+     mu4e-drafts-folder "/drafts"     ;; unfinished messages
+     mu4e-trash-folder  "/gmail/Trash"      ;; trashed messages
+     mu4e-refile-folder "/archive"   ;; saved messages
+     mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
 
-  (setq
+    (setq
      ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
+     ;; mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
      mu4e-get-mail-command "mbsync -a"
      mu4e-update-interval 300)             ;; update every 5 minutes
 
-  ;; tell message-mode how to send mail
-  (setq user-mail-address "frosch03@frosch03.de")
-  (setq user-full-name "Matthias Brettschneider")
-  (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-  (setq mu4e-compose-signature "open source, open minds, open future")
+    ;; tell message-mode ohow to send mail
+    (setq user-mail-address "mbrettschneider@heilmannsoftware.de")
+    (setq user-full-name "Matthias Brettschneider")
+    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
+    ;; (setq mu4e-compose-signature "open source, open minds, open future")
 
-  ;; configuration within: private_config.org
-  ;; (setq message-send-mail-function 'smtpmail-send-it
-  ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
-  ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
-  ;;       smtpmail-default-smtp-server "<servername>"
-  ;;       smtpmail-smtp-server "<servername>"
-  ;;       smtpmail-smtp-service <port>
-  ;;       smtpmail-local-domain "<domain>")
+    ;; configuration within: private_config.org
+    ;; (setq message-send-mail-function 'smtpmail-send-it
+    ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
+    ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
+    ;;       smtpmail-default-smtp-server "<servername>"
+    ;;       smtpmail-smtp-server "<servername>"
+    ;;       smtpmail-smtp-service <port>
+    ;;       smtpmail-local-domain "<domain>")
 
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (add-to-list 'mu4e-bookmarks
-               '("((date:7d..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-  (add-to-list 'mu4e-bookmarks
-               '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
-  (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
-               flag:trashed) AND (maildir:/frosch03/INBOX OR
-               maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
-  (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
+    (add-to-list 'mu4e-view-actions
+                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("((date:7d..now) AND not (maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
+    (add-to-list 'mu4e-bookmarks
+                 '("(((date:30d..now) AND not flag:trashed) AND ((maildir:/gmail/INBOX) OR (maildir:/gmail-priv/INBOX) OR (maildir:/frosch03/Inbox)))" "Inbox" ?i))
 
-  ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
-  (setq mu4e-html2text-command "w3m -T text/html")
-  )
+    ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+    (setq mu4e-html2text-command "w3m -T text/html")
+    )
 #+END_SRC
 
 In order to generate html mails from org-mode, this function helps to
@@ -1217,21 +1229,21 @@ add some org configurations before the output is created. Here:
   snippits. Also
 - the table of content is disabled
   #+BEGIN_SRC lisp
-  (defun frog/mu4e-org-compose ()
-    "Switch to/from mu4e-compose-mode and org-mode"
-     (interactive)
-     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
-     (let ((p (point)))
-       (goto-char (point-min))
-       (let ((case-fold-search t))
-         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
-           (goto-char (point-max))
-           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
-       (goto-char p))
-     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
-         (org~mu4e-mime-switch-headers-or-body)
-       (mu4e-compose-mode)))
-  (global-set-key "\M-@" 'frog/mu4e-org-compose)
+    ;; (defun frog/mu4e-org-compose ()
+    ;;   "Switch to/from mu4e-compose-mode and org-mode"
+    ;;    (interactive)
+    ;;    ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
+    ;;    (let ((p (point)))
+    ;;      (goto-char (point-min))
+    ;;      (let ((case-fold-search t))
+    ;;        (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
+    ;;          (goto-char (point-max))
+    ;;          (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
+    ;;      (goto-char p))
+    ;;    (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
+    ;;        (org~mu4e-mime-switch-headers-or-body)
+    ;;      (mu4e-compose-mode)))
+    ;; (global-set-key "\M-@" 'frog/mu4e-org-compose)
   #+END_SRC
 
 * jekyll
@@ -1239,7 +1251,7 @@ add some org configurations before the output is created. Here:
 (use-package hyde
 :ensure t
 :config
-(setq hyde/hyde-list-posts-command "/bin/ls -ltr *.md"
+(setq hyde/hyde-list-posts-command "ls -ltr *.md"
       hyde-home "/home/frosch03/Documents/Blog")
 ;; (setq hyde/hyde-list-posts-command "/bin/ls -ltr *.md"
 ;;       hyde/git/remote "master"   ; The name of the branch on which your blog resides
@@ -1270,10 +1282,13 @@ add some org configurations before the output is created. Here:
 
 * yassnippets
 #+BEGIN_SRC emacs-lisp
-(setq yas-snippet-dirs
-      '("~/.emacs.d/snippets"                 ;; personal snippets
-        "~/.emacs.d/snippets"                 ;; the default collection
-        ))
+  (use-package yasnippet
+    :ensure t)
+  
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/snippets"                 ;; personal snippets
+          "~/.emacs.d/snippets"                 ;; the default collection
+          ))
 #+END_SRC
 
 * weechat
@@ -1288,7 +1303,7 @@ add some org configurations before the output is created. Here:
 :ensure t
 :config
 (setq tramp-default-method "ssh")
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))
 )
 #+END_SRC
 
@@ -1370,9 +1385,50 @@ Using mpdel mode for navigation of mpd
     )
 #+END_SRC
 
-* Disabled: org-roam
+* org-roam
 The configuration of org roam is done as it is suggested on the [[https://org-roam.readthedocs.io/en/master/installation/][org
 roam page]]
+
+Define a function to call from the outside
+#+begin_src emacs-lisp
+  (defun make-capture-today-frame ()
+    "Create a new frame and run org-roam-dailies-capture-today."
+    (interactive)
+    (org-roam-dailies-capture-today)
+    (delete-other-windows)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n z")
+                  (lambda ()
+                    (interactive)
+                    (load-library "dired-x")
+                    (dired "~/Org/roam/")
+                    (dired-omit-mode)
+                    (dired-sort-other "-alhr --time-style=+ --group-directories-first")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-roam-v2-ack t)
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Org/roam/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; ("C-c n j" . org-roam-jump-to-index)
+           ;; Dailies
+           ("C-c n t" . org-roam-dailies-capture-today))
+    :config
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
+#+end_src
+
 # #+BEGIN_SRC emacs-lisp
 #   (use-package org-roam
 #     :hook
@@ -1398,3 +1454,142 @@ here and cloned the git repositry by hand.
 #   (require 'company-org-roam)
 #   (push 'company-org-roam company-backends)
 # #+END_SRC
+
+* GPG Config
+#+begin_src emacs-lisp
+  (setq epa-pinentry-mode 'loopback)
+#+end_src
+
+* Haskell LSP
+#+begin_src emacs-lisp
+  ;; (use-package lsp-mode
+  ;;   :init
+  ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  ;;   (setq lsp-keymap-prefix "C-c l")
+  ;;   (add-hook 'haskell-mode-hook #'lsp)
+  ;;   (add-hook 'haskell-literate-mode-hook #'lsp)
+  ;;   :hook ((haskell-mode . lsp)
+  ;;          ;; if you want which-key integration
+  ;;          ;; (lsp-mode . lsp-enable-which-key-integration)
+  ;;          )
+  ;;   :commands lsp)
+
+  ;; optionally
+  ;; ;; (use-package lsp-ui :commands lsp-ui-mode)
+  ;; if you are helm user
+  ;; ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+  ;; if you are ivy user
+  ;; ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  ;; ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+  ;; ;; optionally if you want to use debugger
+  ;; (use-package dap-mode)
+  ;; ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+  ;; ;; optional if you want which-key integration
+  ;; (use-package which-key
+  ;;   :config
+  ;;   (which-key-mode))
+
+  ;; (use-package eglot
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-to-list 'eglot-server-programs '(haskell-mode . ("ghcide" "--lsp"))))
+
+  (use-package haskell-snippets
+    :ensure t
+    :config
+    (add-hook 'haskell-mode-hook 'yas-minor-mode)
+    )
+
+  ;; LSP
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode t))
+  (use-package lsp-mode
+    :ensure t
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp)
+    :hook (haskell-mode . lsp)
+    :commands lsp)
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package lsp-haskell
+    :ensure t
+    :config
+    (setq lsp-haskell-server-path "/home/mb/.cabal/bin/haskell-language-server")
+    ;; (setq lsp-haskell-server-path "haskell-language-server-8.6.5")
+    (setq lsp-haskell-server-args ())
+    ;; (setq lsp-haskell-process-path-hie "ghcide")
+    ;; (setq lsp-haskell-process-args-hie '())
+    ;; Comment/uncomment this line to see interactions between lsp client/server.
+    (setq lsp-log-io t)
+    )
+#+end_src
+
+** company mode
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    )
+#+end_src
+
+* Ormolu
+#+begin_src emacs-lisp
+  (use-package ormolu
+    :ensure t
+    :hook (haskell-mode . ormolu-format-on-save-mode)
+    :config (setq ormolu-cabal-default-extensions t)
+    :bind (:map haskell-mode-map
+                ("C-c r" . ormolu-format-buffer)))
+#+end_src
+
+* PragmataPro
+#+begin_src emacs-lisp
+  (use-package pragmatapro-lig
+    :ensure f
+    :load-path "~/.emacs.d/pragmatapro/"
+    :config
+    (add-hook 'prog-mode-hook 'pragmatapro-lig-mode)
+    ;; (pragmatapro-lig-global-mode)
+  )
+#+end_src
+
+* fill column marker mode
+#+begin_src emacs-lisp
+  (defun frog-change-column-width ()
+    (setq fill-column 120))
+  (add-hook 'change-log-mode-hook 'frog-change-column-width)
+  (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode)
+#+end_src
+
+* imenu-list
+#+begin_src emacs-lisp
+  (use-package imenu-list
+    :ensure f
+    :config
+    (global-set-key (kbd "C-'") 'imenu-list-smart-toggle)
+    (setq imenu-list-focus-after-activation t)
+    (setq imenu-list-after-jump-hook nil) ; Recenter curser after jumping from imenu to its entry\
+    )
+#+end_src
+
+* fixme-mode
+#+begin_src emacs-lisp
+  (use-package fixme-mode
+    :ensure  f
+    :load-path "~/.emacs.d/fixme-mode/"
+    :config
+    (setq fixme-highlighted-words '("FIXME" "TODO" "BUG" "HACK"))
+    (add-hook 'prog-mode-hook #'fixme-mode)
+    )
+#+end_src

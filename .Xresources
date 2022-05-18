@@ -52,7 +52,8 @@ URxvt.keysym.C-equal: command:\033]11;rgba:ffff/ffff/ffff/ffff\007\033]10;rgba:0
 Fig.latexfonts: true 
 Fig.specialtext: true
 
-xclock*background: #222222
 ! xclock*background: #DDDDDD
+! xclock*background: #222222
+xclock*background: #DDDDDD
 
-Xcursor.size: 16
+Xcursor.size: 32

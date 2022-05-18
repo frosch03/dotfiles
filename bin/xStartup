@@ -12,6 +12,7 @@ SHUTDOWN_CMD="killall bash dunst xbindkeys conky lemonbar bash bash /home/frosch
 
 TWIDTH=130
 
+
 # Set initial bg image
 ############
 # echo "> Set initial bg image"
@@ -27,6 +28,16 @@ TWIDTH=130
 # xset fp rehash
 
 
+
+# xscreensaver - daemon for starting a screensaver
+#              - basically a black screen that locks the system
+############
+echo "> xscreensaver - daemon for starting a screensaver"
+if [ `ps ax | grep "xscreensaver" | grep -v grep | wc -l` -ge 1 ] ; then
+    killall xscreensaver
+    sleep 1
+fi
+xscreensaver --no-splash &
 
 # dunst - notifier for libnotify (notify-send "hello world")
 ############
@@ -189,27 +200,27 @@ $HOME/.lemonbar/frogs_lemonbar.sh &
 # composite Manager
 ###################
 # echo "> composite Manager"
-if [ `ps ax | grep "xcompmgr" | grep -v grep | wc -l` -ge 1 ] ; then
-    killall xcompmgr 
-    sleep 2
-fi
-xcompmgr -c -t 1 -l 1 -o .5 -r 3 &
+# if [ `ps ax | grep "xcompmgr" | grep -v grep | wc -l` -ge 1 ] ; then
+#     killall xcompmgr 
+#     sleep 2
+# fi
+# xcompmgr -c -t 1 -l 1 -o .5 -r 3 &
 
 
 # dropdox deamon
 ############
 # echo "> dropdox deamon"
-if [ `ps ax | grep "dropbox" | grep -v grep | wc -l` -ge 1 ] ; then
-    killall dropbox
-    sleep 2
-fi
-dropbox &
+# if [ `ps ax | grep "dropbox" | grep -v grep | wc -l` -ge 1 ] ; then
+#     killall dropbox
+#     sleep 2
+# fi
+# dropbox &
 
 # initialize the keyboard for Hyper_L & Hyper_R on Tab & Backslash
 ##################################################################
 # echo "> initialize the keyboard for Hyper_L & Hyper_R on Tab & Backslash"
-/home/frosch03/bin/init-keyboard
-xmodmap $HOME/.Xmodmap
+$HOME/bin/init-keyboard & 
+xmodmap $HOME/.Xmodmap & 
     
 
 # set the mouse pointer speeds

@@ -88,25 +88,25 @@ while read -r line ; do
                 bat0_icon=${icon_battery}
             fi
             bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}}${bat0_icon} 0:${sys_arr[14]} "
-            # Battery 1
-            if [ ! "${sys_arr[13]}" == "off" ]; then
-                bat1_cback=${color_batLoad}
-                bat1_cfore=${color_batM}
-                bat1_icon="" # ${icon_power}
-            else
-                bat1_cfore=${color_disable}
-                if [ ${sys_arr[15]} -gt 50 ]; then
-                    bat1_cback=${color_batH}
-                elif [ ${sys_arr[15]} -gt 30 ]; then
-                    bat1_cback=${color_batU}
-                elif [ ${sys_arr[15]} -gt 15 ]; then
-                    bat1_cback=${color_batM}
-                else
-                    bat1_cback=${color_batL}
-                fi
-                bat1_icon=${icon_battery}
-            fi
-            bat1="%{B${bat1_cback}}${bat1_icon} 1:${sys_arr[15]} "
+            # # Battery 1
+            # if [ ! "${sys_arr[13]}" == "off" ]; then
+            #     bat1_cback=${color_batLoad}
+            #     bat1_cfore=${color_batM}
+            #     bat1_icon="" # ${icon_power}
+            # else
+            #     bat1_cfore=${color_disable}
+            #     if [ ${sys_arr[15]} -gt 50 ]; then
+            #         bat1_cback=${color_batH}
+            #     elif [ ${sys_arr[15]} -gt 30 ]; then
+            #         bat1_cback=${color_batU}
+            #     elif [ ${sys_arr[15]} -gt 15 ]; then
+            #         bat1_cback=${color_batM}
+            #     else
+            #         bat1_cback=${color_batL}
+            #     fi
+            #     bat1_icon=${icon_battery}
+            # fi
+            # bat1="%{B${bat1_cback}}${bat1_icon} 1:${sys_arr[15]} "
             ;;
         VOL*)
             # Volume
@@ -173,6 +173,7 @@ while read -r line ; do
     # And finally, output
     # printf "%s\n" "%{l}${wsp}${title} %{r}${mpd}${stab}${irc}${stab}${gmail}${stab}${cpu}${stab}${mem}${stab}${diskused}${stab}${diskh}${stab}${wland}${stab}${wlanu}${stab}${ethd}${stab}${ethu}${stab}${vol}${stab}${bat0}${bat1}${date}${stab}${time}"
     # without mpd:
-    printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${mpd}${stab}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${bat1}${date}${stab}${time}"
+    # printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${mpd}${stab}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${bat1}${date}${stab}${time}"
+    printf "%s\n" "%{S0}%{l}${wsp}${title} %{S1}%{r}${mpd}${stab}${ethd}${stab}${ethu}${stab}${wland}${stab}${wlanu}${stab}${gmail}${stab}${cpu}${stab}${coretemp}${stab}${mem}${stab}${diskused}${stab}${vol}${stab}${bat0}${date}${stab}${time}"
     #printf "%s\n" "%{l}${wsp}${title}"
 done

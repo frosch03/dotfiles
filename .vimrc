@@ -1,8 +1,8 @@
 syntax on
 
 "call pathogen#infect()
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+"call pathogen#runtime_append_all_bundles()
+"call pathogen#helptags()
 
 let no_haskell_syntax_checker='true'
 
@@ -40,7 +40,7 @@ set showmatch
 set matchpairs=(:),[:],{:}
 
 set laststatus=2
-set statusline=%<%F%h%m%r%h%w%y\ %{&ff}\ %{strftime(\"%d/%m/%Y-%H:%M\")}%=\ %{fugitive#statusline()}\ %c%V\ %l\,%L\ %P
+set statusline=%<%F%h%m%r%h%w%y\ %{&ff}\ %{strftime(\"%d/%m/%Y-%H:%M\")}%=\ %c%V\ %l\,%L\ %P
 
 set textwidth=140
 set wrap

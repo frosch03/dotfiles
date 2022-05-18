@@ -6,12 +6,12 @@ let
 in
 {
   # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  programs.home-manager.enable = false;
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "frosch03";
-  home.homeDirectory = "/home/frosch03";
+  home.username = "mb";
+  home.homeDirectory = "/home/mb";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -43,11 +43,13 @@ in
     tree
     unixtools.killall
     neofetch
+    htop
 
     xcape
     xorg.xmodmap
     xorg.xkbcomp
     xorg.xclock
+    xorg.xeyes
 
     lemonbar-xft
     conky
@@ -66,9 +68,6 @@ in
 
     git
     git-crypt
-    gnupg
-    # pinentry-gtk2
-    pinentry-emacs
 
     ag
     xscreensaver
@@ -80,14 +79,21 @@ in
     isync
     w3m
 
+    # IM
+    signal-desktop
+    ferdi
+
     ghc
     python3
+    python39Packages.pip
 
     # Utilities
     restic
     rclone
     pass
     wpa_supplicant_gui
+    zip
+    unzip
 
     broot                       # file browser within console
     amfora                      # gemini terminal client
@@ -95,6 +101,7 @@ in
     mupdf
     pandoc
     imagemagick
+    graphviz
     librecad
     gimp
 
@@ -106,5 +113,41 @@ in
     (texlive.combine {
       inherit (texlive) scheme-medium koma-script capt-of minted fvextra upquote catchfile xstring framed xcolor latex-fonts collection-fontsrecommended biblatex biblatex-apa wrapfig ulem mathtools multirow beamer listings dvipng metafont datetime xltabular;
     })
+
+    # Job specifics
+    ## haskell-language-server
+    chromium
+    cabal-install
+    jdk11
+
+    hunspell
+    hunspellDicts.de-de
+    hunspellDicts.en-us
+
+    nyxt
+
+    msmtp
   ];
+
+  programs.tmux = {
+	  enable = true;
+	  clock24 = true;
+	  plugins = with pkgs.tmuxPlugins; [
+		  sensible
+		  yank
+		  {
+			  plugin = dracula;
+			  extraConfig = ''
+				set -g @dracula-show-battery false
+				set -g @dracula-show-powerline true
+				set -g @dracula-refresh-rate 10
+			'';
+		  }
+	  ];
+
+	  extraConfig = ''
+		set -g mouse on
+	'';
+  };  
+  
 }

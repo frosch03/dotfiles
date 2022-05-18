@@ -146,6 +146,9 @@ EOF
 # ----------------------------------------------------------------------
 
 export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$XUSERID/bus"
-notify-send -u low "Keyboard initialized"
+# notify-send -u low "Keyboard initialized"
+dunstify -u low "Keyboard initialized" &>/dev/null
 xkbcomp -synch -w3 -I$XKBDIR $XKBDIR/keymap/custom.xkb $DISPLAY &>/dev/null
 (exec killall -q xcape) & # gets restarted by the xcape systemd user service
+cd ~
+xmodmap .Xmodmap

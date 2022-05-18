@@ -7,22 +7,17 @@ Type=Application
 Version=1.0
 
 # The name of the application
-Name=Threema
+Name=Youtube
 
 # A comment which can/will be used as a tooltip
-Comment=Group Chat with Threema
-
-# The path to the folder in which the executable is run
-Path=/usr/bin
+Comment=Music via Youtube
 
 # The executable of the application, possibly with arguments.
-Exec=chromium --app="http://t.frosch03.de" --window-position=0,0 --start-fullscreen --class="t.frosch03.de"
-
-# The name of the icon that will be used to display this entry
-# Icon=jmemorize
+Exec=chromium --app="https://www.youtube.com" --window-position=0,0 --start-fullscreen --class="www.youtube.com"
+# Exec=firefox --private-window https://www.youtube.com --kiosk
 
 # Describes whether this application needs to be run in a terminal or not
 Terminal=false
 
 # Describes the categories in which this entry should be shown
-Categories=Work;Planning;Web;
+Categories=Music;Web;

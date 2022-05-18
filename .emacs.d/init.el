@@ -41,5 +41,7 @@
  ;; If there is more than one, they won't work right.
  '(fg:erc-color-face12 ((t (:foreground "deep sky blue"))))
  '(iedit-occurrence ((t (:inherit highlight :background "yellow")))))
-(put 'dired-find-alternate-file 'disabled nil)
 (put 'upcase-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
