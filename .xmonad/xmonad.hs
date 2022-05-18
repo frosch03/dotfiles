@@ -253,7 +253,7 @@ myLayoutHook = hiddenWindows
              $ fullBarToggle
              $ mirrorToggle
              $ reflectToggle
-             $ flex ||| tabs
+             $ threeCol ||| flex ||| tabs
   where
 
 --    testTall = Tall 1 (1/50) (2/3)
@@ -425,6 +425,10 @@ myLayoutHook = hiddenWindows
     --                   standardLayout = ResizableTall 1 (1/50) (2/3) []
     --
     -- retained during development: safe to remove later
+
+    threeCol =
+        trimNamed 5 "3 Col" $
+                  windowNavigation $ addTopBar $ myGaps $ mySpacing $ ThreeCol 1 (3 / 100) (1 / 2)
 
     flex = trimNamed 5 "Flex"
               -- $ avoidStruts
