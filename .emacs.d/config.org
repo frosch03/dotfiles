@@ -1488,6 +1488,13 @@ Define a function to call from the outside
                             '(display-buffer-use-some-window
                               (main)))))
 
+    (add-to-list 'display-buffer-alist
+                 '("\\*org-roam\\*"
+                   (display-buffer-in-direction)
+                   (direction . right)
+                   (window-width . 0.33)
+                   (window-height . fit-window-to-buffer)))
+
     ;; If using org-roam-protocol
     (require 'org-roam-protocol))
 #+end_src
