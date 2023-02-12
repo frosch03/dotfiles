@@ -1773,7 +1773,11 @@ Configuration of ebib together with roam within my dropbox folder
 * eyebrowse
 #+begin_src emacs-lisp
   (use-package eyebrowse
-    :ensure f)
-  (eyebrowse-mode)
+    :ensure f
+    :config
+    (setq desktop-save-mode 1)
+    (eyebrowse-mode)
+    )
+#+end_src
 #+end_src
 
