@@ -1779,5 +1779,13 @@ Configuration of ebib together with roam within my dropbox folder
     (eyebrowse-mode)
     )
 #+end_src
+
+* git-gutter
+#+begin_src emacs-lisp
+  (use-package git-gutter
+    :ensure t
+    :config
+    (global-git-gutter-mode +1)
+    )
 #+end_src
 
