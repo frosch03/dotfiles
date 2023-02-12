@@ -23,7 +23,7 @@
     #+END_SRC
   - set the font size
     #+BEGIN_SRC emacs-lisp
-      (set-face-attribute 'default nil :height 75)
+      (set-face-attribute 'default nil :height 100)
     #+END_SRC
   - inhibit splash screen
     #+BEGIN_SRC emacs-lisp
@@ -46,9 +46,9 @@
     #+BEGIN_SRC emacs-lisp
       (use-package moe-theme
         :ensure t
-        )
+      )
       ;; (load-theme 'leuven)
-      (load-theme 'dracula)
+      (load-theme 'tsdh-dark)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -97,6 +97,7 @@
       (global-set-key (kbd "C-z")     'undo)
       (global-set-key (kbd "M-*")     'pop-tag-mark)
       (global-set-key (kbd "C-<f7>")  'simple-mpc)
+      (global-set-key (kbd "C-x q")    'bury-buffer)
     #+END_SRC
 
 * Org-Mode Config
@@ -106,6 +107,8 @@
     :ensure t
     :config
     (setq org-startup-indented t)
+    ; v-- via: https://github.com/org-roam/org-roam/issues/2198 in order to show links in org-roam backlink buffer in descriptive form
+    ; (setq org-fold-core-style "overlays")
     (with-eval-after-load 'org       
       (add-hook 'org-mode-hook #'visual-line-mode))
 
@@ -159,23 +162,27 @@
      )
    #+END_SRC
 ** ox-koma-letter
-#+BEGIN_SRC emacs-lisp
-  (use-package ox-koma-letter
-    :ensure org-contrib
-    :config
-    (add-to-list 'org-latex-classes
-                 '("my-letter"
-                   "\\documentclass\{scrlttr2\}
-     \\usepackage[english]{babel}
-     \\setkomavar{frombank}{(1234)\\,567\\,890}
-     \[DEFAULT-PACKAGES]
-     \[PACKAGES]
-     \[EXTRA]"))
-    (setq org-koma-letter-default-class "my-letter")
-    :pin nongnu
-    )
-#+END_SRC
+# #+BEGIN_SRC emacs-lisp
+#   (use-package ox-koma-letter
+#     :ensure org-contrib
+#     :config
+#     (add-to-list 'org-latex-classes
+#                  '("my-letter"
+#                    "\\documentclass\{scrlttr2\}
+#      \\usepackage[english]{babel}
+#      \\setkomavar{frombank}{(1234)\\,567\\,890}
+#      \[DEFAULT-PACKAGES]
+#      \[PACKAGES]
+#      \[EXTRA]"))
+#     (setq org-koma-letter-default-class "my-letter")
+#     :pin gnu
+#     )
+# #+END_SRC
 
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/ox-koma-letter/")
+  (require 'ox-koma-letter)
+#+end_src
 ** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
    (use-package org-mu4e
@@ -189,28 +196,31 @@
    #+END_SRC
 ** org-capture
    #+BEGIN_SRC emacs-lisp
-   (use-package org-capture
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+     (use-package org-capture
+       :ensure f
+       :init
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
 
-   :config 
-   (setq org-capture-templates '(("i" "Item [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %i%?")
-                                   ("T" "Timed" entry
-                                    (file+headline "~/Org/timed.org" "Timed")
-                                    "* %i%? \n %U")
-                                   ("w" "Url [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %?[[%:link][%:description]]")
-                                   ("W" "Url with Text [inbox]" entry
-                                    (file "~/Org/inbox.org")
-                                    "* TODO %?[[%:link][%:description]] \n  %:initial")
-                                   ))
-                                   )
+       :config
+       (setq org-capture-templates '(("i" "Item [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %i%?")
+                                     ("L" "Link" entry
+                                      (file "~/Dropbox/Zettelkasten/Notizen.org")
+                                      "* TODO %a %?\n %T\n %i")
+                                     ("T" "Timed" entry
+                                      (file+headline "~/Org/timed.org" "Timed")
+                                      "* %i%? \n %U")
+                                     ("w" "Url [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %?[[%:link][%:description]]")
+                                     ("W" "Url with Text [inbox]" entry
+                                      (file "~/Org/inbox.org")
+                                      "* TODO %?[[%:link][%:description]] \n  %:initial")
+                                     ))
+       )
    #+END_SRC
 ** COMMENT org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
@@ -235,20 +245,31 @@
 ** agenda
    Set the agenda files to my agenda fileset:
    #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files '("~/Org/inbox.org"
-                              "~/Org/current.org"
-                              "~/Org/timed.org"
-                              ;; "~/Dropbox/Apps/frosch03s org-web/Tasks.org"
-                              ))
+     (setq org-agenda-files
+           '("~/Org/inbox.org"
+             "~/Org/current.org"
+             "~/Org/timed.org"
+             "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
+             "~/Dropbox/Zettelkasten/Roam"
+             "~/Dropbox/Zettelkasten/Roam/daily"
+             ;; "~/Dropbox/Apps/frosch03s org-web/Tasks.org"
+             ))
+     ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
+     (setq org-agenda-file-regexp "[0-9]\\{14\\}-[^.]*\\.org$\\|[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.org$")
    #+END_SRC
 
    Define the files one is able to refile stuff into:
    #+BEGIN_SRC emacs-lisp
      (setq org-refile-use-outline-path t)
 
-     (setq org-refile-targets '(("~/Org/current.org" :maxlevel . 2)
-                                ("~/Org/future.org" :level . 1)
-                                ("~/Org/timed.org" :maxlevel . 2)))
+     (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+
+     ;; (setq org-refile-targets '(("~/Org/current.org" :maxlevel . 2)
+     ;;                            ("~/Org/future.org" :level . 1)
+     ;;                            ("~/Org/timed.org" :maxlevel . 2)))
    #+END_SRC
 
    Set the default todo types:
@@ -641,7 +662,7 @@
 (use-package magit
 :ensure t
 :config
-(global-set-key (kbd "C-<f9>") 'magit-status)
+(global-set-key (kbd "C-x g") 'magit-status)
 )
 #+END_SRC
 * Haskell
@@ -1197,6 +1218,7 @@ to switch back to window configurations
   (use-package mu4e
     :ensure f
     :config
+    (global-set-key (kbd "C-x m") 'mu4e)
     (setq
      mu4e-maildir       "~/Mail"   ;; top-level Maildir
      mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
@@ -1342,6 +1364,10 @@ add some org configurations before the output is created. Here:
 #+END_SRC
 
 * eww
+- Give eww a global key binding
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "C-x e") 'eww)
+  #+end_src
 - This here is to toggle images in eww buffers on and off
   #+BEGIN_SRC emacs-lisp
   (defvar-local endless/display-images t)
@@ -1417,13 +1443,25 @@ Define a function to call from the outside
 #+end_src
 
 #+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n d")
+                  (lambda ()
+                    (interactive)
+                    (find-file "~/Org/Roam/20230104232111-index.org")))
   (global-set-key (kbd "C-c n z")
                   (lambda ()
                     (interactive)
                     (load-library "dired-x")
-                    (dired "~/Org/roam/")
+                    (dired "~/Org/Roam/")
                     (dired-omit-mode)
                     (dired-sort-other "-alhr --time-style=+ --group-directories-first")))
+
+  (global-set-key (kbd "C-c n w")
+                  (lambda ()
+                    (interactive)
+                    (load-library "dired-x")
+                    (dired "~/Org/Wissensdatenbank/")
+                    (dired-omit-mode)
+                    (dired-sort-other "-alh --time-style=+ --group-directories-first")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1431,7 +1469,7 @@ Define a function to call from the outside
   (use-package org-roam
     :ensure t
     :custom
-    (org-roam-directory (file-truename "~/Org/roam/"))
+    (org-roam-directory (file-truename "~/Org/Roam/"))
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)
@@ -1461,7 +1499,7 @@ roam page]]
 #     :hook
 #     (after-init . org-roam-mode)
 #     :custom
-#     (org-roam-directory "~/Org/roam/")
+#     (org-roam-directory "~/Org/Roam/")
 #     :bind (:map org-roam-mode-map
 #                 (("C-c n l" . org-roam)
 #                  ("C-c n f" . org-roam-find-file)
@@ -1492,11 +1530,104 @@ Configuration of ebib together with roam within my dropbox folder
     :custom
     (ebib-preload-bib-files '("Literatur.bib"))
     (ebib-bib-search-dirs '("/home/frosch03/Dropbox/roam/"))
-    ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/roam/Literatur.bib"))
+    ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/Roam/Literatur.bib"))
     )
 #+end_src
 
 * Haskell LSP
+#+begin_src emacs-lisp
+  ;; (use-package lsp-mode
+  ;;   :init
+  ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  ;;   (setq lsp-keymap-prefix "C-c l")
+  ;;   (add-hook 'haskell-mode-hook #'lsp)
+  ;;   (add-hook 'haskell-literate-mode-hook #'lsp)
+  ;;   :hook ((haskell-mode . lsp)
+  ;;          ;; if you want which-key integration
+  ;;          ;; (lsp-mode . lsp-enable-which-key-integration)
+  ;;          )
+  ;;   :commands lsp)
+
+  ;; optionally
+  ;; ;; (use-package lsp-ui :commands lsp-ui-mode)
+  ;; if you are helm user
+  ;; ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+  ;; if you are ivy user
+  ;; ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  ;; ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+  ;; ;; optionally if you want to use debugger
+  ;; (use-package dap-mode)
+  ;; ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+  ;; ;; optional if you want which-key integration
+  ;; (use-package which-key
+  ;;   :config
+  ;;   (which-key-mode))
+
+  ;; (use-package eglot
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-to-list 'eglot-server-programs '(haskell-mode . ("ghcide" "--lsp"))))
+
+  (use-package haskell-snippets
+    :ensure t
+    :config
+    (add-hook 'haskell-mode-hook 'yas-minor-mode)
+    )
+
+  ;; LSP
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode t))
+  (use-package lsp-mode
+    :ensure t
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp)
+    :hook (haskell-mode . lsp)
+    :commands lsp)
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package lsp-haskell
+    :ensure t
+    :config
+    (setq lsp-haskell-server-path "/home/frosch03/.cabal/bin/haskell-language-server")
+    ;; (setq lsp-haskell-server-path "haskell-language-server-8.6.5")
+    (setq lsp-haskell-server-args ())
+    ;; (setq lsp-haskell-process-path-hie "ghcide")
+    ;; (setq lsp-haskell-process-args-hie '())
+    ;; Comment/uncomment this line to see interactions between lsp client/server.
+    (setq lsp-log-io t)
+    )
+#+end_src
+
+** company mode
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    )
+#+end_src
+
+* Ormolu
+#+begin_src emacs-lisp
+  (use-package ormolu
+    :ensure t
+    :hook (haskell-mode . ormolu-format-on-save-mode)
+    :config (setq ormolu-cabal-default-extensions t)
+    :bind (:map haskell-mode-map
+                ("C-c r" . ormolu-format-buffer))
+    )
+#+end_src
+* COMMENT Haskell LSP
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :ensure t
@@ -1538,9 +1669,9 @@ Configuration of ebib together with roam within my dropbox folder
   (use-package ormolu
     :ensure t
     :hook (haskell-mode . ormolu-format-on-save-mode)
-    :bind
-    (:map haskell-mode-map
-          ("C-c r" . ormolu-format-buffer)))
+    :config (setq ormolu-cabal-default-extensions t)
+    :bind (:map haskell-mode-map
+                ("C-c r" . ormolu-format-buffer)))
 #+end_src
 
 ** Fixme Mode
@@ -1552,5 +1683,97 @@ Configuration of ebib together with roam within my dropbox folder
     (setq fixme-highhlighted-words '("FIXME" "TODO" "BUG" "HACK"))
     (add-hook 'prog-mode-hook #'fixme-mode)
     )
+#+end_src
+
+* org-static-blog
+#+begin_src emacs-lisp
+  (use-package org-static-blog
+    :ensure t
+    :config
+    (setq org-static-blog-publish-title "frosch03.de/blog")
+    (setq org-static-blog-publish-url "https://frosch03.de/blog")
+    (setq org-static-blog-publish-directory "~/Org/Blog/")
+    (setq org-static-blog-posts-directory "~/Org/Blog/posts/")
+    (setq org-static-blog-index-length 7)
+    (setq org-static-blog-use-preview t)
+    (setq org-static-blog-drafts-directory "~/Org/Blog/drafts/")
+    (setq org-static-blog-enable-tags t)
+    (setq org-export-with-toc nil)
+    (setq org-export-with-section-numbers nil)
+
+    ;; This header is inserted into the <head> section of every page:
+    ;;   (you will need to create the style sheet at
+    ;;    ~/projects/blog/static/style.css
+    ;;    and the favicon at
+    ;;    ~/projects/blog/static/favicon.ico)
+    (setq org-static-blog-page-header
+          "<link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
+           <script src=\"static/respond.js\"></script>
+           <link href=\"static/theme.css\" rel=\"stylesheet\" type=\"text/css\">
+           <meta name=\"author\" content=\"Matthias Brettschneider\">")
+
+    ;; This preamble is inserted at the beginning of the <body> of every page:
+    ;;   This particular HTML creates a <div> with a simple linked headline
+    (setq org-static-blog-page-preamble
+          "<div class=\"container-fluid\" style=\"padding:0px\">
+            <div class=\"row-fluid\">
+              <div class=\"navbar navbar-inverse navbar-static-top\" role=\"navigation\">
+                <div class=\"navbar-header\">
+                  <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">
+                    <span class=\"sr-only\"></span>
+                    <span class=\"icon-bar\"></span>
+                    <span class=\"icon-bar\"></span>
+                    <span class=\"icon-bar\"></span>
+                  </button>
+                </div>
+                <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
+                  <ul class=\"nav navbar-nav\">
+                    <li class=\"active\"><a href=\"/blog/\">Home</a></li>
+                    <li class=\"active\"><a href=\"/blog/archive.html\">Archive</a></li>
+                    <li class=\"active\"><a href=\"/blog/rss.xml\">RSS</a></li>
+
+                    <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>")
+
+    ;; This postamble is inserted at the end of the <body> of every page:
+    ;;   This particular HTML creates a <div> with a link to the archive page
+    ;;   and a licensing stub.
+    (setq org-static-blog-page-postamble
+          "<div id=\"archive\">
+          <a href=\"https://frosch03.de/blog/archive.html\">Other posts</a>
+          </div>
+          <center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">frosch03.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://frosch03.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Matthias Brettschneider</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+
+    ;; This HTML code is inserted into the index page between the preamble and
+    ;;   the blog posts
+    (setq org-static-blog-index-front-matter
+          "<a class=\"navbar-brand\" href=\"/blog/\" class=\"hidden-xs\">
+             <h1>frosch03.de/blog </h1>
+           </a>\n")
+    )
+#+end_src
+
+* Mastodon
+#+begin_src emacs-lisp
+  (use-package mastodon
+    :ensure t
+    :config
+    (global-set-key (kbd "C-x a") 'mastodon)
+    (mastodon-discover)
+    (setq mastodon-instance-url "https://social.frosch03.de")
+    (setq mastodon-active-user "frosch03@social.frosch03.de")
+    )
+#+end_src
+
+* eyebrowse
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :ensure f)
+  (eyebrowse-mode)
 #+end_src
 

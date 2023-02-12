@@ -6,13 +6,12 @@
   (load custom-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;       Bootstrapping packages              ;;
+;;    Bootstrapping package & use-package    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ;; ("org"   . "https://orgmode.org/elpa/")
                          ("elpa"  . "https://elpa.gnu.org/packages/")))
 ;; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 ;; (add-to-list 'package-archives '("org"  . "https://orgmode.org/elpa/"))
@@ -26,7 +25,7 @@
   (package-install 'use-package))
 
 (eval-when-compile
-  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20200520.2305/")
+  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210207.1926/")
   (require 'use-package))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -46,6 +45,6 @@
  ;; If there is more than one, they won't work right.
  '(fg:erc-color-face12 ((t (:foreground "deep sky blue"))))
  '(iedit-occurrence ((t (:inherit highlight :background "yellow")))))
-(put 'dired-find-alternate-file 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
