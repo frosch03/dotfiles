@@ -52,7 +52,16 @@ URxvt.keysym.C-equal: command:\033]11;rgba:ffff/ffff/ffff/ffff\007\033]10;rgba:0
 Fig.latexfonts: true 
 Fig.specialtext: true
 
-xclock*background: #222222
-! xclock*background: #DDDDDD
+! xclock*background: #222222
+! ! xclock*background: #DDDDDD
+
+XClock*foreground: #fbfbfb
+XClock*background: #000018
+XClock*update: 60
+XClock*geometry:          210x210+1020+12
+XClock*majorColor:  rgba:f0/f0/19/7b
+XClock*minorColor:  rgba:a0/c0/f0/c0
+XClock*hourColor:   rgba:c9/66/11/72
+XClock*minuteColor: rgba:00/82/9f/72
 
 Xcursor.size: 16
