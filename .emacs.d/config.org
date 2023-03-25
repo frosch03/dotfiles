@@ -73,6 +73,7 @@
     (add-to-list 'load-path "~/.emacs.d/neotree/")
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
     (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e/")
+    (add-to-list 'load-path "~/.emacs.d/windows-mode/")
   #+END_SRC
 
 * Key-Bindings
@@ -1794,5 +1795,11 @@ Configuration of ebib together with roam within my dropbox folder
     :config
     (global-git-gutter-mode +1)
     )
+#+end_src
+* Windows Mode - Revive.el
+#+begin_src emacs-lisp
+  (autoload 'save-current-configuration "revive" "Save status" t)
+  (autoload 'resume "revive" "Resume Emacs" t)
+  (autoload 'wipe "revive" "Wipe Emacs" t)
 #+end_src
 
