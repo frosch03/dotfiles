@@ -1235,10 +1235,8 @@ to switch back to window configurations
      mu4e-update-interval 300)             ;; update every 5 minutes
 
     ;; tell message-mode how to send mail
-    (setq user-mail-address "frosch03@frosch03.de")
-    (setq user-full-name "Matthias Brettschneider")
-    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-    (setq mu4e-compose-signature "open source, open minds, open future")
+    (setq user-mail-address "matthias@brettschneiders.email")
+    (setq user-full-name "Dr. Matthias Brettschneider")
 
     ;; configuration within: private_config.org
     ;; (setq message-send-mail-function 'smtpmail-send-it
