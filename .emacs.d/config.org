@@ -1535,7 +1535,7 @@ Configuration of ebib together with roam within my dropbox folder
     (global-set-key "\C-cne" 'ebib)
     :custom
     (ebib-preload-bib-files '("Literatur.bib"))
-    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/roam/"))
+    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/Zettelkasten/Roam/Literaturnotizen/"))
     ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/Roam/Literatur.bib"))
     )
 #+end_src
