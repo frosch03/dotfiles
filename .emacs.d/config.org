@@ -1808,4 +1808,10 @@ Configuration of ebib together with roam within my dropbox folder
     :ensure f
     )
 #+end_src
+* Visual-fill-column mode
+In order to wrap on a defined position while using visual-line-mode, visual-fill-column mode comes into play:
+#+begin_src emacs-lisp
+    (use-package visual-fill-column
+      :ensure f)
+#+end_src
 
