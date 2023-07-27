@@ -325,7 +325,7 @@ schemes:
       white:   '0x005f87'
 
 # Colors (Tomorrow Night)
-colors: *light
+colors: *dark
   # Default colors
   #primary:
     # background: '#1d1f21'

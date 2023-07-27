@@ -796,7 +796,7 @@ myKeys x = M.fromList $
   , ((modMask x .|. shiftMask,   xK_k), windows swapUp)
   , ((modMask x,                 xK_m), windows shiftMaster)
   , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
-  , ((modMask x .|. controlMask, xK_l),             spawn "/home/frosch03/bin/lock")
+  , ((modMask x .|. controlMask, xK_l), spawn "/home/frosch03/bin/lock")
   , ((0,        xK_XF86Play),      spawn "mpc toggle")
   , ((0,        xK_XF86Stop),      spawn "mpc stop")
   , ((0,        xK_XF86Fwrd),      spawn "mpc next")
@@ -1065,7 +1065,7 @@ myKeys' conf = let
     -- , ("M-S-k"        , addName "" $ windows swapUp)
     -- , ("M-m"          , addName "" $ windows shiftMaster)
     -- , ("M-S-<Return>" , addName "" $ spawn myTerminal)
-    -- , ("M-S-l"        ,        addName "" $ spawn "/home/frosch03/bin/lock")
+    , ("M-S-l"        ,        addName "" $ spawn "/home/frosch03/bin/lock")
 
     , ("M-C-q"        , addName "Rebuild & restart XMonad"  $ spawn "xmonad --recompile && xmonad --restart")
     , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ (spawn "xShutdown") >> io (exitWith ExitSuccess))
