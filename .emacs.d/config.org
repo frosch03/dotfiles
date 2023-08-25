@@ -48,7 +48,7 @@
         :ensure t
       )
       ;; (load-theme 'leuven)
-      (load-theme 'tsdh-dark)
+      (load-theme 'dracula)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
