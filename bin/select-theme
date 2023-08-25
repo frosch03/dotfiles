@@ -50,12 +50,14 @@ case  "${1}" in
       update_colsep_value ~/localStorage/dotfiles/.Xresources 'xclock\*background' "#DDDDDD"
       update_eqsignsep_value ~/.config/gtk-3.0/settings.ini 'gtk-theme-name' "Arc"
       update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*light"
+      emacsclient --eval "(progn (disable-theme 'dracula) (enable-theme 'leuven))" --quiet -no-wait --suppress-output -a true
     ;;
 
   dark)
       update_colsep_value ~/localStorage/dotfiles/.Xresources 'xclock\*background' "#222222"
       update_eqsignsep_value ~/.config/gtk-3.0/settings.ini "gtk-theme-name" "Arc-Dark"
       update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*dark"
+      emacsclient --eval "(progn (disable-theme 'leuven) (enable-theme 'dracula))" --quiet -no-wait --suppress-output -a true
     ;;
 
   *)
