@@ -251,8 +251,8 @@
              "~/Org/current.org"
              "~/Org/timed.org"
              "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
-             "~/Dropbox/Zettelkasten/Roam"
-             "~/Dropbox/Zettelkasten/Roam/daily"
+             ;; "~/Dropbox/Zettelkasten/Roam"
+             ;; "~/Dropbox/Zettelkasten/Roam/daily"
              ;; "~/Dropbox/Apps/frosch03s org-web/Tasks.org"
              ))
      ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
