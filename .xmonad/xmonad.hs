@@ -96,8 +96,8 @@ wmWindowRole = stringProperty "WM_WINDOW_ROLE"
 floatClass  = []
 floatTitle  = []
 hacking     = ["Happy Hacking"]
-configuring = ["Happy Configuring"]
-webApps     = ["Firefox", "Google-chrome", "Chromium"]
+configuring = ["xclock", "pavucontrol", "configTerminal"]
+webApps     = ["firefox", "Navigator", "Google-chrome", "Chromium"]
 comApps     = ["Pidgin", "jabber", "Jabber", "Empathy"]
 mailApps    = ["OUTLOOK.EXE", "Wine", "mutt", "mail", "evolution", "Evolution"]
 gimpApp     = ["Gimp", "gimp"]
@@ -109,7 +109,7 @@ wmSkypeMain x = do x1 <- className    =? x
                    return (x1 && x2)
 
 wsOne   = "HACKING"
-wsCode  = "CONFIGURING"
+wsConf  = "CONFIGURING"
 wsWeb   = "BROWSING"
 wsComm  = "COMM"
 wsMail  = "MAIL"
@@ -119,7 +119,7 @@ wsMusi  = "EIGHT"
 wsIrc   = "NINE"
 
 
-myWorkspaces = [wsOne, wsCode, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
+myWorkspaces = [wsOne, wsConf, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
 
 
 
@@ -131,12 +131,11 @@ projects =
                 , projectStartHook  = Just $ do spawnOn wsOne myTmuxTerminal
                 }
 
-    , Project   { projectName       = wsCode
+    , Project   { projectName       = wsConf
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsCode myTmuxTerminal
-                                                spawnOn wsCode "xclock"
-                                                spawnOn wsCode "pavucontrol"
-                                                spawnOn wsCode "signal-desktop"
+                , projectStartHook  = Just $ do spawnOn wsConf myConfigTerm
+                                                spawnOn wsConf "xclock"
+                                                spawnOn wsConf "pavucontrol"
                 }
 
     , Project   { projectName       = wsWeb
@@ -744,6 +743,7 @@ xK_FroggersPause = 0x1008ff12
 -- myTerminal = "urxvt"
 myTerminal     = "/home/frosch03/bin/terminal"
 myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux attach-session -t frog"
+myConfigTerm   = "/home/frosch03/bin/terminal --class configTerminal -e tmux attach-session -t frog"
 myFirefox      = "firefox"
 myChrome       = "chromium"
 myEditor       = "emacsclient -c"
@@ -817,16 +817,16 @@ myManagedHook =
     where manageSpecific = composeAll . concat $
                            [ [ className =? c --> doFloat               | c <- floatClass ]
                            , [ title     =? t --> doFloat               | t <- floatTitle ]
-                           , [ title     =? x --> doF (S.shift "hack")  | x <- hacking]
-                           , [ title     =? x --> doF (S.shift "conf")  | x <- configuring]
-                           , [ className =? x --> doF (S.shift "web")   | x <- webApps ]
-                           , [ className =? x --> doF (S.shift "im")    | x <- comApps ]
-                           , [ title     =? x --> doF (S.shift "im")    | x <- comApps ]
-                           , [ className =? x --> doF (S.shift "mail")  | x <- mailApps ]
-                           , [ title     =? x --> doF (S.shift "mail")  | x <- mailApps ]
-                           , [ className =? x --> doF (S.shift "gimp")  | x <- gimpApp ]
-                           , [ className =? x --> doF (S.shift "skype") | x <- skypeApp ]
-                           , [ title     =? x --> doF (S.shift "irc")   | x <- ircApps ]
+                           , [ title     =? x --> doF (S.shift wsOne)   | x <- hacking]
+                           , [ title     =? x --> doF (S.shift wsConf)  | x <- configuring]
+                           , [ className =? x --> doF (S.shift wsWeb)   | x <- webApps ]
+                           , [ className =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           , [ title     =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           , [ className =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           , [ title     =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           , [ className =? x --> doF (S.shift wsGimp)  | x <- gimpApp ]
+                           , [ className =? x --> doF (S.shift wsSkype) | x <- skypeApp ]
+                           , [ title     =? x --> doF (S.shift wsIrc)   | x <- ircApps ]
                            , [ isFullscreen   --> doFullFloat]
                            ]
 

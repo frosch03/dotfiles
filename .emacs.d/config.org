@@ -47,7 +47,7 @@
       (use-package moe-theme
         :ensure t
       )
-      ;; (load-theme 'leuven)
+      (load-theme 'leuven)
       (load-theme 'dracula)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
