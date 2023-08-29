@@ -61,6 +61,11 @@
        (server-start)
      #+END_SRC
 
+By default split the buffer horizontal so that there are an upper and a lower buffer 
+#+begin_src emacs-lisp
+  (setq split-width-threshold nil)
+#+end_src
+
 * Loadpaths
   Add folders to the load-path
   #+BEGIN_SRC emacs-lisp
