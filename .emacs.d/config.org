@@ -638,8 +638,11 @@ Definition of a custom agenda view for Zettelkasten entries:
                  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
     ;; (add-to-list 'mu4e-bookmarks
     ;;              '("((date:7D..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-    (add-to-list 'mu4e-bookmarks
-                 '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
+    (setq mu4e-bookmarks
+          '(("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i)
+            ("(((date:30d..now) AND flag:flagged)" "Marked Mails" ?f)))
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
     ;; (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
     ;;              flag:trashed) AND (maildir:/frosch03/INBOX OR
     ;;              maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
@@ -674,7 +677,7 @@ add some org configurations before the output is created. Here:
   (global-set-key "\M-@" 'frog/mu4e-org-compose)
   #+END_SRC
 
-Accrding to [[https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-05.org][daviwil]]s mu4e workflow, with the following custom actions,
+According to [[https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-05.org][daviwil]]s mu4e workflow, with the following custom actions,
 one can do the capture action without even running org-caputer
 manually:
 
@@ -1314,9 +1317,9 @@ to switch back to window configurations
 
 ** helm-config
 #+BEGIN_SRC emacs-lisp
-(use-package helm-config
-:ensure f
-:config)
+  ;; (use-package helm-config
+  ;;   :ensure nil
+  ;;   :config)
 #+END_SRC
 
 ** helm-eshell
