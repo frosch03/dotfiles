@@ -184,6 +184,14 @@ By default split the buffer horizontal so that there are an upper and a lower bu
 
    #+END_SRC
 
+Definition of a custom agenda view for Zettelkasten entries:
+#+begin_src emacs-lisp :results silent
+  (setq org-agenda-custom-commands
+        '(("z" "Zettelkasten todos" alltodo ""
+           ((org-agenda-files '("~/Dropbox/Zettelkasten/Notizen.org"))
+            (org-agenda-sorting-strategy '(time-up))))))
+#+end_src
+
 ** org-capture
    #+BEGIN_SRC emacs-lisp
      (use-package org-capture
