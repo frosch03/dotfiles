@@ -49,6 +49,7 @@
       )
       (load-theme 'leuven)
       (load-theme 'dracula)
+      (disable-theme 'leuven)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
