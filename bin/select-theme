@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+PWDPATH=$(pwd)
+
+# update_colsep_value File-Name Target-Key Replacement-Value
+update_value() {
+    SEPERATOR=$1
+    CONFIG_FILE=$2
+    TARGET_KEY=$3
+    REPLACEMENT_VALUE=$4
+    sed -i "s/^\($TARGET_KEY *$SEPERATOR *\).*/\1$REPLACEMENT_VALUE/" $CONFIG_FILE
+}
+
+update_colsep_value() {
+    update_value ":" $1 $2 $3
+}
+
+update_colspacesep_value() {
+    update_value ": " $1 $2 $3
+}
+
+update_eqsignsep_value() {
+    update_value "=" $1 $2 $3
+}
+
+update_config() {
+    FROM_FILE=$1
+    TO_FILE=$2
+
+    rm $TO_FILE;
+    cp $FROM_FILE $TO_FILE
+}
+
+update_alacritty() {
+    CONFIG_FILE=$1
+    update_colsep_value $CONFIG_FILE $2 $3
+    mv $CONFIG_FILE ${CONFIG_FILE}.tmp
+    cp ${CONFIG_FILE}.tmp $CONFIG_FILE
+    rm ${CONFIG_FILE}.tmp
+}
+
+restart_program () {
+    PROG_NAME=$1
+    if [ $(ps ax | grep "$PROG_NAME" | grep -v grep | wc -l) -ge 1 ] ; then
+        kill $(ps ax | grep "$PROG_NAME" | grep -v "grep" | sed -e "s/ *\([0-9]*\) .*/\1/") 2>/dev/null
+        sleep 1
+        $PROG_NAME &
+    fi
+}
+
+case  "${1}" in
+
+  light)
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'XClock\*foreground'  "#000018"
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'XClock\*background'  "#fbfbfb"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*majorColor'  "rgba:10\/10\/09\/7b"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minorColor'  "rgba:a0\/c0\/f0\/c0"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*hourColor'   "rgba:09\/06\/01\/72"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minuteColor' "rgba:00\/12\/1f\/72"
+
+      update_eqsignsep_value ~/.config/gtk-3.0/settings.ini 'gtk-theme-name' "Arc"
+      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*light"
+      emacsclient --eval "(progn (disable-theme 'dracula) (enable-theme 'leuven))" --quiet -no-wait --suppress-output -a true
+    ;;
+
+  dark)
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'XClock\*foreground'  "#fbfbfb"
+      update_colsep_value ~/localStorage/dotfiles/.Xresources 'XClock\*background'  "#000018"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*majorColor'  "rgba:f0\/f0\/19\/7b"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minorColor'  "rgba:a0\/c0\/f0\/c0"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*hourColor'   "rgba:c9\/66\/11\/72"
+      update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minuteColor' "rgba:00\/82\/9f\/72"
+
+      update_eqsignsep_value ~/.config/gtk-3.0/settings.ini "gtk-theme-name" "Arc-Dark"
+      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*dark"
+      emacsclient --eval "(progn (disable-theme 'leuven) (enable-theme 'dracula))" --quiet -no-wait --suppress-output -a true
+    ;;
+
+  *)
+    echo "unknown theme, use:"
+    echo "- light"
+    echo "- dark"
+    exit -1
+    ;;
+
+esac
+
+# POST PROCESSING
+#################
+
+xrdb ~/.Xresources
+
+restart_program xeyes
+restart_program xclock
+restart_program pavucontrol
+restart_program firefox
+restart_program signal-desktop
+
+cd $PWDPATH

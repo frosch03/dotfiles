@@ -1,0 +1,30 @@
+[Desktop Entry]
+
+# The type as listed above
+Type=Application
+# Type=Link
+# URL=http://jira.frosch03.de
+
+# The version of the desktop entry specification to which this file complies
+Version=1.0
+
+# The name of the application
+Name=Jira
+
+# A comment which can/will be used as a tooltip
+Comment=Private project planning
+
+# The path to the folder in which the executable is run
+Path=/usr/bin
+
+# The executable of the application, possibly with arguments.
+Exec=chromium --app="http://jira.frosch03.de" --window-position=0,0 --start-fullscreen --class="jira.frosch03.de"
+
+# The name of the icon that will be used to display this entry
+# Icon=jmemorize
+
+# Describes whether this application needs to be run in a terminal or not
+Terminal=false
+
+# Describes the categories in which this entry should be shown
+Categories=Work;Planning;Web;

@@ -1,11 +1,5 @@
 #+Startup: overview
 
-* Package Archives
-  #+BEGIN_SRC emacs-lisp
-  (add-to-list 'package-archives '("org"  . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives '("elpy" . "http://jorgenschaefer.github.io/packages/"))
-  #+END_SRC
-
 * Interface Tweaks & Server
   - custom-set-faces was added by Custom. 
     If you edit it by hand, you could mess it up, so be careful. Your
@@ -22,7 +16,8 @@
       ;; (set-face-attribute 'default nil :font "ProggyTinyTTSZ-14") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "Inconsolata-10") ;; Truetype font
-      (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      ;; (set-face-attribute 'default nil :font "DejaVuSansMono-10") ;; Truetype font
+      (set-face-attribute 'default nil :font "PragmataPro-6") ;; Truetype font
       ;; (set-face-attribute 'default nil :font "terminusicons2") ;; Icon Font
       ;; (set-default-font "Inconsolata 10")
     #+END_SRC
@@ -49,8 +44,12 @@
     #+END_SRC
   - set theme
     #+BEGIN_SRC emacs-lisp
-      (use-package moe-theme)
-      ;; (load-theme 'leuven)
+      (use-package moe-theme
+        :ensure t
+      )
+      (load-theme 'leuven)
+      (load-theme 'dracula)
+      (disable-theme 'leuven)
     #+END_SRC
   - set the width of simple html reader to a more comforting value
     #+BEGIN_SRC emacs-lisp
@@ -63,6 +62,11 @@
        (server-start)
      #+END_SRC
 
+By default split the buffer horizontal so that there are an upper and a lower buffer 
+#+begin_src emacs-lisp
+  (setq split-width-threshold nil)
+#+end_src
+
 * Loadpaths
   Add folders to the load-path
   #+BEGIN_SRC emacs-lisp
@@ -74,7 +78,8 @@
     (add-to-list 'load-path "~/.emacs.d/flycheck/")
     (add-to-list 'load-path "~/.emacs.d/neotree/")
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e/")
+    (add-to-list 'load-path "~/.emacs.d/windows-mode/")
   #+END_SRC
 
 * Key-Bindings
@@ -99,116 +104,219 @@
       (global-set-key (kbd "C-z")     'undo)
       (global-set-key (kbd "M-*")     'pop-tag-mark)
       (global-set-key (kbd "C-<f7>")  'simple-mpc)
+      (global-set-key (kbd "C-x q")    'bury-buffer)
     #+END_SRC
 
 * Org-Mode Config
+** agenda
+   Set the agenda files to my agenda fileset:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-files
+           '("~/Org/organizer.org"
+             ;; "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
+             ))
+     ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
+     (setq org-agenda-file-regexp "[0-9]\\{14\\}-[^.]*\\.org$\\|[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.org$")
+   #+END_SRC
+
+   Define the files one is able to refile stuff into:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-refile-use-outline-path t)
+
+     (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+   #+END_SRC
+
+   Set the default todo types:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keywords '((sequence "TODO" "DONE")))
+   #+END_SRC
+
+   Start emacs within Org's Agenda mode.
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'after-init-hook 'org-agenda-list)
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     ;; starte agenda in ganzem fenster
+     (setq org-agenda-window-setup 'current-window)
+
+     ;; Tasks mit Prioriäten unterschiedlich darstellen:
+     (setq org-agenda-fontify-priorities
+           (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
+
+     (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
+
+
+     (define-key mode-specific-map [?a] 'org-agenda)
+
+     ;; (eval-after-load "org"
+     ;;   '(progn
+     ;;      (define-prefix-command 'org-todo-state-map)
+
+     ;;      (define-key org-mode-map "\C-cx" 'org-todo-state-map)
+
+     ;;      (define-key org-todo-state-map "x"
+     ;;        #'(lambda nil (interactive) (org-todo "CANCELLED")))
+     ;;      (define-key org-todo-state-map "d"
+     ;;        #'(lambda nil (interactive) (org-todo "DONE")))
+     ;;      ;; (define-key org-todo-state-map "f"
+     ;;      ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
+     ;;      (define-key org-todo-state-map "w"
+     ;;        #'(lambda nil (interactive) (org-todo "WAITING")))
+     ;;      ;; (define-key org-todo-state-map "s"
+     ;;      ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
+     ;;      ;; (define-key org-todo-state-map "w"
+     ;;      ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
+
+     ;;      (eval-after-load "org-agenda"
+     ;;        '(progn 
+     ;;           (define-key org-agenda-mode-map "\C-n" 'next-line)
+     ;;           (define-key org-agenda-keymap "\C-n" 'next-line)
+     ;;           (define-key org-agenda-mode-map "\C-p" 'previous-line)
+     ;;           (define-key org-agenda-keymap "\C-p" 'previous-line)
+     ;;           )
+     ;;        )
+     ;;      )
+     ;;   )
+
+   #+END_SRC
+
+Definition of a custom agenda view for Zettelkasten entries:
+#+begin_src emacs-lisp :results silent
+  (setq org-agenda-custom-commands
+        '(("z" "Zettelkasten todos" alltodo ""
+           ((org-agenda-files '("~/Dropbox/Zettelkasten/Notizen.org"))
+            (org-agenda-sorting-strategy '(time-up))))))
+#+end_src
+
+** org-capture
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-capture
+       :ensure f
+       :init
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+       :config
+       (setq org-capture-templates '(("o" "Organizer Workflow")
+                                     ("ot" "Task" entry (file+headline "~/Org/organizer.org" "TASKS")
+                                           "* TODO %i%?")
+                                     ("oa" "Appointment" entry (file+headline "~/Org/organizer.org" "APPOINTMENTS")
+                                           "* %i%? \n %U")
+
+                                     ("m" "Email Workflow")
+                                     ("mf" "Follow Up" entry (file+olp "~/Org/organizer.org" "MAILS" "Follow Up")
+                                           "* TODO %:fromname Mail %a beantworten\nSCHEDULED:%t\n\n%i" :immediate-finish t)
+                                     ("mr" "Read Later" entry (file+olp "~/Org/organizer.org" "MAILS" "Read Later")
+                                           "* TODO %a lesen\nSCHEDULED:%t\n\n%i" :immediate-finish t)
+
+                                     ("z" "Zettelkasten Workflow")
+                                     ("zl" "Link" entry (file "~/Dropbox/Zettelkasten/Notizen.org")
+                                           "* TODO %a %?\n %T\n %i")
+                                     ;; ("w" "Url [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]]")
+                                     ;; ("W" "Url with Text [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]] \n  %:initial")
+                                     ))
+
+       )
+   #+END_SRC
 ** org
 #+BEGIN_SRC emacs-lisp
-(use-package org
-:ensure f
-:config
-(setq org-startup-indented t)
-)
+  (use-package org
+    :ensure t
+    :config
+    (setq org-startup-indented t)
+    ; v-- via: https://github.com/org-roam/org-roam/issues/2198 in order to show links in org-roam backlink buffer in descriptive form
+    ; (setq org-fold-core-style "overlays")
+    (with-eval-after-load 'org       
+      (add-hook 'org-mode-hook #'visual-line-mode))
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Open new file within current window
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    (defun org-force-open-current-window ()
+      (interactive)
+      (let ((org-link-frame-setup (quote
+                                   ((vm . vm-visit-folder)
+                                    (vm-imap . vm-visit-imap-folder)
+                                    (gnus . gnus)
+                                    (file . find-file)
+                                    (wl . wl)))
+                                  ))
+        (org-open-at-point)))
+
+    ;; Depending on universal argument try opening link
+    (defun org-open-maybe (&optional arg)
+      (interactive "P")
+      (if arg
+          (org-open-at-point)
+        (org-force-open-current-window)
+        )
+      )
+    ;; Redefine file opening without clobbering universal argumnet
+    (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
+    (require 'org-ebib)
+    :pin gnu
+    )
 #+END_SRC
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
-   (use-package ox-latex
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   ;; Org's Latex Exporter configurations sction
-   (setq org-latex-pdf-process
-  			 '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-   (setq org-export-latex-listings 'minted)
-   (add-to-list 'org-latex-packages-alist '("" "minted"))
-  
-   ;; for bigger latex preview in org-mode (C-c C-x C-l)
-   (plist-put org-format-latex-options :scale 1.8)
-   )
+     (use-package ox-latex
+     :config
+     ;; Org's Latex Exporter configurations sction
+     (setq org-latex-pdf-process
+           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+     (setq org-export-latex-listings 'minted)
+     (add-to-list 'org-latex-packages-alist '("" "minted"))
+     
+     ;; for bigger latex preview in org-mode (C-c C-x C-l)
+     (plist-put org-format-latex-options :scale 1.8)
+     )
    #+END_SRC
 ** ox-md
    #+BEGIN_SRC emacs-lisp
-   (use-package ox-md
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-   )
+     (use-package ox-md
+     )
    #+END_SRC
-** os-koma-letter
+** ox-koma-letter
+# #+BEGIN_SRC emacs-lisp
+#   (use-package ox-koma-letter
+#     :ensure org-contrib
+#     :config
+#     (add-to-list 'org-latex-classes
+#                  '("my-letter"
+#                    "\\documentclass\{scrlttr2\}
+#      \\usepackage[english]{babel}
+#      \\setkomavar{frombank}{(1234)\\,567\\,890}
+#      \[DEFAULT-PACKAGES]
+#      \[PACKAGES]
+#      \[EXTRA]"))
+#     (setq org-koma-letter-default-class "my-letter")
+#     :pin gnu
+#     )
+# #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-    (use-package ox-koma-letter
-    :load-path "~/.emacs.d/ox-koma/"
-    :config
-    (add-to-list 'org-latex-classes
-                    '("my-letter"
-                      "\\documentclass\{scrlttr2\}
-       \\usepackage[english]{babel}
-       \\setkomavar{frombank}{(1234)\\,567\\,890}
-       \[DEFAULT-PACKAGES]
-       \[PACKAGES]
-       \[EXTRA]"))
-    (setq org-koma-letter-default-class "my-letter")
-    )
-#+END_SRC
-
-** org-mu4e
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/ox-koma-letter/")
+  (require 'ox-koma-letter)
+#+end_src
+** COMMENT org-mu4e
    #+BEGIN_SRC emacs-lisp
    (use-package org-mu4e
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
    :config 
    (setq org-mu4e-convert-to-html t)
    )
    #+END_SRC
 ** org-protocol
    #+BEGIN_SRC emacs-lisp
-   (use-package org-protocol
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :ensure f)
+     (use-package org-protocol)
    #+END_SRC
-** org-capture
-   #+BEGIN_SRC emacs-lisp
-   (use-package org-capture
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config 
-   (setq org-capture-templates '(("i" "Item [inbox]" entry
-                                    (file "~/gtd/inbox.org")
-                                    "* TODO %i%?")
-                                   ("T" "Timed" entry
-                                    (file+headline "~/gtd/timed.org" "Timed")
-                                    "* %i%? \n %U")
-                                   ("w" "Url [inbox]" entry
-                                    (file "~/gtd/inbox.org")
-                                    "* TODO %?[[%:link][%:description]]")
-                                   ("W" "Url with Text [inbox]" entry
-                                    (file "~/gtd/inbox.org")
-                                    "* TODO %?[[%:link][%:description]] \n  %:initial")
-                                   ))
-                                   )
-   #+END_SRC
-** org-capture-pop-frame
+** COMMENT org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
    (use-package org-capture-pop-frame
    :ensure f
@@ -228,132 +336,20 @@
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
    )
    #+END_SRC
-** org-jira
-   #+BEGIN_SRC emacs-lisp
-   (use-package org-jira
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   ;; you need make sure whether the "/jira" at the end is necessary or
-   ;; not, see discussion at the end of this page
-   (setq jiralib-url "http://jira.frosch03.de")
-   )
-   #+END_SRC
-** org-gcal
-   #+BEGIN_SRC emacs-lisp
-   (use-package org-gcal
-   :ensure f
-   :init
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-   (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-   :config
-   (setq package-check-signature nil)
-  
-   ;; configuration within private_config.org
-   ;; (setq org-gcal-client-id "00000000000-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-   ;; 	org-gcal-client-secret "<password>"
-   ;; 	org-gcal-file-alist '(("<username>" .  "<org-file>")))
-  
-   (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync) ))
-   ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync) ))
-   )
-   #+END_SRC
-
-** agenda
-   Set the agenda files to my GTD fileset:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files '("~/gtd/inbox.org"
-                              "~/gtd/current.org"
-                              "~/gtd/timed.org"
-                              "~/Dropbox/Apps/frosch03s org-web/Tasks.org"))
-   #+END_SRC
-
-   Define the files one is able to refile stuff into:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-refile-use-outline-path t)
-
-     (setq org-refile-targets '(("~/gtd/current.org" :maxlevel . 2)
-                                ("~/gtd/future.org" :level . 1)
-                                ("~/gtd/timed.org" :maxlevel . 2)))
-   #+END_SRC
-
-   Set the default todo types:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-todo-keywords '((sequence "TODO" "DONE")))
-   #+END_SRC
-
-   Start emacs within Org's Agenda mode. 
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'after-init-hook 'org-agenda-list)
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     ;; starte agenda in ganzem fenster
-     (setq org-agenda-window-setup 'current-window)
-
-     ;; Tasks mit Prioriäten unterschiedlich darstellen:
-     (setq org-agenda-fontify-priorities 
-           (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
-
-     (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
-
-
-     (define-key mode-specific-map [?a] 'org-agenda)
-
-     (eval-after-load "org"
-       '(progn
-          (define-prefix-command 'org-todo-state-map)
-
-          (define-key org-mode-map "\C-cx" 'org-todo-state-map)
-
-          (define-key org-todo-state-map "x"
-            #'(lambda nil (interactive) (org-todo "CANCELLED")))
-          (define-key org-todo-state-map "d"
-            #'(lambda nil (interactive) (org-todo "DONE")))
-          ;; (define-key org-todo-state-map "f"
-          ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
-          (define-key org-todo-state-map "w"
-            #'(lambda nil (interactive) (org-todo "WAITING")))
-          ;; (define-key org-todo-state-map "s"
-          ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
-          ;; (define-key org-todo-state-map "w"
-          ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
-
-          (eval-after-load "org-agenda"
-            '(progn 
-               (define-key org-agenda-mode-map "\C-n" 'next-line)
-               (define-key org-agenda-keymap "\C-n" 'next-line)
-               (define-key org-agenda-mode-map "\C-p" 'previous-line)
-               (define-key org-agenda-keymap "\C-p" 'previous-line)
-               )
-            )
-          )
-       )
-
-   #+END_SRC
-
-** mobile
-   - Automaticall pull mobile while starting and push while ending
-     #+BEGIN_SRC emacs-lisp
-     (add-hook 'after-init-hook 'org-mobile-pull)
-     (add-hook 'kill-emacs-hook 'org-mobile-push)
-     #+END_SRC
-
-** bullets
+** COMMENT bullets
    Org-Mode Bullets - for nice looking org-mode bullet items
    #+BEGIN_SRC emacs-lisp
      (use-package org-bullets
-       :ensure f
+       :hook (org-mode . org-bullets-mode)
        :config
-       (autoload 'org-bullets "org-bullets")
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-       )
+       (setq org-bullets-bullet-list '("◉" "⁑" "⁂" "❖" "✮" "✱" "✸")))
+     
+     ;; (use-package org-bullets
+     ;;   :ensure f
+     ;;   :config
+     ;;   (autoload 'org-bullets "org-bullets")
+     ;;   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+     ;;   )
    #+END_SRC
 
 ** ditaa & plantuml
@@ -434,7 +430,7 @@
               (setcdr (assoc "\\.txt\\'" org-file-apps) "notepad.exe %s") 
             (add-to-list 'org-file-apps '("\\.txt\\'" . "notepad.exe %s") t))
           ;; Change .pdf association directly within the alist
-          (setcdr (assoc "\\.pdf\\'" org-file-apps) "evince %s")))
+          (setcdr (assoc "\\.pdf\\'" org-file-apps) "mupdf %s")))
 
      (setq org-src-fontify-natively t)
 
@@ -442,80 +438,282 @@
    #+END_SRC
 ** org publish
 #+BEGIN_SRC emacs-lisp
+  (require 'ox-html)
+  ; (require 'ox-rss)
+  (require 'htmlize)
   (require 'ox-publish)
   (setq org-publish-project-alist
         '(
-          ("newblog-posts"
-           :base-directory "~/Documents/NewBlog/"
+          ("Blog (deploy locally)"
+           :components ("local-blog-posts" "local-blog-static" "local-blog-img" "local-blog-data"))
+
+          ("Blog"
+           :components ("blog-posts" "blog-static" "blog-img" "blog-data"))
+
+          ("blog-posts"
+           :base-directory "~/Documents/Blog/"
            :base-extension "org"
+           :html-extension "html"
            :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/"
-           :recursive t
            :publishing-function org-html-publish-to-html
+           :recursive t
+           :section-numbers nil
+           :with-sub-superscript {}
+           :with-toc nil
+           :with-latex t
+           :html-head-extra
+           " <link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
+             <script src=\"static/respond.js\"></script>
+             <link href=\"static/style.css\" rel=\"stylesheet\">
+             <link href=\"static/theme.css\" rel=\"stylesheet\">"
            :headline-levels 4             ; Just the default for this project.
-           :auto-preamble t
-           ;; :auto-sitemap t
-           ;; :sitemap-title "frosch03.de/posts"
-           ;; :sitemap-filename "index.org"
-           ;; :sitemap-style list
-           ;; :author "Matthias Brettschneider"
-           ;; :email "frosch03@frosch03.de"
-           ;; :with-creator t
+           :auto-sitemap t
+           :sitemap-title "Archive"
+           :sitemap-filename "archive.org"
+           :sitemap-soft-files anti-chronologically
+           :sitemap-style list
+           :makeindex t
+           :html-preamble "
+             <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
+               <ul class=\"nav navbar-nav\">
+                 <li class=\"active page\"><a href=\"https://frosch03.de/posts\">Home</a></li>
+                 <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+                 <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
+               </ul>
+             </div>"
+           :html-postamble "<a href=index.html>Other posts</a>
+                            <div id=\"disqus_thread\"></div>
+                            <script>
+                                /**
+                                ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                                ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+                                /*
+                                var disqus_config = function () {
+                                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                                };
+                                ,*/
+                                (function() { // DON'T EDIT BELOW THIS LINE
+                                var d = document, s = d.createElement('script');
+                                s.src = 'https://frosch03.disqus.com/embed.js';
+                                s.setAttribute('data-timestamp', +new Date());
+                                (d.head || d.body).appendChild(s);
+                                })();
+                            </script>
+                            <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
            )
-          ("newblog-img"
-           :base-directory "~/Documents/NewBlog/img/"
+
+          ("blog-static"
+           :base-directory "~/Documents/Blog/static/"
+           :base-extension "css\\|js"
+           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/static/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+
+          ("blog-img"
+           :base-directory "~/Documents/Blog/img/"
            :base-extension "png\\|jpg\\|gif\\|svg"
            :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/img/"
            :recursive t
            :publishing-function org-publish-attachment
            )
-          ("newblog-data"
-           :base-directory "~/Documents/NewBlog/data/"
+
+          ("blog-data"
+           :base-directory "~/Documents/Blog/data/"
            :base-extension "pdf"
            :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/data/"
            :recursive t
            :publishing-function org-publish-attachment
            )
-          ("local-newblog-posts"
-           :base-directory "~/Documents/NewBlog/"
+
+          ("local-blog-posts"
+           :base-directory "~/Documents/Blog/"
            :base-extension "org"
-           :publishing-directory "~/Documents/NewBlog/local/"
-           :recursive t
+           :html-extension "html"
+           :publishing-directory "~/Documents/Blog/local/"
            :publishing-function org-html-publish-to-html
-           :headline-levels 4             ; Just the default for this project.
-           :auto-preamble t
+           :recursive t
+           :section-numbers nil
+           :with-sub-superscript {}
+           :with-toc nil
+           :with-latex t
+           :html-head-extra
+           " <link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
+             <script src=\"static/respond.js\"></script>
+             <link href=\"static/style.css\" rel=\"stylesheet\">
+             <link href=\"static/theme.css\" rel=\"stylesheet\">"
+           :headline-levels 4
            :auto-sitemap t
-           :sitemap-title "frosch03.de/posts"
-           :sitemap-filename "sitemap.org"
+           :sitemap-title "Archive"
+           :sitemap-filename "archive.org"
+           :sitemap-soft-files anti-chronologically
            :sitemap-style list
-           :author "Matthias Brettschneider"
-           :email "frosch03@frosch03.de"
-           :with-creator t
-          )
-          ("local-newblog-img"
-           :base-directory "~/Documents/NewBlog/img/"
+           :makeindex t
+           :html-preamble "
+             <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
+               <ul class=\"nav navbar-nav\">
+                 <li class=\"active page\"><a href=\"https://frosch03.de/blog\">frosch03.de/blog</a></li>
+                 <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+                 <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
+               </ul>
+             </div>"
+           :html-postamble "<a href=index.html>Other posts</a>
+                            <div id=\"disqus_thread\"></div>
+                            <script>
+                                /**
+                                ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                                ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+                                /*
+                                var disqus_config = function () {
+                                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                                };
+                                ,*/
+                                (function() { // DON'T EDIT BELOW THIS LINE
+                                var d = document, s = d.createElement('script');
+                                s.src = 'https://frosch03.disqus.com/embed.js';
+                                s.setAttribute('data-timestamp', +new Date());
+                                (d.head || d.body).appendChild(s);
+                                })();
+                            </script>
+                            <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
+           )
+
+          ("local-blog-img"
+           :base-directory "~/Documents/Blog/img/"
            :base-extension "png\\|jpg\\|gif\\|svg"
-           :publishing-directory "~/Documents/NewBlog/local/img/"
+           :publishing-directory "~/Documents/Blog/local/img/"
            :recursive t
            :publishing-function org-publish-attachment
-          )
-          ("local-newblog-data"
-           :base-directory "~/Documents/NewBlog/data/"
+           )
+
+          ("local-blog-data"
+           :base-directory "~/Documents/Blog/data/"
            :base-extension "pdf"
-           :publishing-directory "~/Documents/NewBlog/local/data/"
+           :publishing-directory "~/Documents/Blog/local/data/"
            :recursive t
            :publishing-function org-publish-attachment
+           )
+
+          ("local-blog-static"
+           :base-directory "~/Documents/Blog/static/"
+           :base-extension "css\\|js"
+           :publishing-directory "~/Documents/Blog/local/static/"
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+
           )
-          ("newblog" :components ("newblog-posts" "newblog-img" "newblog-data"))
-          ("local-newblog" :components ("local-newblog-posts" "local-newblog-img" "local-newblog-data"))
-         )
-  )
+        )
 #+END_SRC
+
+* mu4e
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e
+    :ensure f
+    :config
+    (global-set-key (kbd "C-x m") 'mu4e)
+    (setq
+     mu4e-maildir       "~/Mail"   ;; top-level Maildir
+     mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
+     mu4e-drafts-folder "/drafts"     ;; unfinished messages
+     mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
+     mu4e-refile-folder "/archive"   ;; saved messages
+     mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
+
+    (setq
+     ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
+     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
+     mu4e-get-mail-command "mbsync -a"
+     mu4e-update-interval 300)             ;; update every 5 minutes
+
+    ;; tell message-mode how to send mail
+    (setq user-mail-address "matthias@brettschneiders.email")
+    (setq user-full-name "Dr. Matthias Brettschneider")
+    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
+    (setq mu4e-compose-signature "")
+
+    (add-to-list 'mu4e-view-actions
+                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("((date:7D..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
+    (setq mu4e-bookmarks
+          '(("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i)
+            ("(((date:30d..now) AND flag:flagged)" "Marked Mails" ?f)))
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
+    ;; (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
+    ;;              flag:trashed) AND (maildir:/frosch03/INBOX OR
+    ;;              maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
+    ;; (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
+
+    ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+    (setq mu4e-html2text-command "w3m -T text/html")
+    )
+#+END_SRC
+
+In order to generate html mails from org-mode, this function helps to
+add some org configurations before the output is created. Here:
+
+- imagemagick is selected for cutting the latex formulas into little
+  snippits. Also
+- the table of content is disabled
+  #+BEGIN_SRC lisp
+  (defun frog/mu4e-org-compose ()
+    "Switch to/from mu4e-compose-mode and org-mode"
+     (interactive)
+     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
+     (let ((p (point)))
+       (goto-char (point-min))
+       (let ((case-fold-search t))
+         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
+           (goto-char (point-max))
+           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
+       (goto-char p))
+     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
+         (org~mu4e-mime-switch-headers-or-body)
+       (mu4e-compose-mode)))
+  (global-set-key "\M-@" 'frog/mu4e-org-compose)
+  #+END_SRC
+
+According to [[https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-05.org][daviwil]]s mu4e workflow, with the following custom actions,
+one can do the capture action without even running org-caputer
+manually:
+
+#+begin_src emacs-lisp
+  (defun frog/capture-mail-follow-up (msg)
+    "Call the `org-capture' template on MSG for capturing mail.
+  With this an todo entry into `~/Org/organize.org' under MAILS /
+  Follow Up is created for following up on the mail later."
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mf"))
+
+  (defun frog/capture-mail-read-later (msg)
+    "Call the `org-capture' template on MSG for capturing mail.
+  With this an todo entry into `~/Org/organize.org' under MAILS /
+  Read Later is created for reading the mail later."
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mr"))
+
+  (add-to-list 'mu4e-headers-actions
+               '("follow-up". frog/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow-up". frog/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read-later". frog/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read-later". frog/capture-mail-read-later) t)
+#+end_src
+
 * Dired Config
 ** Configuring loadpath:
    #+BEGIN_SRC emacs-lisp
      (add-to-list 'load-path "~/.emacs.d/dired/")
    #+END_SRC
-** dired+
+** COMMENT dired+
    #+BEGIN_SRC emacs-lisp
    (use-package dired+
    :ensure f
@@ -557,7 +755,7 @@
    (use-package dired-x
    :ensure f)
    #+END_SRC
-** dired-details+
+** COMMENT dired-details+
    #+BEGIN_SRC emacs-lisp
    (use-package dired-details+
    :ensure t
@@ -602,7 +800,7 @@
     (use-package erc
     :ensure t)
   #+END_SRC
-* Latex Config
+* COMMENT Latex Config
 - Loading up
   #+BEGIN_SRC emacs-lisp
   (autoload 'reftex "reftex" "RefTeX")
@@ -675,7 +873,7 @@
 (use-package magit
 :ensure t
 :config
-(global-set-key (kbd "C-<f9>") 'magit-status)
+(global-set-key (kbd "C-x g") 'magit-status)
 )
 #+END_SRC
 * Haskell
@@ -697,8 +895,6 @@
   ;; (add-hook 'haskell-mode-hook (lambda ()
   ;;                                (set-variable 'projectile-tags-command "hasktags --etags %s")))
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  ;; Enable Speedbar also for haskell
-  (speedbar-add-supported-extension ".hs")
   ;; (setq haskell-hasktags-path "/home/frosch03/.cabal/bin/hasktags")
   ;; Set C-c C-c to compile haskell with the haskell mode compile options
   (eval-after-load "haskell-mode"
@@ -794,46 +990,6 @@
 (push '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)" 1 2 3 4) 
       flymake-err-line-patterns)
 )
-#+END_SRC
-* GNUS
-#+BEGIN_SRC emacs-lisp
-;; (use-package gnus-load
-;; :ensure f
-;; :config 
-;; ;; Configure loadpath
-;; (setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
-;; 
-;; ;; Configure info directory
-;; (add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
-;; 
-;; ;; Setup emacss mail user agent
-;; (setq mail-user-agent 'gnus-user-agent)
-;; 
-;; ;; Attach bbdb hook
-;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-;; 
-;; ;; Configure S/MIME\\
-;; ;; This configuration might not just be for gnus but also for mu4e,
-;; ;; but i need to further confirm that
-;; (setq mm-decrypt-option 'always)
-;; (setq mm-verify-option 'always)
-;; (setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
-;; 
-;; (add-hook 'message-send-hook 'mml-secure-message-sign-smime)
-;; 
-;; (setq password-cache t) ; default is true, so no need to set this actually
-;; (setq password-cache-expiry 86400); default is 16 seconds
-;; 
-;; ;; (setq mml-signencrypt-style-alist '(("smime" combined)
-;; ;;                                     ("pgp" combined)
-;; ;;                                     ("pgpmime" combined)))
-;; 
-;; (setq mml-signencrypt-style-alist '(("smime" separate)
-;;                                     ("pgp" separate)
-;;                                     ("pgpauto" separate)
-;;                                     ("pgpmime" separate)))
-;; 
-;; )
 #+END_SRC
 * BBDB 
 ** Configuring loadpath
@@ -983,16 +1139,10 @@ Simple Hackernews-frontend
 :ensure t)
 #+END_SRC
 
-* Autopair
-Automatically set the Brackets
-
-#+BEGIN_SRC emacs-lisp
-(use-package autopair
-:ensure t
-:config 
-(autopair-global-mode)
-)
-#+END_SRC
+* Electric Pair Mode
+#+begin_src emacs-lisp
+  (electric-pair-mode)
+#+end_src
 
 * iedit
 Change multiple occurences
@@ -1063,12 +1213,6 @@ to switch back to window configurations
   ;;       browse-url-generic-program "/usr/bin/chromium")
 #+END_SRC
 
-* elpy
-#+BEGIN_SRC emacs-lisp
-(package-initialize)
-(elpy-enable)
-#+END_SRC
-
 * flymake
 #+BEGIN_SRC emacs-lisp
 (when (load "flymake" t)
@@ -1085,17 +1229,19 @@ to switch back to window configurations
 
 * projectile
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-:ensure t
-:config
-;; (projectile-global-mode)
-(setq projectile-mode-line " Projectile")
-(setq projectile-indexing-method 'native)
-(setq projectile-enable-caching t)
-;; For Tramp to work with projectile
-;; (add-hook 'text-mode-hook 'projectile-mode)
-;; ^^ won't work, disable projectile-global-mode for it to work
-)
+  (use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode)
+  ;; (setq projectile-mode-line " Projectile")
+  ;; (setq projectile-indexing-method 'native)
+  ;; (setq projectile-enable-caching t)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq projectile-indexing-method 'hybrid)
+  ;; For Tramp to work with projectile
+  ;; (add-hook 'text-mode-hook 'projectile-mode)
+  ;; ^^ won't work, disable projectile-global-mode for it to work
+  )
 #+END_SRC
 
 * recentf
@@ -1171,9 +1317,9 @@ to switch back to window configurations
 
 ** helm-config
 #+BEGIN_SRC emacs-lisp
-(use-package helm-config
-:ensure f
-:config)
+  ;; (use-package helm-config
+  ;;   :ensure nil
+  ;;   :config)
 #+END_SRC
 
 ** helm-eshell
@@ -1201,32 +1347,6 @@ to switch back to window configurations
 )
 #+END_SRC
 
-* calfw
-** calfw-cal
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-cal
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-** calfw-ical
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-ical
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-** calfw-org
-#+BEGIN_SRC emacs-lisp
-(use-package calfw-org
-:ensure t
-:config
-(setq calendar-week-start-day 1)
-)
-#+END_SRC
-
 * isearch
 #+BEGIN_SRC emacs-lisp
 ;; Bind C-Tab to make a highlightion from an isearch
@@ -1241,45 +1361,6 @@ to switch back to window configurations
 (define-key isearch-mode-map (kbd "C-<tab>") 'isearch-highlight-phrase)
 #+END_SRC
 
-* rcirc
-#+BEGIN_SRC emacs-lisp
-;; rcirc config
-(use-package tls
-:ensure t
-:config
-(setq rcirc-server-alist
-      '(("irc.freenode.net"
-         :port 6667
-         :channels ("#emacs" "#haskell" ;; "#clojure #emacs"
-                    ))))
-(put 'narrow-to-region 'disabled nil)
-)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;;(use-package rcirc
-;;:ensure t
-;;:config
-;; configuration within private_config.org
-;; (setq rcirc-default-nick "<user>")
-;; (setq rcirc-default-full-name "<fullname>")
-;; (setq rcirc-authinfo
-;;       ;; /msg NickServ identify <password>
-;;       '(("freenode" nickserv "<username>" "<password>")
-;;         ;; ("freenode" chanserv "your nick" "#hiddenchan" "ninjaisthepassword")
-;;         ))
- 
-;; With SSL
-;; (setq rcirc-server-alist
-;;       '(("irc.freenode.net"
-;;          :port 7000
-;;          :connect-function open-tls-stream
-;;          :channels ("#emacs" "#haskell"))))
- ;; Don't forget to add (require 'tls) first
-
-;; Without SSL
-;;)
-#+END_SRC
 * rvm el
 #+BEGIN_SRC emacs-lisp
 ;; rvm el
@@ -1301,100 +1382,6 @@ to switch back to window configurations
   ;; anyhow, set the brower to the -firefox- chromium
   ;; (setq browse-url-browser-function 'browse-url-firefox)
   ;; (setq browse-url-browser-function 'browse-url-chromium)
-#+END_SRC
-
-* pushbullet
-#+BEGIN_SRC emacs-lisp
-;; configuration within: private_config.org
-;; Pushbullet Api Key for frosch03
-;; (setq pushbullet-api-key "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-#+END_SRC
-
-* mu4e
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e
-  :ensure f
-  :config
-  (setq
-      mu4e-maildir       "~/Mail"   ;; top-level Maildir
-      mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
-      mu4e-drafts-folder "/drafts"     ;; unfinished messages
-      mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
-      mu4e-refile-folder "/archive"   ;; saved messages
-      mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
-
-  (setq
-     ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
-     mu4e-get-mail-command "mbsync -a"
-     mu4e-update-interval 300)             ;; update every 5 minutes
-
-  ;; tell message-mode how to send mail
-  (setq user-mail-address "frosch03@frosch03.de")
-  (setq user-full-name "Matthias Brettschneider")
-  (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-  (setq mu4e-compose-signature "open source, open minds, open future")
-
-  ;; configuration within: private_config.org
-  ;; (setq message-send-mail-function 'smtpmail-send-it
-  ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
-  ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
-  ;;       smtpmail-default-smtp-server "<servername>"
-  ;;       smtpmail-smtp-server "<servername>"
-  ;;       smtpmail-smtp-service <port>
-  ;;       smtpmail-local-domain "<domain>")
-
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (add-to-list 'mu4e-bookmarks
-               '("((date:7d..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-  (add-to-list 'mu4e-bookmarks
-               '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
-  (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
-               flag:trashed) AND (maildir:/frosch03/INBOX OR
-               maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
-  (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
-
-  ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
-  (setq mu4e-html2text-command "w3m -T text/html")
-  )
-#+END_SRC
-
-In order to generate html mails from org-mode, this function helps to
-add some org configurations before the output is created. Here:
-
-- imagemagick is selected for cutting the latex formulas into little
-  snippits. Also
-- the table of content is disabled
-  #+BEGIN_SRC lisp
-  (defun frog/mu4e-org-compose ()
-    "Switch to/from mu4e-compose-mode and org-mode"
-     (interactive)
-     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
-     (let ((p (point)))
-       (goto-char (point-min))
-       (let ((case-fold-search t))
-         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
-           (goto-char (point-max))
-           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
-       (goto-char p))
-     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
-         (org~mu4e-mime-switch-headers-or-body)
-       (mu4e-compose-mode)))
-  (global-set-key "\M-@" 'frog/mu4e-org-compose)
-  #+END_SRC
-
-* autshine
-#+BEGIN_SRC emacs-lisp
-;; outshine tests
-(use-package outshine
-:ensure t
-:config
-(add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-(add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
-(add-hook 'LaTeX-mode-hook 'outline-minor-mode)
-(add-hook 'haskell-mode-hook 'outline-minor-mode)
-)
 #+END_SRC
 
 * jekyll
@@ -1451,7 +1438,7 @@ add some org configurations before the output is created. Here:
 :ensure t
 :config
 (setq tramp-default-method "ssh")
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/sh"))
 )
 #+END_SRC
 
@@ -1463,12 +1450,20 @@ add some org configurations before the output is created. Here:
 
 * elfeed
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x w") 'elfeed)
-(elfeed-org)
-(setq rmh-elfeed-org-files (list "~/Org/feeds.org"))
+  (use-package elfeed
+    :ensure elfeed-org
+    :config
+    (global-set-key (kbd "C-x w") 'elfeed)
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/Org/feeds.org"))
+    )
 #+END_SRC
 
 * eww
+- Give eww a global key binding
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "C-x e") 'eww)
+  #+end_src
 - This here is to toggle images in eww buffers on and off
   #+BEGIN_SRC emacs-lisp
   (defvar-local endless/display-images t)
@@ -1512,26 +1507,6 @@ add some org configurations before the output is created. Here:
               (local-set-key (kbd "C-c C-t") 'endless/toggle-image-display)))
   #+END_SRC
 
-* Ur/Web mode
-Ur/Web mode is a mode for the programming environment of Ur/Web.
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/urweb-mode/")
-(load "urweb-mode-startup")
-#+END_SRC
-
-* Atomic Chrome
-I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] extension within firefox
-
-#+BEGIN_SRC emacs-lisp
-(use-package atomic-chrome
-:ensure t
-:config
-(atomic-chrome-start-server)
-(setq atomic-chrome-buffer-open-style 'frame)
-)
-#+END_SRC
-
 * RESTclient
 #+BEGIN_SRC emacs-lisp
   (use-package restclient
@@ -1539,44 +1514,87 @@ I use this with the [[https://github.com/GhostText/GhostText][ghost-text]] exten
     )
 #+END_SRC
 
-* ejira
-#+BEGIN_SRC emacs-lisp
-  (use-package ejira
-    :load-path "/home/frosch03/.emacs.d/ejira"
-    :init
-    (setq jiralib2-url             "http://jira.frosch03.de"
-          jiralib2-user-login-name "frosch03"
-          ejira-projects           '("SA")
-          ejira-main-project       "SA"
-          ejira-my-org-directory   "/home/frosch03/Org/JIRA"
-          ejira-done-states        '("Done")
-          ejira-in-progress-states '("In Progress" "In Review" "Testing")
-          ejira-high-priorities    '("High" "Highest")
-          ejira-low-priorities     '("Low" "Lowest")
-
-          ;; Customize these based on your JIRA server configuration
-          ejira-sprint-field                     'customfield_10003
-          ejira-epic-field                       'customfield_10003
-          ejira-epic-summary-field               'customfield_10005
-          ;; ejira-no-epic-postfix                  ""
-          )
-
-    :config
-    (require 'ejira)
-    (require 'org-agenda)
-    )
-#+END_SRC
-
 * mpdel
 Using mpdel mode for navigation of mpd
 #+BEGIN_SRC emacs-lisp
   (use-package mpdel
+    :ensure t
     :config
     (mpdel-mode)
-  )
+    )
 #+END_SRC
 
-* Disabled: org-roam
+* org-roam
+The configuration of org roam is done as it is suggested on the org
+roam page
+
+Define a function to call from the outside
+#+begin_src emacs-lisp
+  (defun make-capture-today-frame ()
+    "Create a new frame and run org-roam-dailies-capture-today."
+    (interactive)
+    (org-roam-dailies-capture-today)
+    (delete-other-windows)
+    )
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n d")
+                  (lambda ()
+                    (interactive)
+                    (find-file "~/Org/Roam/20230104232111-index.org")))
+  (global-set-key (kbd "C-c n z")
+                  (lambda ()
+                    (interactive)
+                    (load-library "dired-x")
+                    (dired "~/Org/Roam/")
+                    (dired-omit-mode)
+                    (dired-sort-other "-alhr --time-style=+ --group-directories-first")))
+
+  (global-set-key (kbd "C-c n w")
+                  (lambda ()
+                    (interactive)
+                    (load-library "dired-x")
+                    (dired "~/Org/Wissensdatenbank/")
+                    (dired-omit-mode)
+                    (dired-sort-other "-alh --time-style=+ --group-directories-first")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-roam-v2-ack t)
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Org/Roam/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; ("C-c n j" . org-roam-jump-to-index)
+           ;; Dailies
+           ("C-c n t" . org-roam-dailies-capture-today))
+    :hook (after-init . org-roam-setup)
+
+    :config
+    (org-roam-db-autosync-mode)
+    (add-hook 'org-roam-mode-hook
+              (lambda ()
+                (setq-local display-buffer--same-window-action
+                            '(display-buffer-use-some-window
+                              (main)))))
+
+    (add-to-list 'display-buffer-alist
+                 '("\\*org-roam\\*"
+                   (display-buffer-in-direction)
+                   (direction . right)
+                   (window-width . 0.33)
+                   (window-height . fit-window-to-buffer)))
+
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
+#+end_src
+
 The configuration of org roam is done as it is suggested on the [[https://org-roam.readthedocs.io/en/master/installation/][org
 roam page]]
 # #+BEGIN_SRC emacs-lisp
@@ -1584,7 +1602,7 @@ roam page]]
 #     :hook
 #     (after-init . org-roam-mode)
 #     :custom
-#     (org-roam-directory "~/Org/roam/")
+#     (org-roam-directory "~/Org/Roam/")
 #     :bind (:map org-roam-mode-map
 #                 (("C-c n l" . org-roam)
 #                  ("C-c n f" . org-roam-find-file)
@@ -1604,3 +1622,291 @@ here and cloned the git repositry by hand.
 #   (require 'company-org-roam)
 #   (push 'company-org-roam company-backends)
 # #+END_SRC
+
+* ebib
+Configuration of ebib together with roam within my dropbox folder
+#+begin_src emacs-lisp
+  (use-package ebib
+    :ensure t
+    :config
+    (global-set-key "\C-cne" 'ebib)
+    :custom
+    (ebib-preload-bib-files '("Literatur.bib"))
+    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/Zettelkasten/Roam/Literaturnotizen/"))
+    ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/Roam/Literatur.bib"))
+    )
+#+end_src
+
+* Haskell LSP
+#+begin_src emacs-lisp
+  ;; (use-package lsp-mode
+  ;;   :init
+  ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  ;;   (setq lsp-keymap-prefix "C-c l")
+  ;;   (add-hook 'haskell-mode-hook #'lsp)
+  ;;   (add-hook 'haskell-literate-mode-hook #'lsp)
+  ;;   :hook ((haskell-mode . lsp)
+  ;;          ;; if you want which-key integration
+  ;;          ;; (lsp-mode . lsp-enable-which-key-integration)
+  ;;          )
+  ;;   :commands lsp)
+
+  ;; optionally
+  ;; ;; (use-package lsp-ui :commands lsp-ui-mode)
+  ;; if you are helm user
+  ;; ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+  ;; if you are ivy user
+  ;; ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  ;; ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+  ;; ;; optionally if you want to use debugger
+  ;; (use-package dap-mode)
+  ;; ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+  ;; ;; optional if you want which-key integration
+  ;; (use-package which-key
+  ;;   :config
+  ;;   (which-key-mode))
+
+  ;; (use-package eglot
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-to-list 'eglot-server-programs '(haskell-mode . ("ghcide" "--lsp"))))
+
+  (use-package haskell-snippets
+    :ensure t
+    :config
+    (add-hook 'haskell-mode-hook 'yas-minor-mode)
+    )
+
+  ;; LSP
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode t))
+  (use-package lsp-mode
+    :ensure t
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp)
+    :hook (haskell-mode . lsp)
+    :commands lsp)
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package lsp-haskell
+    :ensure t
+    :config
+    (setq lsp-haskell-server-path "/home/frosch03/.cabal/bin/haskell-language-server")
+    ;; (setq lsp-haskell-server-path "haskell-language-server-8.6.5")
+    (setq lsp-haskell-server-args ())
+    ;; (setq lsp-haskell-process-path-hie "ghcide")
+    ;; (setq lsp-haskell-process-args-hie '())
+    ;; Comment/uncomment this line to see interactions between lsp client/server.
+    (setq lsp-log-io t)
+    )
+#+end_src
+
+** company mode
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    )
+#+end_src
+
+* Ormolu
+#+begin_src emacs-lisp
+  (use-package ormolu
+    :ensure t
+    :hook (haskell-mode . ormolu-format-on-save-mode)
+    :config (setq ormolu-cabal-default-extensions t)
+    :bind (:map haskell-mode-map
+                ("C-c r" . ormolu-format-buffer))
+    )
+#+end_src
+* COMMENT Haskell LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp)
+    :hook ((haskell-mode . lsp)
+           ;; if you want which-key integration
+           ;; (lsp-mode . lsp-enable-which-key-integration)
+           )
+    :commands lsp
+    )
+
+  (use-package lsp-ui
+    :ensure f
+    :commands lsp-ui-mode
+    )
+
+  (use-package lsp-haskell
+    :ensure t
+    :config
+    (setq lsp-haskell-process-path-hie "ghcide")
+    (setq lsp-haskell-process-args-hie '())
+    )
+#+end_src
+
+** Company Mode
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    )
+#+end_src
+
+** Ormolu
+#+begin_src emacs-lisp
+  (use-package ormolu
+    :ensure t
+    :hook (haskell-mode . ormolu-format-on-save-mode)
+    :config (setq ormolu-cabal-default-extensions t)
+    :bind (:map haskell-mode-map
+                ("C-c r" . ormolu-format-buffer)))
+#+end_src
+
+** Fixme Mode
+#+begin_src emacs-lisp
+  (use-package fixme-mode
+    :ensure f
+    :load-path "~/.emacs.d/fixme-mode/"
+    :config
+    (setq fixme-highhlighted-words '("FIXME" "TODO" "BUG" "HACK"))
+    (add-hook 'prog-mode-hook #'fixme-mode)
+    )
+#+end_src
+
+* org-static-blog
+#+begin_src emacs-lisp
+  (use-package org-static-blog
+    :ensure t
+    :config
+    (setq org-static-blog-publish-title "frosch03.de/blog")
+    (setq org-static-blog-publish-url "https://frosch03.de/blog")
+    (setq org-static-blog-publish-directory "~/Org/Blog/")
+    (setq org-static-blog-posts-directory "~/Org/Blog/posts/")
+    (setq org-static-blog-index-length 7)
+    (setq org-static-blog-use-preview t)
+    (setq org-static-blog-drafts-directory "~/Org/Blog/drafts/")
+    (setq org-static-blog-enable-tags t)
+    (setq org-export-with-toc nil)
+    (setq org-export-with-section-numbers nil)
+
+    ;; This header is inserted into the <head> section of every page:
+    ;;   (you will need to create the style sheet at
+    ;;    ~/projects/blog/static/style.css
+    ;;    and the favicon at
+    ;;    ~/projects/blog/static/favicon.ico)
+    (setq org-static-blog-page-header
+          "<link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
+           <script src=\"static/respond.js\"></script>
+           <link href=\"static/theme.css\" rel=\"stylesheet\" type=\"text/css\">
+           <meta name=\"author\" content=\"Matthias Brettschneider\">")
+
+    ;; This preamble is inserted at the beginning of the <body> of every page:
+    ;;   This particular HTML creates a <div> with a simple linked headline
+    (setq org-static-blog-page-preamble
+          "<div class=\"container-fluid\" style=\"padding:0px\">
+            <div class=\"row-fluid\">
+              <div class=\"navbar navbar-inverse navbar-static-top\" role=\"navigation\">
+                <div class=\"navbar-header\">
+                  <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">
+                    <span class=\"sr-only\"></span>
+                    <span class=\"icon-bar\"></span>
+                    <span class=\"icon-bar\"></span>
+                    <span class=\"icon-bar\"></span>
+                  </button>
+                </div>
+                <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">
+                  <ul class=\"nav navbar-nav\">
+                    <li class=\"active\"><a href=\"/blog/\">Home</a></li>
+                    <li class=\"active\"><a href=\"/blog/archive.html\">Archive</a></li>
+                    <li class=\"active\"><a href=\"/blog/rss.xml\">RSS</a></li>
+
+                    <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>")
+
+    ;; This postamble is inserted at the end of the <body> of every page:
+    ;;   This particular HTML creates a <div> with a link to the archive page
+    ;;   and a licensing stub.
+    (setq org-static-blog-page-postamble
+          "<div id=\"archive\">
+          <a href=\"https://frosch03.de/blog/archive.html\">Other posts</a>
+          </div>
+          <center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">frosch03.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://frosch03.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Matthias Brettschneider</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+
+    ;; This HTML code is inserted into the index page between the preamble and
+    ;;   the blog posts
+    (setq org-static-blog-index-front-matter
+          "<a class=\"navbar-brand\" href=\"/blog/\" class=\"hidden-xs\">
+             <h1>frosch03.de/blog </h1>
+           </a>\n")
+    )
+#+end_src
+
+* Mastodon
+#+begin_src emacs-lisp
+  (use-package mastodon
+    :ensure t
+    :config
+    (global-set-key (kbd "C-x a") 'mastodon)
+    (mastodon-discover)
+    (setq mastodon-instance-url "https://social.frosch03.de")
+    (setq mastodon-active-user "frosch03@social.frosch03.de")
+    )
+#+end_src
+
+* eyebrowse
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :ensure f
+    :config
+    (setq desktop-save-mode 1)
+    (eyebrowse-mode)
+    )
+#+end_src
+
+* git-gutter
+#+begin_src emacs-lisp
+  (use-package git-gutter
+    :ensure f
+    :config
+    (global-git-gutter-mode +1)
+    )
+#+end_src
+* Windows Mode - Revive.el
+#+begin_src emacs-lisp
+  (autoload 'save-current-configuration "revive" "Save status" t)
+  (autoload 'resume "revive" "Resume Emacs" t)
+  (autoload 'wipe "revive" "Wipe Emacs" t)
+#+end_src
+* Adaptive Wrap
+#+begin_src emacs-lisp
+  (use-package adaptive-wrap
+    :ensure f
+    )
+#+end_src
+* Visual-fill-column mode
+In order to wrap on a defined position while using visual-line-mode, visual-fill-column mode comes into play:
+#+begin_src emacs-lisp
+    (use-package visual-fill-column
+      :ensure f)
+#+end_src
+

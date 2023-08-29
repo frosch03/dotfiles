@@ -1,8 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
 #
-# I3 bar with https://github.com/LemonBoy/bar
+# status bar with https://github.com/LemonBoy/bar
 
-. $(dirname $0)/i3_lemonbar_config
+. $(dirname $0)/frogs_lemonbar_config
 
 if [ $(pgrep -cx $(basename $0)) -gt 1 ] ; then
     printf "%s\n" "The status bar is already running." >&2
@@ -19,16 +19,12 @@ mkfifo "${panel_fifo}"
 # Window title, "WIN"
 xprop -spy -root _NET_ACTIVE_WINDOW | sed -un 's/.*\(0x.*\)/WIN\1/p' > "${panel_fifo}" &
 
-# i3 Workspaces, "WSP"
-# TODO : Restarting I3 breaks the IPC socket con. :(
-# $(dirname $0)/i3_workspaces.pl > "${panel_fifo}" &
-
 # IRC, "IRC"
 # only for init
 ### ~/bin/irc_warn &
 
 # Conky, "SYS"
-conky -c $(dirname $0)/i3_lemonbar_conky > "${panel_fifo}" &
+conky -c $(dirname $0)/frogs_lemonbar_conky > "${panel_fifo}" &
 
 ### UPDATE INTERVAL METERS
 cnt_vol=${upd_vol}
@@ -66,7 +62,7 @@ done &
 # geometry="5120x14"
 # echo "${geometry}"
 
-cat "${panel_fifo}" | $(dirname $0)/i3_lemonbar_parser.sh \
-  | lemonbar -p -f "${font}" -f "${iconfont}" -g "${geometry}" -B "${color_back}" -F "${color_fore}" &
+cat "${panel_fifo}" | $(dirname $0)/frogs_lemonbar_parser.sh \
+  | lemonbar -p -o -3 -f "${font}" -o 0 -f "${iconfont}" -g "${geometry}" -B "${color_back}" -F "${color_fore}" &
 wait
 

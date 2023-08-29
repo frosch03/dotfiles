@@ -22,10 +22,7 @@ URxvt.iso14755: false
 URxvt.iso14755_52: false
 
 
-URxvt*font: xft:DejaVuSansMono:pixelsize=11
-URxvt*boldFont: xft:DejaVuSansMono:bold:pixelsize=11
-URxvt*italicFont: xft:DejaVuSansMono:italic:autohint=true:pixelsize=11
-URxvt*boldItalicFont: xft:DejaVuSansMono:bold:italic:autohint=true:pixelsize=11
+URxvt*font: xft:Inconsolata Nerd Font Mono-11:style=Regular
 
 
 ! Bind C-0, C-+ and C-= to activate medium, big and small font size respectively.
@@ -55,7 +52,16 @@ URxvt.keysym.C-equal: command:\033]11;rgba:ffff/ffff/ffff/ffff\007\033]10;rgba:0
 Fig.latexfonts: true 
 Fig.specialtext: true
 
-xclock*background: #222222
-! xclock*background: #DDDDDD
+! xclock*background: #222222
+! ! xclock*background: #DDDDDD
+
+XClock*foreground: #fbfbfb
+XClock*background: #000018
+XClock*update: 60
+XClock*geometry:          210x210+1020+12
+XClock*majorColor:  rgba:f0/f0/19/7b
+XClock*minorColor:  rgba:a0/c0/f0/c0
+XClock*hourColor:   rgba:c9/66/11/72
+XClock*minuteColor: rgba:00/82/9f/72
 
 Xcursor.size: 16

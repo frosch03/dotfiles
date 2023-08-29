@@ -1,0 +1,22 @@
+[Desktop Entry]
+
+# The type as listed above
+Type=Application
+
+# The version of the desktop entry specification to which this file complies
+Version=1.0
+
+# The name of the application
+Name=Youtube
+
+# A comment which can/will be used as a tooltip
+Comment=Music via Youtube
+
+# The executable of the application, possibly with arguments.
+Exec=chromium --app="https://www.youtube.com" --window-position=0,0 --start-fullscreen --class="www.youtube.com"
+
+# Describes whether this application needs to be run in a terminal or not
+Terminal=false
+
+# Describes the categories in which this entry should be shown
+Categories=Music;Web;

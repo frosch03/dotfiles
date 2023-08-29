@@ -1,0 +1,5 @@
+#!/bin/sh
+
+alacritty "$@"
+# urxvt -rv "$@"
+# urxvt -rv -e tmux a

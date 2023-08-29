@@ -61,7 +61,8 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Layout.PerWorkspace 
-import XMonad.Layout.Grid
+--import XMonad.Layout.Grid
+import XMonad.Layout.GridVariants hiding (R, L, U, D)
 import XMonad.Layout.IM
 import XMonad.Layout.Reflect
 import XMonad.Layout.Named
@@ -95,8 +96,8 @@ wmWindowRole = stringProperty "WM_WINDOW_ROLE"
 floatClass  = []
 floatTitle  = []
 hacking     = ["Happy Hacking"]
-configuring = ["Happy Configuring"]
-webApps     = ["Firefox", "Google-chrome", "Chromium"]
+configuring = ["xclock", "pavucontrol", "configTerminal", "Pavucontrol"]
+webApps     = ["firefox", "Navigator", "Google-chrome", "Chromium"]
 comApps     = ["Pidgin", "jabber", "Jabber", "Empathy"]
 mailApps    = ["OUTLOOK.EXE", "Wine", "mutt", "mail", "evolution", "Evolution"]
 gimpApp     = ["Gimp", "gimp"]
@@ -108,7 +109,7 @@ wmSkypeMain x = do x1 <- className    =? x
                    return (x1 && x2)
 
 wsOne   = "HACKING"
-wsCode  = "CONFIGURING"
+wsConf  = "CONFIGURING"
 wsWeb   = "BROWSING"
 wsComm  = "COMM"
 wsMail  = "MAIL"
@@ -118,7 +119,7 @@ wsMusi  = "EIGHT"
 wsIrc   = "NINE"
 
 
-myWorkspaces = [wsOne, wsCode, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
+myWorkspaces = [wsOne, wsConf, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
 
 
 
@@ -127,21 +128,20 @@ projects =
 
     [ Project   { projectName       = wsOne
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsOne "/usr/bin/emacs"
+                , projectStartHook  = Just $ do spawnOn wsOne myTmuxTerminal
                 }
 
-    , Project   { projectName       = wsCode
+    , Project   { projectName       = wsConf
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsCode myTmuxTerminal
-                                                spawnOn wsCode "/usr/bin/xclock"
-                                                spawnOn wsCode "/usr/bin/pavucontrol"
-                                                spawnOn wsCode "/usr/bin/signal-desktop"
+                , projectStartHook  = Just $ do spawnOn wsConf myConfigTerm
+                                                spawnOn wsConf "xclock"
+                                                spawnOn wsConf "pavucontrol"
                 }
 
     , Project   { projectName       = wsWeb
                 , projectDirectory  = "~/"
                 , projectStartHook  = Just $ do spawnOn wsWeb myBrowser
-                                                spawnOn wsWeb "emacsclient -c -F '(quote (name . \"Notizen\"))' ~/Dropbox/Apps/SimpleTxtEditor/Notizen.org"
+                                                spawnOn wsWeb "emacsclient -c -F '(quote (name . \"Notizen\"))' ~/Dropbox/Zettelkasten/Notizen.org"
                 }
 
     , Project   { projectName       = wsComm
@@ -163,12 +163,12 @@ curLayout :: X String
 curLayout = gets windowset >>= return . description . S.layout . S.workspace . S.current
 
 main = do
-  spawn "xStartup &"
+  spawn "/home/frosch03/bin/xStartup &"
   xmonad
        -- $ ewmh
        $ dynamicProjects projects
        $ withUrgencyHook NoUrgencyHook
-       $ addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
+             $ addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
        $ desktopConfig
              { borderWidth        = 0
              , normalBorderColor  = myGray
@@ -186,25 +186,26 @@ myLogHook = fadeInactiveLogHook fadeAmount
      where fadeAmount = 0xcccccccc
      
 -- The pretty printed layout for my lemonbar 
-myLemonbarPP = defaultPP 
+myLemonbarPP = def
                  { ppTitle   =  ("WIN" ++)
                  , ppCurrent =  ("FOC" ++)
                  , ppVisible =  ("ACT" ++)
                  , ppUrgent  =  ("URG" ++)
                  , ppHidden  =  ("INA" ++)
-		 , ppLayout  =  ("LAY" ++)
+                 , ppLayout  =  ("LAY" ++)
                  , ppSep     = "\n"
-		 , ppWsSep   = " "
-		 , ppOutput  = \x -> writeFile "/tmp/xmonad_lemonbar_frosch03" $ "WSP" ++ x ++ "\n"
+                 , ppWsSep   = " "
+                 , ppOutput  = \x -> writeFile "/tmp/xmonad_lemonbar_frosch03" $ "WSP" ++ x ++ "\n"
                  } 
                  
 -- The XPConfig definition for my XMonad.Prompts 
-myXPConfig = defaultXPConfig { bgColor     = "#000030" -- dark dark blue
-                             , fgColor     = "white"
-                             , borderColor = "#000060"
-                             , position    = Top
-                             , font        = "xft:DejaVuSansMono:pixelsize=10:antialias=true:autohint=true"
-                             }
+myXPConfig = def { bgColor     = "#000030" -- dark dark blue
+                 , fgColor     = "white"
+                 , borderColor = "#000060"
+                 , position    = Top
+                                 -- , font        = "xft:Inconsolata Nerd Font Mono-11:style=Regular"
+                 , font        = "xft:PragmataPro Mono-8:style=Regular"
+                 }
 
 
 -- The layoutdefinition for my workspaces
@@ -217,11 +218,11 @@ myXPConfig = defaultXPConfig { bgColor     = "#000030" -- dark dark blue
 --                                     ||| reflectHoriz (pidginLayout Full)
 --                                     ||| reflectHoriz (pidginLayout Circle)
 --                                     )
--- 	  $ onWorkspaces ["mail"]   (Full)
--- 	  $ onWorkspaces ["skype"]  (reflectHoriz $ (withIM (1%6) (Role "MainWindow") Grid))
---  	  $ onWorkspaces ["gimp"]   (gimp)
---        	  $ onWorkspaces ["musi"]   (Circle)
--- 	  $ tiled ||| Mirror tiled ||| Full ||| Circle
+--           $ onWorkspaces ["mail"]   (Full)
+--           $ onWorkspaces ["skype"]  (reflectHoriz $ (withIM (1%6) (Role "MainWindow") Grid))
+--            $ onWorkspaces ["gimp"]   (gimp)
+--                  $ onWorkspaces ["musi"]   (Circle)
+--           $ tiled ||| Mirror tiled ||| Full ||| Circle
 --     where tiled   = Tall nmaster delta ratio
 --           nmaster = 1 
 --           ratio   = 1/2
@@ -252,7 +253,7 @@ myLayoutHook = hiddenWindows
              $ fullBarToggle
              $ mirrorToggle
              $ reflectToggle
-             $ flex ||| tabs
+             $ flex ||| (mySpacing $ Grid (4/3)) -- ||| threeCol ||| tabs
   where
 
 --    testTall = Tall 1 (1/50) (2/3)
@@ -425,29 +426,33 @@ myLayoutHook = hiddenWindows
     --
     -- retained during development: safe to remove later
 
+    -- threeCol =
+    --     trimNamed 5 "3 Col" $
+    --               windowNavigation $ addTopBar $ myGaps $ mySpacing $ ThreeColMid 1 (1 / 100) (1 / 3)
+
     flex = trimNamed 5 "Flex"
               -- $ avoidStruts
               -- don't forget: even though we are using X.A.Navigation2D
               -- we need windowNavigation for merging to sublayouts
               $ windowNavigation
               $ addTopBar
-	      $ myGaps
+              $ myGaps
               $ addTabs shrinkText myTabTheme
-	      $ mySpacing
+              $ mySpacing
               -- $ subLayout [] (Simplest ||| (mySpacing $ Accordion))
               $ subLayout [] (Simplest ||| Accordion)
               $ ifWider smallMonResWidth wideLayouts standardLayouts
               where
                   wideLayouts = myGaps $ mySpacing
-                      $ (suffixed "Wide 3Col" $ ThreeColMid 1 (1/20) (1/2))
+                      -- $ (suffixed "Wide 3Col" $ ThreeColMid 1 (1/20) (1/2))
+                      $ (suffixed "Wide 3Col" $ ThreeColMid 1 (1/100) (1/3))
                     ||| (trimSuffixed 1 "Wide BSP" $ hiddenWindows emptyBSP)
                   --  ||| fullTabs
                   standardLayouts = myGaps $ mySpacing
-                      $ (suffixed "Std 2/3" $ ResizableTall 1 (1/20) (2/3) [])
-                    ||| (suffixed "Std 1/2" $ ResizableTall 1 (1/20) (1/2) [])
-
-                  --  ||| fullTabs
-                  --fullTabs = suffixed "Tabs Full" $ Simplest
+                      $ (suffixed "Std 2/3" $ reflectHoriz $ ResizableTall 1 (1/20) (2/3) [])
+                    ||| fullTabs
+                    -- ||| (suffixed "Std 1/2" $ ResizableTall 1 (1/20) (1/2) [])
+                  fullTabs = suffixed "Tabs Full" $ Simplest
                   --
                   -- NOTE: removed this from the two (wide/std) sublayout
                   -- sequences. if inside the ifWider, the ||| combinator
@@ -735,11 +740,13 @@ xK_XF86AudioLowerVolume = 0x1008ff11
 xK_FroggersPause = 0x1008ff12
 
 
--- myTerminal = "/usr/bin/urxvt"
+-- myTerminal = "urxvt"
 myTerminal     = "/home/frosch03/bin/terminal"
-myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux"
-myFirefox      = "/usr/bin/firefox"
-myChrome       = "/usr/bin/chromium"
+myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux attach-session -t frog"
+myConfigTerm   = "/home/frosch03/bin/terminal --class configTerminal -e tmux attach-session -t frog"
+myFirefox      = "firefox"
+myChrome       = "chromium"
+myEditor       = "emacsclient -c"
 myBrowser      = myFirefox
 
 jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
@@ -747,14 +754,14 @@ jiraInfix           = "jira"
 jiraResource        = "jira.frosch03.de"
 isJira              = (resource =? jiraResource)
 
-threemaCommand      = "dex $HOME/.local/share/applications/threema.desktop"
-threemaInfix        = "threema"
-threemaResource     = "t.frosch03.de"
-isThreema           = (resource =? threemaResource)
+youtubeCommand      = "dex $HOME/.local/share/applications/youtube.desktop"
+youtubeInfix        = "youtube"
+youtubeResource     = "www.youtube.com"
+isYoutube           = (resource =? youtubeResource)
 
-imCommand      = "dex $HOME/.local/share/applications/ferdi.desktop"
+imCommand      = "dex $HOME/.local/share/applications/signal.desktop"
 imInfix        = "im"
-imResource     = "ferdi"
+imResource     = "signal"
 isIm           = (resource =? imResource)
 
 whatsappCommand     = "dex $HOME/.local/share/applications/whatsapp.desktop"
@@ -770,7 +777,7 @@ isOrgCapture          = (resource =? orgCaptureResource)
 scratchpads =
     [   (NS "im"       imCommand         isIm         defaultFloating)
     ,   (NS "jira"     jiraCommand       isJira       defaultFloating)
-    ,   (NS "threema"  threemaCommand    isThreema    defaultFloating)
+    ,   (NS "youtube"  youtubeCommand    isYoutube    defaultFloating)
     ,   (NS "whatsapp" whatsappCommand   isWhatsapp   defaultFloating)
     ,   (NS "capture"  orgCaptureCommand isOrgCapture defaultFloating)
     ] 
@@ -778,10 +785,10 @@ scratchpads =
 -- My additional keybindings
 myKeys x = M.fromList $
   [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_r), spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-  , ((modMask x .|. shiftMask,   xK_e), spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
-  , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "urxvt")
-  , ((modMask x,                 xK_m), spawn "/usr/bin/dmpc")
+  , ((modMask x .|. shiftMask,   xK_r), spawn "alacritty -e emacsclient -nw -e '(remember)'")
+  , ((modMask x .|. shiftMask,   xK_e), spawn myEditor)
+  , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "alacritty")
+  , ((modMask x,                 xK_m), spawn "dmpc")
   , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_s), sshPrompt myXPConfig)
   , ((modMask x .|. shiftMask,   xK_f), focusUrgent)
@@ -789,16 +796,16 @@ myKeys x = M.fromList $
   , ((modMask x .|. shiftMask,   xK_k), windows swapUp)
   , ((modMask x,                 xK_m), windows shiftMaster)
   , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
-  , ((modMask x .|. controlMask, xK_l),	spawn "/home/frosch03/bin/lock")
-  , ((0        ,          xK_XF86Play), spawn "/usr/bin/mpc toggle")
-  , ((0        ,          xK_XF86Stop), spawn "/usr/bin/mpc stop")
-  , ((0        ,          xK_XF86Fwrd), spawn "/usr/bin/mpc next")
-  , ((0        ,          xK_XF86Bwrd), spawn "/usr/bin/mpc prev")
-  , ((0        ,          xK_XF86Thnk), spawn "/home/frosch03/whatIsThisPlace")
-  , ((0        ,         xK_XF86Sleep),	spawn "sudo pm-suspend")
-  , ((0        ,   xK_XF86ScreenSaver),	spawn "gnome-screensaver-command --lock")
+  , ((modMask x .|. controlMask, xK_l), spawn "/home/frosch03/bin/lock")
+  , ((0,        xK_XF86Play),      spawn "mpc toggle")
+  , ((0,        xK_XF86Stop),      spawn "mpc stop")
+  , ((0,        xK_XF86Fwrd),      spawn "mpc next")
+  , ((0,        xK_XF86Bwrd),      spawn "mpc prev")
+  , ((0,        xK_XF86Thnk),      spawn "/home/frosch03/whatIsThisPlace")
+  , ((0,       xK_XF86Sleep),      spawn "sudo pm-suspend")
+  , ((0, xK_XF86ScreenSaver),      spawn "gnome-screensaver-command --lock")
   ]
-newKeys x = myKeys x `M.union` keys defaultConfig x
+newKeys x = myKeys x `M.union` keys def x
 
 -- My additional managed applications (browser is always on desktop 3 and in fullscreen, etc.)
 myManagedHook =
@@ -810,16 +817,17 @@ myManagedHook =
     where manageSpecific = composeAll . concat $
                            [ [ className =? c --> doFloat               | c <- floatClass ]
                            , [ title     =? t --> doFloat               | t <- floatTitle ]
-                           , [ title     =? x --> doF (S.shift "hack")  | x <- hacking]
-                           , [ title     =? x --> doF (S.shift "conf")  | x <- configuring]
-                           , [ className =? x --> doF (S.shift "web")   | x <- webApps ]
-                           , [ className =? x --> doF (S.shift "im")    | x <- comApps ]
-                           , [ title     =? x --> doF (S.shift "im")    | x <- comApps ]
-                           , [ className =? x --> doF (S.shift "mail")  | x <- mailApps ]
-                           , [ title     =? x --> doF (S.shift "mail")  | x <- mailApps ]
-                           , [ className =? x --> doF (S.shift "gimp")  | x <- gimpApp ]
-                           , [ className =? x --> doF (S.shift "skype") | x <- skypeApp ]
-                           , [ title     =? x --> doF (S.shift "irc")   | x <- ircApps ]
+                           , [ title     =? x --> doF (S.shift wsOne)   | x <- hacking]
+                           , [ title     =? x --> doF (S.shift wsConf)  | x <- configuring]
+                           , [ className =? x --> doF (S.shift wsConf)  | x <- configuring]
+                           , [ className =? x --> doF (S.shift wsWeb)   | x <- webApps ]
+                           , [ className =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           , [ title     =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           , [ className =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           , [ title     =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           , [ className =? x --> doF (S.shift wsGimp)  | x <- gimpApp ]
+                           , [ className =? x --> doF (S.shift wsSkype) | x <- skypeApp ]
+                           , [ title     =? x --> doF (S.shift wsIrc)   | x <- ircApps ]
                            , [ isFullscreen   --> doFullFloat]
                            ]
 
@@ -838,7 +846,8 @@ myModMask = mod4Mask
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
 --myEventHook = mempty
-myEventHook = ewmhDesktopsEventHook
+--myEventHook = ewmhDesktopsEventHook
+myEventHook = ewmh
 
 
 
@@ -857,12 +866,12 @@ notSP = (return $ ("NSP" /=) . W.tag) :: X (WindowSpace -> Bool)
 shiftAndView dir = findWorkspace getSortByIndex dir (WSIs notSP) 1
         >>= \t -> (windows . W.shift $ t) >> (windows . W.greedyView $ t)
 
-nextNonEmptyWS = findWorkspace getSortByIndexNoSP Next HiddenNonEmptyWS 1
+nextNonEmptyWS = findWorkspace getSortByIndexNoSP Next (hiddenWS :&: XMonad.Actions.CycleWS.Not emptyWS) 1
         >>= \t -> (windows . W.view $ t)
-prevNonEmptyWS = findWorkspace getSortByIndexNoSP Prev HiddenNonEmptyWS 1
+prevNonEmptyWS = findWorkspace getSortByIndexNoSP Prev (hiddenWS :&: XMonad.Actions.CycleWS.Not emptyWS) 1
         >>= \t -> (windows . W.view $ t)
 getSortByIndexNoSP =
-        fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex
+        fmap (.filterOutWs []) getSortByIndex
 
 wsKeys = map show $ [1..9] ++ [0]
             
@@ -891,7 +900,7 @@ myKeys' conf = let
     swapMaster' (W.Stack f u d) = W.Stack f [] $ reverse u ++ d
 
     -- try sending one message, fallback if unreceived, then refresh
-    tryMsgR x y = sequence_ [(tryMessage_ x y), refresh]
+    tryMsgR x y = sequence_ [(tryMessageWithNoRefreshToCurrent x y), refresh]
 
     -- warpCursor = warpToWindow (9/10) (9/10)
 
@@ -914,24 +923,17 @@ myKeys' conf = let
     -- Launchers
     -----------------------------------------------------------------------
     subKeys "Launchers"
-    [ -- ("M-<Space>"              , addName "Launcher"                        $ spawn myLauncher)
-    -- , 
-      ("M-<Return>"             , addName "Terminal"                        $ spawn myTerminal)
-    , ("M-\\"                   , addName "Browser"                         $ spawn myBrowser)
-    -- , ("M-c"                    , addName "NSP Chat"                        $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "hangoutsWork"),
-    --                                                                           ("", namedScratchpadAction scratchpads "hangoutsPersonal")])
-    -- , ("M-t"                    , addName "NSP Tasks"                       $ bindOn WS [(wsWRK, namedScratchpadAction scratchpads "trelloWork"),
-    --                                                                           ("", namedScratchpadAction scratchpads "trello")])
-    -- , ("M-m"                    , addName "NSP Music"                       $ namedScratchpadAction scratchpads "googleMusic")
-    , ("M-v"                    , addName "NSP jira"                        $ namedScratchpadAction scratchpads "jira")
-    , ("M-t"                    , addName "NSP threema"                     $ namedScratchpadAction scratchpads "threema")
-    , ("M-w"                    , addName "NSP whatsapp"                    $ namedScratchpadAction scratchpads "whatsapp")
-    , ("M-c"                    , addName "NSP im"                          $ namedScratchpadAction scratchpads "im")
-    , ("M-o"                    , addName "NSP orgCapture"                  $ namedScratchpadAction scratchpads "capture")
-    -- , ("M1-x"                   , addName "NSP Xawtv"                       $ namedScratchpadAction scratchpads "xawtv")
-    -- , ("M-n"                    , addName "NSP Console"                     $ namedScratchpadAction scratchpads "console")
-    , ("M-s s"                  , addName "Cancel submap"                   $ return ())
-    , ("M-s M-s"                , addName "Cancel submap"                   $ return ())
+    [ -- ("M-<Space>", addName "Launcher"       $ spawn myLauncher)
+      ("M-<Return>"  , addName "Terminal"       $ spawn myTerminal)
+    , ("M-S-<Return>", addName "Editor"         $ spawn myEditor)
+    , ("M-\\"        , addName "Browser"        $ spawn myBrowser)
+    , ("M-n"         , addName "NSP youtube"    $ namedScratchpadAction scratchpads "youtube")
+    , ("M-c"         , addName "NSP im"         $ namedScratchpadAction scratchpads "im")
+    , ("M-o"         , addName "NSP orgCapture" $ namedScratchpadAction scratchpads "capture")
+    -- , ("M1-x"     , addName "NSP Xawtv"      $ namedScratchpadAction scratchpads "xawtv")
+    -- , ("M-n"      , addName "NSP Console"    $ namedScratchpadAction scratchpads "console")
+    , ("M-s s"       , addName "Cancel submap"  $ return ())
+    , ("M-s M-s"     , addName "Cancel submap"  $ return ())
     ] ^++^
 
     -----------------------------------------------------------------------
@@ -958,13 +960,25 @@ myKeys' conf = let
     , ("M-z m"                  , addName "Focus master"                    $ windows W.focusMaster)
 
     , ("M-S-w"                  , addName "Focus up"                        $ windows W.focusUp)
-    , ("M-S-s"              	, addName "Focus down"                      $ windows W.focusDown)
+    , ("M-S-s"                      , addName "Focus down"                      $ windows W.focusDown)
 
     -- , ("M-'"                    , addName "Cycle current tabs D"            $ bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
     -- , ("M-;"                    , addName "Cycle current tabs U"            $ bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
 
     -- ComboP specific (can remove after demo)
     , ("M-C-S-m"                , addName "Combo swap"                      $ sendMessage $ SwapWindow)
+    , ("M-C-h"                  , addName "Move window left"                $ sendMessage $ Go L)
+    , ("M-C-j"                  , addName "Move window down"                $ sendMessage $ Go D)
+    , ("M-C-k"                  , addName "Move window up"                  $ sendMessage $ Go U)
+    , ("M-C-l"                  , addName "Move window right"               $ sendMessage $ Go R)
+    , ("M-C-S-h"                , addName "Pull group left"                 $ sendMessage $ pullGroup L)
+    , ("M-C-S-j"                , addName "Pull group down"                 $ sendMessage $ pullGroup D)
+    , ("M-C-S-k"                , addName "Pull group up"                   $ sendMessage $ pullGroup U)
+    , ("M-C-S-l"                , addName "Pull group right"                $ sendMessage $ pullGroup R)
+    , ("M-C-m"                  , addName "Merge group"                     $ withFocused (sendMessage . MergeAll))
+    , ("M-C-u"                  , addName "Unmerge group"                   $ withFocused (sendMessage . UnMerge))
+    , ("M-C-."                  , addName "Focus up"                        $ onGroup W.focusUp')
+    , ("M-C-,"                  , addName "Focus down"                      $ onGroup W.focusDown')
     ]
 
     ++ zipM' "M-"               "Navigate window"                           dirKeys dirs windowGo True
@@ -1041,8 +1055,9 @@ myKeys' conf = let
     [ ("M-q"          , addName "Restart XMonad"            $ spawn "xmonad --restart")
     , ("M-i"          , addName "Run a programm"            $ shellPrompt myXPConfig)
     -- , ("M-c"          , addName "Capture a thought"         $ inputPrompt myXPConfig "Capture" ?+ (\x -> spawn ("/home/frosch03/bin/capture.sh " ++ x)))
-    -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(remember)'")
-    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "/usr/bin/urxvt -e emacsclient -q -nw -e '(eshell)'")
+    -- , ("M-S-n"        , addName "Emacs remember window"     $ spawn "urxvt -e emacsclient -q -nw -e '(remember)'")
+    -- , ("M-S-e"        , addName "Emacs eshell"              $ spawn "urxvt -e emacsclient -q -nw -e '(eshell)'")
+    , ("M-t"        , addName "Org Roam capture today"    $ spawn "alacritty -e emacsclient -c -e '(make-capture-today-frame)'")
     -- , ("M-y"          , addName "Scratchpad shell"          $ scratchpadSpawnActionTerminal "urxvt")
     -- , ("M-S-m"        , addName "" $ manPrompt myXPConfig)
     -- , ("M-S-s"        , addName "" $ sshPrompt myXPConfig)
@@ -1051,7 +1066,7 @@ myKeys' conf = let
     -- , ("M-S-k"        , addName "" $ windows swapUp)
     -- , ("M-m"          , addName "" $ windows shiftMaster)
     -- , ("M-S-<Return>" , addName "" $ spawn myTerminal)
-    -- , ("M-S-l"        ,	addName "" $ spawn "/home/frosch03/bin/lock")
+    , ("M-S-l"        ,        addName "" $ spawn "/home/frosch03/bin/lock")
 
     , ("M-C-q"        , addName "Rebuild & restart XMonad"  $ spawn "xmonad --recompile && xmonad --restart")
     , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ (spawn "xShutdown") >> io (exitWith ExitSuccess))
@@ -1122,9 +1137,9 @@ myKeys' conf = let
     ]               
 
               where
-		toggleCopyToAll = wsContainingCopies >>= \ws -> case ws of
-							         [] -> windows copyToAll
-				                                 _  -> killAllOtherCopies
+                toggleCopyToAll = wsContainingCopies >>= \ws -> case ws of
+                                                                 [] -> windows copyToAll
+                                                                 _  -> killAllOtherCopies
 
 
 focusColor   = myGray -- base03

@@ -26,7 +26,6 @@ ${if_existing /proc/net/route eth0}${downspeedf eth0} ${upspeedf eth0}${else}${i
 ${if_existing /proc/net/route wlan0}${downspeedf wlan0} ${upspeedf wlan0}${else}down down${endif} \
 ${exec acpi -a | grep Adapter | cut -c12-14} \
 ${battery_percent BAT0} \
-${battery_percent BAT1} \
 ]];
 
 --(${battery_percent BAT0},${battery_percent BAT1})
