@@ -107,6 +107,117 @@ By default split the buffer horizontal so that there are an upper and a lower bu
     #+END_SRC
 
 * Org-Mode Config
+** agenda
+   Set the agenda files to my agenda fileset:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-files
+           '("~/Org/organizer.org"
+             ;; "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
+             ))
+     ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
+     (setq org-agenda-file-regexp "[0-9]\\{14\\}-[^.]*\\.org$\\|[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.org$")
+   #+END_SRC
+
+   Define the files one is able to refile stuff into:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-refile-use-outline-path t)
+
+     (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+
+     ;; (setq org-refile-targets '(("~/Org/current.org" :maxlevel . 2)
+     ;;                            ("~/Org/future.org" :level . 1)
+     ;;                            ("~/Org/timed.org" :maxlevel . 2)))
+   #+END_SRC
+
+   Set the default todo types:
+   #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keywords '((sequence "TODO" "DONE")))
+   #+END_SRC
+
+   Start emacs within Org's Agenda mode.
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'after-init-hook 'org-agenda-list)
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     ;; starte agenda in ganzem fenster
+     (setq org-agenda-window-setup 'current-window)
+
+     ;; Tasks mit Prioriäten unterschiedlich darstellen:
+     (setq org-agenda-fontify-priorities
+           (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
+
+     (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
+
+
+     (define-key mode-specific-map [?a] 'org-agenda)
+
+     (eval-after-load "org"
+       '(progn
+          (define-prefix-command 'org-todo-state-map)
+
+          (define-key org-mode-map "\C-cx" 'org-todo-state-map)
+
+          (define-key org-todo-state-map "x"
+            #'(lambda nil (interactive) (org-todo "CANCELLED")))
+          (define-key org-todo-state-map "d"
+            #'(lambda nil (interactive) (org-todo "DONE")))
+          ;; (define-key org-todo-state-map "f"
+          ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
+          (define-key org-todo-state-map "w"
+            #'(lambda nil (interactive) (org-todo "WAITING")))
+          ;; (define-key org-todo-state-map "s"
+          ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
+          ;; (define-key org-todo-state-map "w"
+          ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
+
+          (eval-after-load "org-agenda"
+            '(progn 
+               (define-key org-agenda-mode-map "\C-n" 'next-line)
+               (define-key org-agenda-keymap "\C-n" 'next-line)
+               (define-key org-agenda-mode-map "\C-p" 'previous-line)
+               (define-key org-agenda-keymap "\C-p" 'previous-line)
+               )
+            )
+          )
+       )
+
+   #+END_SRC
+
+** org-capture
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-capture
+       :ensure f
+       :init
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
+       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
+
+       :config
+       (setq org-capture-templates '(("o" "Organizer Workflow")
+                                     ("ot" "Task" entry (file+headline "~/Org/organizer.org" "TASKS")
+                                           "* TODO %i%?")
+                                     ("oa" "Appointment" entry (file+headline "~/Org/organizer.org" "APPOINTMENTS")
+                                           "* %i%? \n %U")
+
+                                     ("m" "Email Workflow")
+                                     ("mf" "Follow Up" entry (file+olp "~/Org/organizer.org" "MAILS" "Follow Up")
+                                           "* TODO %:fromname Mail %a beantworten\nSCHEDULED:%t\n\n%i" :immediate-finish t)
+                                     ("mr" "Read Later" entry (file+olp "~/Org/organizer.org" "MAILS" "Read Later")
+                                           "* TODO %a lesen\nSCHEDULED:%t\n\n%i" :immediate-finish t)
+
+                                     ("z" "Zettelkasten Workflow")
+                                     ("zl" "Link" entry (file "~/Dropbox/Zettelkasten/Notizen.org")
+                                           "* TODO %a %?\n %T\n %i")
+                                     ;; ("w" "Url [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]]")
+                                     ;; ("W" "Url with Text [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]] \n  %:initial")
+                                     ))
+
+       )
+   #+END_SRC
 ** org
 #+BEGIN_SRC emacs-lisp
   (use-package org
@@ -200,34 +311,6 @@ By default split the buffer horizontal so that there are an upper and a lower bu
    #+BEGIN_SRC emacs-lisp
      (use-package org-protocol)
    #+END_SRC
-** org-capture
-   #+BEGIN_SRC emacs-lisp
-     (use-package org-capture
-       :ensure f
-       :init
-       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib")
-       (add-to-list 'load-path "~/.emacs.d/org-latest/lisp")
-       (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
-
-       :config
-       (setq org-capture-templates '(("i" "Item [inbox]" entry
-                                      (file "~/Org/inbox.org")
-                                      "* TODO %i%?")
-                                     ("L" "Link" entry
-                                      (file "~/Dropbox/Zettelkasten/Notizen.org")
-                                      "* TODO %a %?\n %T\n %i")
-                                     ("T" "Timed" entry
-                                      (file+headline "~/Org/timed.org" "Timed")
-                                      "* %i%? \n %U")
-                                     ("w" "Url [inbox]" entry
-                                      (file "~/Org/inbox.org")
-                                      "* TODO %?[[%:link][%:description]]")
-                                     ("W" "Url with Text [inbox]" entry
-                                      (file "~/Org/inbox.org")
-                                      "* TODO %?[[%:link][%:description]] \n  %:initial")
-                                     ))
-       )
-   #+END_SRC
 ** COMMENT org-capture-pop-frame
    #+BEGIN_SRC emacs-lisp
    (use-package org-capture-pop-frame
@@ -248,91 +331,6 @@ By default split the buffer horizontal so that there are an upper and a lower bu
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
    )
    #+END_SRC
-** agenda
-   Set the agenda files to my agenda fileset:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-files
-           '("~/Org/inbox.org"
-             "~/Org/current.org"
-             "~/Org/timed.org"
-             "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
-             ;; "~/Dropbox/Zettelkasten/Roam"
-             ;; "~/Dropbox/Zettelkasten/Roam/daily"
-             ;; "~/Dropbox/Apps/frosch03s org-web/Tasks.org"
-             ))
-     ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
-     (setq org-agenda-file-regexp "[0-9]\\{14\\}-[^.]*\\.org$\\|[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.org$")
-   #+END_SRC
-
-   Define the files one is able to refile stuff into:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-refile-use-outline-path t)
-
-     (setq org-refile-targets '((nil :maxlevel . 9)
-                                (org-agenda-files :maxlevel . 9)))
-     (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-     (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
-
-     ;; (setq org-refile-targets '(("~/Org/current.org" :maxlevel . 2)
-     ;;                            ("~/Org/future.org" :level . 1)
-     ;;                            ("~/Org/timed.org" :maxlevel . 2)))
-   #+END_SRC
-
-   Set the default todo types:
-   #+BEGIN_SRC emacs-lisp
-     (setq org-todo-keywords '((sequence "TODO" "DONE")))
-   #+END_SRC
-
-   Start emacs within Org's Agenda mode. 
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'after-init-hook 'org-agenda-list)
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     ;; starte agenda in ganzem fenster
-     (setq org-agenda-window-setup 'current-window)
-
-     ;; Tasks mit Prioriäten unterschiedlich darstellen:
-     (setq org-agenda-fontify-priorities 
-           (quote ((65 (:foreground "Red")) (66 (:foreground "Blue")) (67 (:foreground "Darkgreen")))))
-
-     (setq org-agenda-date-weekend (quote (:foreground "Yellow" :weight bold)))
-
-
-     (define-key mode-specific-map [?a] 'org-agenda)
-
-     (eval-after-load "org"
-       '(progn
-          (define-prefix-command 'org-todo-state-map)
-
-          (define-key org-mode-map "\C-cx" 'org-todo-state-map)
-
-          (define-key org-todo-state-map "x"
-            #'(lambda nil (interactive) (org-todo "CANCELLED")))
-          (define-key org-todo-state-map "d"
-            #'(lambda nil (interactive) (org-todo "DONE")))
-          ;; (define-key org-todo-state-map "f"
-          ;;   #'(lambda nil (interactive) (org-todo "DEFERRED")))
-          (define-key org-todo-state-map "w"
-            #'(lambda nil (interactive) (org-todo "WAITING")))
-          ;; (define-key org-todo-state-map "s"
-          ;;   #'(lambda nil (interactive) (org-todo "STARTED")))
-          ;; (define-key org-todo-state-map "w"
-          ;;   #'(lambda nil (interactive) (org-todo "WAITING")))
-
-          (eval-after-load "org-agenda"
-            '(progn 
-               (define-key org-agenda-mode-map "\C-n" 'next-line)
-               (define-key org-agenda-keymap "\C-n" 'next-line)
-               (define-key org-agenda-mode-map "\C-p" 'previous-line)
-               (define-key org-agenda-keymap "\C-p" 'previous-line)
-               )
-            )
-          )
-       )
-
-   #+END_SRC
-
 ** COMMENT bullets
    Org-Mode Bullets - for nice looking org-mode bullet items
    #+BEGIN_SRC emacs-lisp
@@ -604,6 +602,103 @@ By default split the buffer horizontal so that there are an upper and a lower bu
           )
         )
 #+END_SRC
+
+* mu4e
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e
+    :ensure f
+    :config
+    (global-set-key (kbd "C-x m") 'mu4e)
+    (setq
+     mu4e-maildir       "~/Mail"   ;; top-level Maildir
+     mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
+     mu4e-drafts-folder "/drafts"     ;; unfinished messages
+     mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
+     mu4e-refile-folder "/archive"   ;; saved messages
+     mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
+
+    (setq
+     ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
+     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
+     mu4e-get-mail-command "mbsync -a"
+     mu4e-update-interval 300)             ;; update every 5 minutes
+
+    ;; tell message-mode how to send mail
+    (setq user-mail-address "matthias@brettschneiders.email")
+    (setq user-full-name "Dr. Matthias Brettschneider")
+    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
+    (setq mu4e-compose-signature "")
+
+    (add-to-list 'mu4e-view-actions
+                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+    ;; (add-to-list 'mu4e-bookmarks
+    ;;              '("((date:7D..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
+    (add-to-list 'mu4e-bookmarks
+                 '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
+    ;; (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
+    ;;              flag:trashed) AND (maildir:/frosch03/INBOX OR
+    ;;              maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
+    ;; (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
+
+    ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+    (setq mu4e-html2text-command "w3m -T text/html")
+    )
+#+END_SRC
+
+In order to generate html mails from org-mode, this function helps to
+add some org configurations before the output is created. Here:
+
+- imagemagick is selected for cutting the latex formulas into little
+  snippits. Also
+- the table of content is disabled
+  #+BEGIN_SRC lisp
+  (defun frog/mu4e-org-compose ()
+    "Switch to/from mu4e-compose-mode and org-mode"
+     (interactive)
+     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
+     (let ((p (point)))
+       (goto-char (point-min))
+       (let ((case-fold-search t))
+         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
+           (goto-char (point-max))
+           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
+       (goto-char p))
+     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
+         (org~mu4e-mime-switch-headers-or-body)
+       (mu4e-compose-mode)))
+  (global-set-key "\M-@" 'frog/mu4e-org-compose)
+  #+END_SRC
+
+Accrding to [[https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-05.org][daviwil]]s mu4e workflow, with the following custom actions,
+one can do the capture action without even running org-caputer
+manually:
+
+#+begin_src emacs-lisp
+  (defun frog/capture-mail-follow-up (msg)
+    "Call the `org-capture' template on MSG for capturing mail.
+  With this an todo entry into `~/Org/organize.org' under MAILS /
+  Follow Up is created for following up on the mail later."
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mf"))
+
+  (defun frog/capture-mail-read-later (msg)
+    "Call the `org-capture' template on MSG for capturing mail.
+  With this an todo entry into `~/Org/organize.org' under MAILS /
+  Read Later is created for reading the mail later."
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "mr"))
+
+  (add-to-list 'mu4e-headers-actions
+               '("follow-up". frog/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-view-actions
+               '("follow-up". frog/capture-mail-follow-up) t)
+  (add-to-list 'mu4e-headers-actions
+               '("read-later". frog/capture-mail-read-later) t)
+  (add-to-list 'mu4e-view-actions
+               '("read-later". frog/capture-mail-read-later) t)
+#+end_src
 
 * Dired Config
 ** Configuring loadpath:
@@ -887,46 +982,6 @@ By default split the buffer horizontal so that there are an upper and a lower bu
 (push '("^\\(\.+\.hs\\|\.lhs\\):\\([0-9]+\\):\\([0-9]+\\):\\(.+\\)" 1 2 3 4) 
       flymake-err-line-patterns)
 )
-#+END_SRC
-* GNUS
-#+BEGIN_SRC emacs-lisp
-;; (use-package gnus-load
-;; :ensure f
-;; :config 
-;; ;; Configure loadpath
-;; (setq load-path (cons (expand-file-name "~/.emacs.d/gnus/lisp") load-path))
-;; 
-;; ;; Configure info directory
-;; (add-to-list 'Info-default-directory-list "~/.emacs.d/gnus/texi/")
-;; 
-;; ;; Setup emacss mail user agent
-;; (setq mail-user-agent 'gnus-user-agent)
-;; 
-;; ;; Attach bbdb hook
-;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-;; 
-;; ;; Configure S/MIME\\
-;; ;; This configuration might not just be for gnus but also for mu4e,
-;; ;; but i need to further confirm that
-;; (setq mm-decrypt-option 'always)
-;; (setq mm-verify-option 'always)
-;; (setq gnus-buttonized-mime-types '("multipart/encrypted" "multipart/signed"))
-;; 
-;; (add-hook 'message-send-hook 'mml-secure-message-sign-smime)
-;; 
-;; (setq password-cache t) ; default is true, so no need to set this actually
-;; (setq password-cache-expiry 86400); default is 16 seconds
-;; 
-;; ;; (setq mml-signencrypt-style-alist '(("smime" combined)
-;; ;;                                     ("pgp" combined)
-;; ;;                                     ("pgpmime" combined)))
-;; 
-;; (setq mml-signencrypt-style-alist '(("smime" separate)
-;;                                     ("pgp" separate)
-;;                                     ("pgpauto" separate)
-;;                                     ("pgpmime" separate)))
-;; 
-;; )
 #+END_SRC
 * BBDB 
 ** Configuring loadpath
@@ -1320,81 +1375,6 @@ to switch back to window configurations
   ;; (setq browse-url-browser-function 'browse-url-firefox)
   ;; (setq browse-url-browser-function 'browse-url-chromium)
 #+END_SRC
-
-* mu4e
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e
-    :ensure f
-    :config
-    (global-set-key (kbd "C-x m") 'mu4e)
-    (setq
-     mu4e-maildir       "~/Mail"   ;; top-level Maildir
-     mu4e-sent-folder   "/frosch03/Sent"       ;; folder for sent messages
-     mu4e-drafts-folder "/drafts"     ;; unfinished messages
-     mu4e-trash-folder  "/frosch03/Trash"      ;; trashed messages
-     mu4e-refile-folder "/archive"   ;; saved messages
-     mu4e-change-filenames-when-moving t) ;; https://stackoverflow.com/a/43461973
-
-    (setq
-     ;; mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-     mu4e-get-mail-command "~/bin/offlineimap-notify.py" ;
-     mu4e-get-mail-command "mbsync -a"
-     mu4e-update-interval 300)             ;; update every 5 minutes
-
-    ;; tell message-mode how to send mail
-    (setq user-mail-address "matthias@brettschneiders.email")
-    (setq user-full-name "Dr. Matthias Brettschneider")
-    (setq mu4e-compose-signature-auto-include nil) ;; insert signature with C-c C-w
-    (setq mu4e-compose-signature "")
-
-    ;; configuration within: private_config.org
-    ;; (setq message-send-mail-function 'smtpmail-send-it
-    ;;       smtpmail-starttls-credentials '(("<servername>" <port> nil nil))
-    ;;       smtpmail-auth-credentials '(("<servername>" <port> "<username>" nil))
-    ;;       smtpmail-default-smtp-server "<servername>"
-    ;;       smtpmail-smtp-server "<servername>"
-    ;;       smtpmail-smtp-service <port>
-    ;;       smtpmail-local-domain "<domain>")
-
-    (add-to-list 'mu4e-view-actions
-                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-    ;; (add-to-list 'mu4e-bookmarks
-    ;;              '("((date:7D..now) AND not (maildir:/frosch03/Trash OR maildir:/gmail/[Gmail].Trash OR maildir:/gmail/[Gmail].Spam OR maildir:/frosch03/Spam OR maildir:\"/gmail/[Gmail].All Mail\") AND not flag:trashed)" "No Trash" ?b))
-    (add-to-list 'mu4e-bookmarks
-                 '("(((date:30d..now) AND not flag:trashed) AND (maildir:/frosch03/INBOX OR maildir:/gmail/INBOX)) AND not v:OSCC*" "Inbox" ?i))
-    ;; (add-to-list 'mu4e-bookmarks '("(((date:30d..now) AND not
-    ;;              flag:trashed) AND (maildir:/frosch03/INBOX OR
-    ;;              maildir:/gmail/INBOX)) AND v:OSCC*" "Lists (OSCC*)" ?l))
-    ;; (add-to-list 'mu4e-bookmarks '("v:vp-* OR v:kistenpost* OR v:budget* OR v:website* OR v:rezepte*" "SoLaWi Lists" ?s))
-
-    ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
-    (setq mu4e-html2text-command "w3m -T text/html")
-    )
-#+END_SRC
-
-In order to generate html mails from org-mode, this function helps to
-add some org configurations before the output is created. Here:
-
-- imagemagick is selected for cutting the latex formulas into little
-  snippits. Also
-- the table of content is disabled
-  #+BEGIN_SRC lisp
-  (defun frog/mu4e-org-compose ()
-    "Switch to/from mu4e-compose-mode and org-mode"
-     (interactive)
-     ;;(if (not (boundp 'kdm/mu4e-org-html-opt-done))
-     (let ((p (point)))
-       (goto-char (point-min))
-       (let ((case-fold-search t))
-         (when (not (search-forward "#+OPTIONS: tex:imagemagick" nil t))
-           (goto-char (point-max))
-           (insert "\n#+OPTIONS: tex:imagemagick\n#+OPTIONS: toc:0\n")))
-       (goto-char p))
-     (if (eq 'mu4e-compose-mode (buffer-local-value 'major-mode (current-buffer)))
-         (org~mu4e-mime-switch-headers-or-body)
-       (mu4e-compose-mode)))
-  (global-set-key "\M-@" 'frog/mu4e-org-compose)
-  #+END_SRC
 
 * jekyll
 #+BEGIN_SRC emacs-lisp
