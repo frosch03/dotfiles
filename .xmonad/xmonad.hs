@@ -774,12 +774,18 @@ orgCaptureInfix       = "capture"
 orgCaptureResource    = "orgCapture"
 isOrgCapture          = (resource =? orgCaptureResource)
 
+orgConsoleCommand     = "dex $HOME/.local/share/applications/console.desktop"
+orgConsoleInfix       = "console"
+orgConsoleResource    = "dropdown console"
+isOrgConsole          = (resource =? orgConsoleResource)
+
 scratchpads =
     [   (NS "im"       imCommand         isIm         defaultFloating)
     ,   (NS "jira"     jiraCommand       isJira       defaultFloating)
     ,   (NS "youtube"  youtubeCommand    isYoutube    defaultFloating)
     ,   (NS "whatsapp" whatsappCommand   isWhatsapp   defaultFloating)
     ,   (NS "capture"  orgCaptureCommand isOrgCapture defaultFloating)
+    ,   (NS "console"  orgConsoleCommand isOrgConsole defaultFloating)
     ] 
 
 -- My additional keybindings
@@ -931,7 +937,7 @@ myKeys' conf = let
     , ("M-c"         , addName "NSP im"         $ namedScratchpadAction scratchpads "im")
     , ("M-o"         , addName "NSP orgCapture" $ namedScratchpadAction scratchpads "capture")
     -- , ("M1-x"     , addName "NSP Xawtv"      $ namedScratchpadAction scratchpads "xawtv")
-    -- , ("M-n"      , addName "NSP Console"    $ namedScratchpadAction scratchpads "console")
+    , ("M-m"         , addName "NSP console"    $ namedScratchpadAction scratchpads "console")
     , ("M-s s"       , addName "Cancel submap"  $ return ())
     , ("M-s M-s"     , addName "Cancel submap"  $ return ())
     ] ^++^
