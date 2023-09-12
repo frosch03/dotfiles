@@ -262,6 +262,13 @@ Definition of a custom agenda view for Zettelkasten entries:
     :pin gnu
     )
 #+END_SRC
+** org-mime
+Lets write html emails directly out of org mode
+#+begin_src emacs-lisp
+  (use-package org-mime
+    :ensure t
+    )
+#+end_src
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
      (use-package ox-latex
