@@ -50,9 +50,9 @@ import XMonad.Util.XSelection
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.Rescreen
 
 import XMonad.StackSet (swapUp, swapDown, shiftMaster)
 
@@ -162,14 +162,22 @@ projects =
 curLayout :: X String
 curLayout = gets windowset >>= return . description . S.layout . S.workspace . S.current
 
+myAfterRescreenHook :: X ()
+myAfterRescreenHook = spawn "xmonad --restart"
+
+myRandrChangeHook :: X ()
+myRandrChangeHook = spawn "autorandr --change"
+
 main = do
   spawn "/home/frosch03/bin/xStartup &"
   xmonad
        -- $ ewmh
        $ dynamicProjects projects
-       $ withUrgencyHook NoUrgencyHook
-             $ addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
-       $ desktopConfig
+       . withUrgencyHook NoUrgencyHook
+       . addDescrKeys' ((myModMask, xK_F1), showKeybindings) myKeys'
+       . addAfterRescreenHook myAfterRescreenHook
+       . addRandrChangeHook myRandrChangeHook
+       $ desktopConfig 
              { borderWidth        = 0
              , normalBorderColor  = myGray
              , focusedBorderColor = "#999999"
@@ -178,12 +186,8 @@ main = do
              -- , handleEventHook    = myEventHook <+> fullscreenEventHook
              , manageHook         = myManagedHook
              , layoutHook         = myLayoutHook
-             , logHook            = (dynamicLogWithPP $ myLemonbarPP) <+> myLogHook
-             } 
- 
-myLogHook :: X ()
-myLogHook = fadeInactiveLogHook fadeAmount
-     where fadeAmount = 0xcccccccc
+             , logHook            = (dynamicLogWithPP $ myLemonbarPP)
+             }
      
 -- The pretty printed layout for my lemonbar 
 myLemonbarPP = def
