@@ -11,6 +11,7 @@ import XMonad.Actions.Navigation2D          -- (for windowGo)
 import XMonad.Actions.Promote               -- promote window to master
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.WithAll               -- action all the things
+import XMonad.Actions.NoBorders
 
 import XMonad.Layout.Accordion
 import XMonad.Layout.BinarySpacePartition
@@ -1164,10 +1165,6 @@ hisBase03  = "#002b36"
 hisBase02  = "#073642"
 hisBase01  = "#586e75"
 hisBase00  = "#657b83"
-base0   = "#839496"
-base1   = "#93a1a1"
-base2   = "#eee8d5"
-base3   = "#fdf6e3"
 yellow  = "#b58900"
 orange  = "#cb4b16"
 red     = "#dc322f"
@@ -1187,10 +1184,16 @@ gap    = 12
 topbar = 12
 
 
-myFontSmall = "xft:DejaVuSansMono:antialias=true:pixelsize=10:autohint=true"
-myFont      = "xft:DejaVuSansMono:antialias=true:pixelsize=14:autohint=true"
-myBigFont   = "xft:DejaVuSansMono:antialias=true:pixelsize=20:autohint=true"
-myWideFont  = "xft:DejaVuSansMono:antialias=true:pixelsize=180:autohint=true"
+
+myFontSmall = "xft:PragmataPro Mono-10:style=Regular"
+myFont      = "xft:PragmataPro Mono-14:style=Regular"
+myBigFont   = "xft:PragmataPro Mono-20:style=Regular"
+myWideFont  = "xft:PragmataPro Mono-180:style=Regular"
+
+-- myFontSmall = "xft:DejaVuSansMono:antialias=true:pixelsize=10:autohint=true"
+-- myFont      = "xft:DejaVuSansMono:antialias=true:pixelsize=14:autohint=true"
+-- myBigFont   = "xft:DejaVuSansMono:antialias=true:pixelsize=20:autohint=true"
+-- myWideFont  = "xft:DejaVuSansMono:antialias=true:pixelsize=180:autohint=true"
 -- myFont      = "-*-terminus-medium-*-*-*-*-160-*-*-*-*-*-*"
 -- myBigFont   = "-*-terminus-medium-*-*-*-*-240-*-*-*-*-*-*"
 -- myWideFont  = "xft:Eurostar Black Extended:"
@@ -1226,14 +1229,14 @@ myTabTheme = def
     }
 
 warmPromptTheme = myPromptTheme
-    { bgColor               = yellow
+    { bgColor               = hisBase03
     , fgColor               = base03
     , position              = Top
     }
 
 hotPromptTheme = myPromptTheme
-    { bgColor               = red
-    , fgColor               = base3
+    { bgColor               = base01
+    , fgColor               = red
     , position              = Top
     }
 
