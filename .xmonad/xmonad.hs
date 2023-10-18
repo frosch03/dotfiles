@@ -792,30 +792,31 @@ scratchpads =
     ,   (NS "console"  orgConsoleCommand isOrgConsole defaultFloating)
     ] 
 
--- My additional keybindings
-myKeys x = M.fromList $
-  [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_r), spawn "alacritty -e emacsclient -nw -e '(remember)'")
-  , ((modMask x .|. shiftMask,   xK_e), spawn myEditor)
-  , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "alacritty")
-  , ((modMask x,                 xK_m), spawn "dmpc")
-  , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_s), sshPrompt myXPConfig)
-  , ((modMask x .|. shiftMask,   xK_f), focusUrgent)
-  , ((modMask x .|. shiftMask,   xK_j), windows swapDown)
-  , ((modMask x .|. shiftMask,   xK_k), windows swapUp)
-  , ((modMask x,                 xK_m), windows shiftMaster)
-  , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
-  , ((modMask x .|. controlMask, xK_l), spawn "/home/frosch03/bin/lock")
-  , ((0,        xK_XF86Play),      spawn "mpc toggle")
-  , ((0,        xK_XF86Stop),      spawn "mpc stop")
-  , ((0,        xK_XF86Fwrd),      spawn "mpc next")
-  , ((0,        xK_XF86Bwrd),      spawn "mpc prev")
-  , ((0,        xK_XF86Thnk),      spawn "/home/frosch03/whatIsThisPlace")
-  , ((0,       xK_XF86Sleep),      spawn "sudo pm-suspend")
-  , ((0, xK_XF86ScreenSaver),      spawn "gnome-screensaver-command --lock")
-  ]
-newKeys x = myKeys x `M.union` keys def x
+-- -- My additional keybindings
+-- myKeys x = M.fromList $
+--   [ ((modMask x,                 xK_p), shellPrompt myXPConfig)
+--   , ((modMask x .|. shiftMask,   xK_r), spawn "alacritty -e emacsclient -nw -e '(remember)'")
+--   , ((modMask x .|. controlMask, xK_o), withFocused toggleBorder)
+--   , ((modMask x .|. shiftMask,   xK_e), spawn myEditor)
+--   , ((modMask x,                 xK_y), scratchpadSpawnActionTerminal "alacritty")
+--   , ((modMask x,                 xK_m), spawn "dmpc")
+--   , ((modMask x .|. shiftMask,   xK_m), manPrompt myXPConfig)
+--   , ((modMask x .|. shiftMask,   xK_s), sshPrompt myXPConfig)
+--   , ((modMask x .|. shiftMask,   xK_f), focusUrgent)
+--   , ((modMask x .|. shiftMask,   xK_j), windows swapDown)
+--   , ((modMask x .|. shiftMask,   xK_k), windows swapUp)
+--   , ((modMask x,                 xK_m), windows shiftMaster)
+--   , ((modMask x .|. shiftMask,   xK_Return), spawn myTerminal)
+--   , ((modMask x .|. controlMask, xK_l), spawn "/home/frosch03/bin/lock")
+--   , ((0,        xK_XF86Play),      spawn "mpc toggle")
+--   , ((0,        xK_XF86Stop),      spawn "mpc stop")
+--   , ((0,        xK_XF86Fwrd),      spawn "mpc next")
+--   , ((0,        xK_XF86Bwrd),      spawn "mpc prev")
+--   , ((0,        xK_XF86Thnk),      spawn "/home/frosch03/whatIsThisPlace")
+--   , ((0,       xK_XF86Sleep),      spawn "sudo pm-suspend")
+--   , ((0, xK_XF86ScreenSaver),      spawn "gnome-screensaver-command --lock")
+--   ]
+-- newKeys x = myKeys x `M.union` keys def x
 
 -- My additional managed applications (browser is always on desktop 3 and in fullscreen, etc.)
 myManagedHook =
@@ -957,11 +958,12 @@ myKeys' conf = let
     , ("M-S-d"                  , addName "Kill other duplicates"           $ killAllOtherCopies)
     , ("M-e"                    , addName "Duplicate w to all ws"           $ windows copyToAll)
     , ("M-S-e"                  , addName "Toggle copy w to all ws"         $ toggleCopyToAll)
-    , ("M-d"                    , addName "Browse DuckDuckGo via uzbl"      $ inputPrompt myXPConfig "Internet" ?+ (\x -> spawn ("uzbl-browser 'http://ddg.gg/?q=" ++ x ++ "'")))
+    -- , ("M-d"                    , addName "Browse DuckDuckGo via uzbl"      $ inputPrompt myXPConfig "Internet" ?+ (\x -> spawn ("uzbl-browser 'http://ddg.gg/?q=" ++ x ++ "'")))
     , ("M-u"                    , addName "Hide window to stack"            $ withFocused hideWindow)
     , ("M-S-u"                  , addName "Restore hidden window (FIFO)"    $ popOldestHiddenWindow)
 
     , ("M-b"                    , addName "Promote"                         $ promote) 
+    , ("M-S-b"                  , addName "toggle Borders"                  $ withFocused toggleBorder) 
 
     , ("M-g"                    , addName "Un-merge from sublayout"         $ withFocused (sendMessage . UnMerge))
     , ("M-S-g"                  , addName "Merge all into sublayout"        $ withFocused (sendMessage . MergeAll))
@@ -970,17 +972,13 @@ myKeys' conf = let
     , ("M-z m"                  , addName "Focus master"                    $ windows W.focusMaster)
 
     , ("M-S-w"                  , addName "Focus up"                        $ windows W.focusUp)
-    , ("M-S-s"                      , addName "Focus down"                      $ windows W.focusDown)
+    , ("M-S-s"                  , addName "Focus down"                      $ windows W.focusDown)
 
     -- , ("M-'"                    , addName "Cycle current tabs D"            $ bindOn LD [("Tabs", windows W.focusDown), ("", onGroup W.focusDown')])
     -- , ("M-;"                    , addName "Cycle current tabs U"            $ bindOn LD [("Tabs", windows W.focusUp), ("", onGroup W.focusUp')])
 
     -- ComboP specific (can remove after demo)
     , ("M-C-S-m"                , addName "Combo swap"                      $ sendMessage $ SwapWindow)
-    , ("M-C-h"                  , addName "Move window left"                $ sendMessage $ Go L)
-    , ("M-C-j"                  , addName "Move window down"                $ sendMessage $ Go D)
-    , ("M-C-k"                  , addName "Move window up"                  $ sendMessage $ Go U)
-    , ("M-C-l"                  , addName "Move window right"               $ sendMessage $ Go R)
     , ("M-C-S-h"                , addName "Pull group left"                 $ sendMessage $ pullGroup L)
     , ("M-C-S-j"                , addName "Pull group down"                 $ sendMessage $ pullGroup D)
     , ("M-C-S-k"                , addName "Pull group up"                   $ sendMessage $ pullGroup U)
@@ -991,16 +989,13 @@ myKeys' conf = let
     , ("M-C-,"                  , addName "Focus down"                      $ onGroup W.focusDown')
     ]
 
-    ++ zipM' "M-"               "Navigate window"                           dirKeys dirs windowGo True
-    -- ++ zipM' "M-S-"               "Move window"                               dirKeys dirs windowSwap True
-    -- TODO: following may necessitate use of a "passthrough" binding that can send C- values to focused w
-    ++ zipM' "M-C-"             "Move window"                               dirKeys dirs windowSwap True
-    -- ++ zipM  "M-C-"             "Merge w/sublayout"                         dirKeys dirs (sendMessage . pullGroup)
-    ++ zipM' "M-"               "Navigate screen"                           arrowKeys dirs screenGo True
+    ++ zipM' "M-"               "Navigate window"                             dirKeys dirs windowGo True
+    ++ zipM' "M-S-"             "Move window"                                 dirKeys dirs windowSwap True
+    ++ zipM  "M-C-"             "Merge w/sublayout"                           dirKeys dirs (sendMessage . pullGroup)
+    -- ++ zipM' "M-"               "Navigate screen"                             arrowKeys dirs screenGo True
     -- ++ zipM' "M-S-"             "Move window to screen"                     arrowKeys dirs windowToScreen True
-    ++ zipM' "M-C-"             "Move window to screen"                     arrowKeys dirs windowToScreen True
-    ++ zipM' "M-S-"             "Swap workspace to screen"                  arrowKeys dirs screenSwap True
-
+    -- ++ zipM' "M-C-"             "Move window to screen"                       arrowKeys dirs windowToScreen True
+    -- ++ zipM' "M-S-"             "Swap workspace to screen"                    arrowKeys dirs screenSwap True
     ) ^++^
 
     -----------------------------------------------------------------------
@@ -1076,7 +1071,6 @@ myKeys' conf = let
     -- , ("M-S-k"        , addName "" $ windows swapUp)
     -- , ("M-m"          , addName "" $ windows shiftMaster)
     -- , ("M-S-<Return>" , addName "" $ spawn myTerminal)
-    , ("M-S-l"        ,        addName "" $ spawn "/home/frosch03/bin/lock")
 
     , ("M-C-q"        , addName "Rebuild & restart XMonad"  $ spawn "xmonad --recompile && xmonad --restart")
     , ("M-S-q"        , addName "Quit XMonad"               $ confirmPrompt hotPromptTheme "Quit XMonad" $ (spawn "xShutdown") >> io (exitWith ExitSuccess))
