@@ -108,18 +108,18 @@ wmSkypeMain x = do x1 <- className    =? x
                    x2 <- wmWindowRole =? "MainWindow"
                    return (x1 && x2)
 
-wsOne   = "HACKING"
-wsConf  = "CONFIGURING"
-wsWeb   = "BROWSING"
-wsComm  = "COMM"
-wsMail  = "MAIL"
-wsSkype = "SIX"
-wsGimp  = "SEVEN"
-wsMusi  = "EIGHT"
-wsIrc   = "NINE"
+wsOne   = "hacking"
+wsConf  = "configuring"
+wsWeb   = "browsing"
+-- wsComm  = "comm"
+-- wsMail  = "mail"
+-- wsSkype = "six"
+-- wsGimp  = "seven"
+-- wsMusi  = "eight"
+-- wsIrc   = "nine"
 
 
-myWorkspaces = [wsOne, wsConf, wsWeb, wsComm, wsMail, wsSkype, wsGimp, wsMusi, wsIrc]
+myWorkspaces = [wsOne, wsConf, wsWeb] -- , wsComm, wsMail] -- , wsSkype, wsGimp, wsMusi, wsIrc]
 
 
 
@@ -144,15 +144,15 @@ projects =
                                                 spawnOn wsWeb "emacsclient -c -F '(quote (name . \"Notizen\"))' ~/Dropbox/Zettelkasten/Notizen.org"
                 }
 
-    , Project   { projectName       = wsComm
-                , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsComm "emacsclient -q -c -e '(start-irc)'"
-                }
+    -- , Project   { projectName       = wsComm
+    --             , projectDirectory  = "~/"
+    --             , projectStartHook  = Just $ do spawnOn wsComm "emacsclient -q -c -e '(start-irc)'"
+    --             }
 
-    , Project   { projectName       = wsMail
-                , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsMail "emacsclient -q -c -e '(mu4e)'"
-                }
+    -- , Project   { projectName       = wsMail
+    --             , projectDirectory  = "~/"
+    --             , projectStartHook  = Just $ do spawnOn wsMail "emacsclient -q -c -e '(mu4e)'"
+    --             }
 
     ]
 
@@ -831,13 +831,13 @@ myManagedHook =
                            , [ title     =? x --> doF (S.shift wsConf)  | x <- configuring]
                            , [ className =? x --> doF (S.shift wsConf)  | x <- configuring]
                            , [ className =? x --> doF (S.shift wsWeb)   | x <- webApps ]
-                           , [ className =? x --> doF (S.shift wsComm)  | x <- comApps ]
-                           , [ title     =? x --> doF (S.shift wsComm)  | x <- comApps ]
-                           , [ className =? x --> doF (S.shift wsMail)  | x <- mailApps ]
-                           , [ title     =? x --> doF (S.shift wsMail)  | x <- mailApps ]
-                           , [ className =? x --> doF (S.shift wsGimp)  | x <- gimpApp ]
-                           , [ className =? x --> doF (S.shift wsSkype) | x <- skypeApp ]
-                           , [ title     =? x --> doF (S.shift wsIrc)   | x <- ircApps ]
+                           -- , [ className =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           -- , [ title     =? x --> doF (S.shift wsComm)  | x <- comApps ]
+                           -- , [ className =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           -- , [ title     =? x --> doF (S.shift wsMail)  | x <- mailApps ]
+                           -- , [ className =? x --> doF (S.shift wsGimp)  | x <- gimpApp ]
+                           -- , [ className =? x --> doF (S.shift wsSkype) | x <- skypeApp ]
+                           -- , [ title     =? x --> doF (S.shift wsIrc)   | x <- ircApps ]
                            , [ isFullscreen   --> doFullFloat]
                            ]
 
