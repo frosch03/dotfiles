@@ -17,7 +17,7 @@ Path=/home/frosch03
 
 # The executable of the application, possibly with arguments.
 # ... keep in mind, the name capture must match the functions defined within emacs config
-Exec=alacritty --class "dropdown console"
+Exec=alacritty --option "window.opacity=0.9" --class "dropdown console"
 
 # The name of the icon that will be used to display this entry
 # Icon=jmemorize
