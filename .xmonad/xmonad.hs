@@ -1181,7 +1181,7 @@ frogs_blue_dark = "#0a1f34"
 frogs_grey = "#d3d3d3"                  
 
 gap    = 12
-topbar = 12
+topbar = 14
 
 
 
@@ -1203,19 +1203,19 @@ myGray = "#333333"
 
 topBarTheme = def
     { fontName              = myFontSmall
+    , decoHeight            = topbar
 
     , activeColor           = frogs_blue -- green -- "white"
-    , activeBorderColor     = frogs_blue
-
     , inactiveColor         = frogs_blue_dark -- "black"
-    , inactiveBorderColor   = frogs_blue_dark -- "black"
+    , urgentColor           = violet -- green -- "white"
 
     , activeTextColor       = frogs_grey -- myGray -- "white"
     , inactiveTextColor     = frogs_grey -- "black" -- "white"
-
-    , urgentBorderColor     = red
     , urgentTextColor       = yellow
-    , decoHeight            = topbar
+
+    , activeBorderWidth     = 0
+    , inactiveBorderWidth   = 0
+    , urgentBorderWidth     = 0
     }
 
 myTabTheme = def
@@ -1228,7 +1228,7 @@ myTabTheme = def
     , inactiveTextColor     = "white"
     }
 
-warmPromptTheme = myPromptTheme
+projectPromptTheme = myPromptTheme
     { bgColor               = hisBase03
     , fgColor               = base03
     , position              = Top
@@ -1241,7 +1241,8 @@ hotPromptTheme = myPromptTheme
     }
 
 myPromptTheme = def
-    { bgColor               = base03
+    { font                  = myFontSmall
+    , bgColor               = base03
     , fgColor               = blue
     , fgHLight              = base03
     , bgHLight              = blue
