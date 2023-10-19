@@ -1009,8 +1009,8 @@ myKeys' conf = let
 
     subKeys "Workspaces & Projects"
     (
-    [ ("M-p"                    , addName "Switch to Project"           $ switchProjectPrompt warmPromptTheme)
-    , ("M-S-p"                  , addName "Shift to Project"            $ shiftToProjectPrompt warmPromptTheme)
+    [ ("M-p"                    , addName "Switch to Project"           $ switchProjectPrompt projectPromptTheme)
+    , ("M-S-p"                  , addName "Shift to Project"            $ shiftToProjectPrompt projectPromptTheme)
     , ("M-<Escape>"             , addName "Next non-empty workspace"    $ nextNonEmptyWS)
     , ("M-S-<Escape>"           , addName "Prev non-empty workspace"    $ prevNonEmptyWS)
     , ("M-`"                    , addName "Next non-empty workspace"    $ nextNonEmptyWS)
