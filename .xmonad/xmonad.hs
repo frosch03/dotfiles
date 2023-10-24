@@ -988,6 +988,7 @@ myKeys' conf = let
     , ("M-C-u"                  , addName "Unmerge group"                   $ withFocused (sendMessage . UnMerge))
     , ("M-C-."                  , addName "Focus up"                        $ onGroup W.focusUp')
     , ("M-C-,"                  , addName "Focus down"                      $ onGroup W.focusDown')
+    , ("M-w"                    , addName "Focus Next Monitor"              $ nextScreen)
     ]
 
     ++ zipM' "M-"               "Navigate window"                             dirKeys dirs windowGo True
