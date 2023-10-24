@@ -13,7 +13,7 @@ title="%{F${color_head} B${color_sec_b2}}${sep_right}%{F${color_head} B${color_s
 while read -r line ; do
     case $line in
         SYS*)
-            # conky=, 0=wday, 1=mday, 2=month, 3=time, 4=cpu, 5=temp, 6=ram, 7=ram unit, 8=disk used perc, 9-10=up/down eth0, 11-12=up/down wlan0, 13=power plugged in, 14=BAT0, 15=BAT1
+            # conky=, 0=wday, 1=mday, 2=month, 3=time, 4=cpu, 5=temp, 6=ram, 7=disk used perc, 8-9=up/down eth0, 10-11=up/down wlan0, 12=power plugged in, 13=BAT0, 14=BAT1            
             sys_arr=(${line#???})
             # date
             if [ ${res_w} -gt 1024 ]; then
@@ -34,16 +34,16 @@ while read -r line ; do
             # mem
             coretemp="%{F${cpu_cicon}}${sep_l_left} %{F${cpu_cfore} T1} ${sys_arr[5]}°C"
             # mem
-            mem="%{F${cpu_cicon}}${sep_l_left} %{T2}${icon_mem}%{F${cpu_cfore} T1} ${sys_arr[6]} ${sys_arr[7]}"
+            mem="%{F${cpu_cicon}}${sep_l_left} %{T2}${icon_mem}%{F${cpu_cfore} T1} ${sys_arr[6]}"
             # disk /
-            diskused="%{F${color_sec_b1}}${sep_left}%{F${color_icon} B${color_sec_b1}} %{T2}${icon_hd}%{F- T1} ${sys_arr[8]}%"
+            diskused="%{F${color_sec_b1}}${sep_left}%{F${color_icon} B${color_sec_b1}} %{T2}${icon_hd}%{F- T1} ${sys_arr[7]}%"
             # eth
-            if [ "${sys_arr[9]}" == "down" ]; then
+            if [ "${sys_arr[8]}" == "down" ]; then
                 ethd_v="×"; ethu_v="×";
                 eth_cback=${color_sec_b1}; eth_cicon=${color_disable}; eth_cfore=${color_disable};
                 net_seperator="%{F${eth_cback}} " #"${sep_left}"
             else
-                ethd_v=${sys_arr[9]}K; ethu_v=${sys_arr[10]}K;
+                ethd_v=${sys_arr[8]}K; ethu_v=${sys_arr[9]}K;
                 if [ ${ethd_v:0:-3} -gt ${net_alert} ] || [ ${ethu_v:0:-3} -gt ${net_alert} ]; then
                     eth_cback=${color_net}; eth_cicon=${color_back}; eth_cfore=${color_back};
                 else
@@ -54,12 +54,12 @@ while read -r line ; do
             ethd="${net_seperator}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}" # "%{F${eth_cback}}${sep_left}%{F${eth_cicon} B${eth_cback}} %{T2}${icon_eth}%{T2}${icon_dl}%{F${eth_cfore} T1} ${ethd_v}"
             ethu="%{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}" # "%{F${eth_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${eth_cfore} T1} ${ethu_v}"
             # wlan
-            if [ "${sys_arr[11]}" == "down" ]; then
+            if [ "${sys_arr[10]}" == "down" ]; then
                 wland_v="×"; wlanu_v="×";
                 wlan_cback=${color_sec_b1}; wlan_cicon=${color_disable}; wlan_cfore=${color_disable};
                 net_seperator="%{F${color_icon}}${sep_left}"
             else
-                wland_v=${sys_arr[11]}K; wlanu_v=${sys_arr[12]}K;
+                wland_v=${sys_arr[10]}K; wlanu_v=${sys_arr[11]}K;
                 if [[ ${wland_v:0:-3} -gt ${net_alert} ]] || [[ ${wlanu_v:0:-3} -gt ${net_alert} ]]; then
                     wlan_cback=${color_net}; wlan_cicon=${color_back}; wlan_cfore=${color_back};
                 else
@@ -70,43 +70,43 @@ while read -r line ; do
             wland="%{F${wlan_cicon}}${sep_left}%{F${wlan_cicon} B${wlan_cback}} %{T2} ${icon_wlan}%{T2}${icon_dl}%{F${wlan_cfore} T1} ${wland_v}"
             wlanu="%{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}" # "%{F${wlan_cicon}}${sep_l_left} %{T2}${icon_ul}%{F${wlan_cfore} T1} ${wlanu_v}"
             # Battery 0
-            if [ ! "${sys_arr[13]}" == "off" ]; then
+            if [ ! "${sys_arr[12]}" == "off" ]; then
                 bat0_cfore=${color_batM}
                 bat0_cback=${color_batLoad}
                 bat0_icon=${icon_power}
             else
                 bat0_cfore=${color_disable}
-                if [ ${sys_arr[14]} -gt 50 ]; then
+                if [ ${sys_arr[13]} -gt 50 ]; then
                     bat0_cback=${color_batH}
-                elif [ ${sys_arr[14]} -gt 30 ]; then
+                elif [ ${sys_arr[13]} -gt 30 ]; then
                     bat0_cback=${color_batU}
-                elif [ ${sys_arr[14]} -gt 15 ]; then
+                elif [ ${sys_arr[13]} -gt 15 ]; then
                     bat0_cback=${color_batM}
                 else
                     bat0_cback=${color_batL}
                 fi
                 bat0_icon=${icon_battery}
             fi
-            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}} ${bat0_icon} 0:${sys_arr[14]} "
+            bat0="%{F${bat0_cback}}${sep_left}%{F${bat0_cfore} B${bat0_cback}} ${bat0_icon} 0:${sys_arr[13]} "
             # # Battery 1
-            # if [ ! "${sys_arr[13]}" == "off" ]; then
+            # if [ ! "${sys_arr[12]}" == "off" ]; then
             #     bat1_cback=${color_batLoad}
             #     bat1_cfore=${color_batM}
             #     bat1_icon="" # ${icon_power}
             # else
             #     bat1_cfore=${color_disable}
-            #     if [ ${sys_arr[15]} -gt 50 ]; then
+            #     if [ ${sys_arr[14]} -gt 50 ]; then
             #         bat1_cback=${color_batH}
-            #     elif [ ${sys_arr[15]} -gt 30 ]; then
+            #     elif [ ${sys_arr[14]} -gt 30 ]; then
             #         bat1_cback=${color_batU}
-            #     elif [ ${sys_arr[15]} -gt 15 ]; then
+            #     elif [ ${sys_arr[14]} -gt 15 ]; then
             #         bat1_cback=${color_batM}
             #     else
             #         bat1_cback=${color_batL}
             #     fi
             #     bat1_icon=${icon_battery}
             # fi
-            # bat1="%{B${bat1_cback}}${bat1_icon} 1:${sys_arr[15]} "
+            # bat1="%{B${bat1_cback}}${bat1_icon} 1:${sys_arr[14]} "
             ;;
         VOL*)
             # Volume
