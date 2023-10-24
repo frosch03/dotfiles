@@ -120,7 +120,6 @@ font:
     x: -1
     y: -1
   scale_with_dpi: true
-  use_thin_strokes: true
 
 # Font configuration
 #font:
@@ -223,7 +222,7 @@ schemes:
       focused_match:
         foreground: '#44475a'
         background: '#ffb86c'
-      bar:
+      footer_bar:
         background: '#282a36'
         foreground: '#f8f8f2'
     hints:
@@ -325,7 +324,7 @@ schemes:
       white:   '0x005f87'
 
 # Colors (Tomorrow Night)
-colors: *dark
+colors: *light
   # Default colors
   #primary:
     # background: '#1d1f21'
