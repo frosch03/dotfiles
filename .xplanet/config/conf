@@ -104,7 +104,7 @@ color={28, 82, 110}
 #map=alice_springs.png
 #night_map=alice_springs_night.png
 #mapbounds={-1.2,98.7107,-46.2,169.023}  # lat1, lon1, lat2, lon2
-cloud_map=/home/frosch03/.xplanet/images/clouds.jpg
+cloud_map=/home/frosch03/.xplanet/images/clouds.png
 
 #marker_file=earth
 
