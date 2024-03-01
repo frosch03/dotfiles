@@ -13,7 +13,7 @@ Name=Signal Desktop
 Comment=Chat via Signal
 
 # The executable of the application, possibly with arguments.
-Exec=/bin/sh -c "$HOME/bin/signal-desktop"
+Exec=signal-desktop
 
 # Describes whether this application needs to be run in a terminal or not
 Terminal=false
