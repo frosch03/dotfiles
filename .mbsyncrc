@@ -45,10 +45,10 @@ SyncState *
 # 
 IMAPAccount frosch03
 # Address to connect to
-Host mail.frosch03.de
+Host mail.dipling.cloud
 User frosch03@frosch03.de
 PassCmd "gpg --use-agent --quiet --batch -d /home/frosch03/.private/passwd/frosch03.gpg"
-AuthMechs CRAM-MD5
+# AuthMechs CRAM-MD5
 # To store the password in an encrypted file use PassCmd instead of Pass
 # PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mailpass.gpg"
 #
