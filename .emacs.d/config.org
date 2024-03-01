@@ -1003,19 +1003,6 @@ manually:
 #      (ispell-word)
 #      )
 #  #+END_SRC
-- Disable in Haskell mode
-#  #+BEGIN_SRC emacs-lisp
-#    (dolist (hook '(haskell-mode-hook))
-#          (add-hook hook (lambda () (flyspell-mode -1))))
-#  #+END_SRC
-- Setup keybindings
-#  #+BEGIN_SRC emacs-lisp
-#    (global-set-key (kbd "<f9>")       'fd-switch-dictionary)
-#    (global-set-key (kbd "C-S-<f8>")   'flyspell-mode)
-#    (global-set-key (kbd "C-M-S-<f8>") 'flyspell-buffer)
-#    (global-set-key (kbd "C-<f8>")     'flyspell-check-previous-highlighted-word)
-#    (global-set-key (kbd "M-<f8>")     'flyspell-check-next-highlighted-word)
-#  #+END_SRC
 * Flymake
 #+BEGIN_SRC emacs-lisp
 (use-package flymake

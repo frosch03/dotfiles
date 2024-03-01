@@ -46,14 +46,13 @@ import XMonad.Util.Paste as P               -- testing
 import XMonad.Util.Run                      -- for spawnPipe and hPutStrLn
 import XMonad.Util.WorkspaceCompare         -- custom WS functions filtering NSP
 import XMonad.Util.XSelection
-    
 
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.Rescreen
+import XMonad.Hooks.UrgencyHook
 
 import XMonad.StackSet (swapUp, swapDown, shiftMaster)
 
@@ -858,8 +857,8 @@ myModMask = mod4Mask
 --
 --myEventHook = mempty
 --myEventHook = ewmhDesktopsEventHook
-myEventHook = ewmh
-
+--myEventHook = ewmh
+-- myEventHook = swallowEventHook (className =? "dropdown console" <||> className =? "evince") (return True)
 
 
 -- Display keyboard mappings using zenity
