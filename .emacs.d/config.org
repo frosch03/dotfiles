@@ -24,7 +24,7 @@
     #+END_SRC
   - set the font size
     #+BEGIN_SRC emacs-lisp
-      (set-face-attribute 'default nil :height 100)
+      (set-face-attribute 'default nil :height 120)
     #+END_SRC
   - inhibit splash screen
     #+BEGIN_SRC emacs-lisp
@@ -68,6 +68,10 @@ By default split the buffer horizontal so that there are an upper and a lower bu
   (setq split-width-threshold nil)
 #+end_src
 
+- Do not use the american writist tradition of having two spaces after a sentence
+  #+begin_src emacs-lisp
+    (setq sentence-end-double-space nil)
+  #+end_src
 * Loadpaths
   Add folders to the load-path
   #+BEGIN_SRC emacs-lisp
@@ -273,24 +277,61 @@ Lets write html emails directly out of org mode
 ** ox-latex
    #+BEGIN_SRC emacs-lisp
      (use-package ox-latex
-     :config
-     ;; Org's Latex Exporter configurations sction
-     (setq org-latex-pdf-process
-           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-     (setq org-export-latex-listings 'minted)
-     (add-to-list 'org-latex-packages-alist '("" "minted"))
-     
-     ;; for bigger latex preview in org-mode (C-c C-x C-l)
-     (plist-put org-format-latex-options :scale 1.8)
-     )
+       :config
+       ;; Org's Latex Exporter configurations sction
+       (setq org-latex-pdf-process
+             '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+               "biber --output-directory %o $(basename %f .tex)"
+               "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+               "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+       (setq org-export-latex-listings 'minted)
+       (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+       ;; for bigger latex preview in org-mode (C-c C-x C-l)
+       (plist-put org-format-latex-options :scale 1.8)
+       :custom
+
+       (org-cite-csl-styles-dir '"/home/frosch03/.emacs.d/csl-styles")
+
+       (org-cite-global-bibliography
+        '("/home/frosch03/Dropbox/Zettelkasten/Roam/Literaturnotizen/Literatur.bib"))
+
+       (org-cite-export-processors
+        '((latex  biblatex)                                 ; For humanities
+          (md  . (csl "chicago-fullnote-bibliography.csl")) ; Footnote reliant
+          (odt . (csl "chicago-fullnote-bibliography.csl")) ; Footnote reliant
+          (t   . (csl "ieee-with-url.csl"))))               ; Fallback
+
+
+       :custom-face
+       ;; Have citation link faces look closer to as they were for `org-ref'
+       (org-cite ((t (:foreground "DarkSeaGreen4"))))
+       (org-cite-key ((t (:foreground "forest green" :slant italic))))
+       )
    #+END_SRC
+** citeproc
+#+begin_src emacs-lisp
+  (use-package citeproc
+    :ensure t
+
+    )
+#+end_src
+
 ** ox-md
    #+BEGIN_SRC emacs-lisp
      (use-package ox-md
      )
    #+END_SRC
+
+** Org Contrib Package
+
+#+begin_src emacs-lisp
+  (use-package org-contrib
+    :config
+    (require 'ox-extra)
+    (ox-extras-activate '(ignore-headlines))
+    )
+#+end_src
 ** ox-koma-letter
 # #+BEGIN_SRC emacs-lisp
 #   (use-package ox-koma-letter
@@ -334,7 +375,7 @@ Lets write html emails directly out of org mode
    (add-to-list 'load-path "~/.emacs.d/org-latest/contrib/lisp")
    )
    #+END_SRC
-** org-install
+** COMMENT org-install
    #+BEGIN_SRC emacs-lisp
    (use-package org-install
    :ensure f
@@ -432,13 +473,8 @@ Lets write html emails directly out of org mode
    #+BEGIN_SRC emacs-lisp
      (eval-after-load "org"
        '(progn
-          ;; .txt files aren't in the list initially, but in case that changes
-          ;; in a future version of org, use if to avoid errors
-          (if (assoc "\\.txt\\'" org-file-apps)
-              (setcdr (assoc "\\.txt\\'" org-file-apps) "notepad.exe %s") 
-            (add-to-list 'org-file-apps '("\\.txt\\'" . "notepad.exe %s") t))
           ;; Change .pdf association directly within the alist
-          (setcdr (assoc "\\.pdf\\'" org-file-apps) "mupdf %s")))
+          (setcdr (assoc "\\.pdf\\'" org-file-apps) "zathura %s")))
 
      (setq org-src-fontify-natively t)
 
@@ -941,6 +977,12 @@ manually:
   '(haskell-process-log t))
 )
 #+END_SRC
+
+* Spell Checking
+#+begin_src emacs-lisp
+  (setq ispell-program-name "aspell")
+  (setq ispell-local-dictionary "de_DE")
+#+end_src
 * Flyspell
 - Define flyspell switch language function
 #  #+BEGIN_SRC emacs-lisp
