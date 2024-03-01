@@ -129,13 +129,12 @@ projects =
 
     [ Project   { projectName       = wsOne
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsOne myTmuxTerminal
+                , projectStartHook  = Just $ do spawnOn wsOne "emacsclient -c"
                 }
 
     , Project   { projectName       = wsConf
                 , projectDirectory  = "~/"
-                , projectStartHook  = Just $ do spawnOn wsConf myConfigTerm
-                                                spawnOn wsConf "xclock"
+                , projectStartHook  = Just $ do spawnOn wsConf "xclock"
                                                 spawnOn wsConf "pavucontrol"
                 }
 
