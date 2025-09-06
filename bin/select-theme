@@ -11,6 +11,16 @@ update_value() {
     sed -i "s/^\($TARGET_KEY *$SEPERATOR *\).*/\1$REPLACEMENT_VALUE/" $CONFIG_FILE
 }
 
+update_symlink() {
+    DIR_NAME=$(dirname $1)
+    LINK_NAME=$(basename $1)
+    TO_FILE=$2
+
+    pushd $DIR_NAME
+    ln -sf $TO_FILE $LINK_NAME
+    popd
+}
+
 update_colsep_value() {
     update_value ":" $1 $2 $3
 }
