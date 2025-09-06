@@ -69,7 +69,8 @@ case  "${1}" in
       update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minuteColor' "rgba:00\/12\/1f\/72"
 
       update_eqsignsep_value ~/.config/gtk-3.0/settings.ini 'gtk-theme-name' "Arc"
-      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*light"
+      update_symlink ~/localStorage/dotfiles/.config/alacritty/alacritty.toml alacritty.toml.light
+      update_symlink ~/.config/alacritty/alacritty.toml ~/localStorage/dotfiles/.config/alacritty/alacritty.toml
       emacsclient --eval "(progn (disable-theme 'dracula) (enable-theme 'leuven))" --quiet -no-wait --suppress-output -a true
     ;;
 
@@ -82,7 +83,8 @@ case  "${1}" in
       update_colspacesep_value ~/localStorage/dotfiles/.Xresources 'XClock\*minuteColor' "rgba:00\/82\/9f\/72"
 
       update_eqsignsep_value ~/.config/gtk-3.0/settings.ini "gtk-theme-name" "Arc-Dark"
-      update_alacritty ~/localStorage/dotfiles/.config/alacritty/alacritty.yml 'colors' "*dark"
+      update_symlink ~/localStorage/dotfiles/.config/alacritty/alacritty.toml alacritty.toml.dark
+      update_symlink ~/.config/alacritty/alacritty.toml ~/localStorage/dotfiles/.config/alacritty/alacritty.toml
       emacsclient --eval "(progn (disable-theme 'leuven) (enable-theme 'dracula))" --quiet -no-wait --suppress-output -a true
     ;;
 
