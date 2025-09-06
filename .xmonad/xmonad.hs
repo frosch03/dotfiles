@@ -97,7 +97,7 @@ floatClass  = []
 floatTitle  = []
 hacking     = ["Happy Hacking"]
 configuring = ["xclock", "pavucontrol", "configTerminal", "Pavucontrol"]
-webApps     = ["firefox", "Navigator", "Google-chrome", "Chromium"]
+webApps     = ["brave", "firefox", "Navigator", "Google-chrome", "Chromium"]
 comApps     = ["Pidgin", "jabber", "Jabber", "Empathy"]
 mailApps    = ["OUTLOOK.EXE", "Wine", "mutt", "mail", "evolution", "Evolution"]
 gimpApp     = ["Gimp", "gimp"]
@@ -747,10 +747,11 @@ xK_FroggersPause = 0x1008ff12
 myTerminal     = "/home/frosch03/bin/terminal"
 myTmuxTerminal = "/home/frosch03/bin/terminal -e tmux attach-session -t frog"
 myConfigTerm   = "/home/frosch03/bin/terminal --class configTerminal -e tmux attach-session -t frog"
+myBrave        = "brave"
 myFirefox      = "firefox"
 myChrome       = "chromium"
 myEditor       = "emacsclient -c"
-myBrowser      = myFirefox
+myBrowser      = myBrave
 
 jiraCommand         = "dex $HOME/.local/share/applications/jira.desktop"
 jiraInfix           = "jira"
@@ -788,7 +789,7 @@ scratchpads =
     ,   (NS "youtube"  youtubeCommand    isYoutube    defaultFloating)
     ,   (NS "whatsapp" whatsappCommand   isWhatsapp   defaultFloating)
     ,   (NS "capture"  orgCaptureCommand isOrgCapture defaultFloating)
-    ,   (NS "console"  orgConsoleCommand isOrgConsole defaultFloating)
+    ,   (NS "console"  orgConsoleCommand isOrgConsole (customFloating $ W.RationalRect (2/32) (0/32) (28/32) (28/32)))
     ] 
 
 -- -- My additional keybindings
