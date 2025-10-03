@@ -150,6 +150,6 @@ eval $(dircolors ~/.LS_COLORS)
 alias ls="ls --color=auto -F"
 alias emc="emacsclient -c"
 alias pd="pushd"
-alias cd="echo 'use pd=pushd, dirs and popd'"
+# alias cd="echo 'use pd=pushd, dirs and popd'"
 
 source /home/frosch03/.config/broot/launcher/bash/br
