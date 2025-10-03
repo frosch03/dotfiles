@@ -483,9 +483,37 @@ Lets write html emails directly out of org mode
 ** org publish
 #+BEGIN_SRC emacs-lisp
   (require 'ox-html)
-  ; (require 'ox-rss)
+  (require 'ox-rss)
   (require 'htmlize)
   (require 'ox-publish)
+
+  (defun sr/format-description (file)
+    "Format publication date. Use (org-publish-find-property file :title project) to add other properties
+                      This works with some specific properties and not all custom property so the following hack."
+    (concat "" (with-temp-buffer 
+                 (insert-file-contents file)
+                 (cdr
+                  (assoc "DESCRIPTION" 
+                         (org-element-map
+                             (org-element-parse-buffer 'element) 'keyword
+                           (lambda (keyword) (cons (org-element-property :key keyword)
+                                                   (org-element-property :value keyword)))))))))
+
+  (defun my-sitemap-format-entry (entry style project)
+    "Format for sitemap ENTRY, as a string.
+                        ENTRY is a file name.
+                        STYLE is the style of the sitemap.
+                        PROJECT is the current project."
+
+    (format "[[file:%s][%s]]
+                             ,#+HTML: <p class='description'>%s</p>
+                             ,#+HTML: <p class='date'>%s</p>"
+            entry
+            (org-publish-find-title entry project)
+            (sr/format-description entry)
+            (format-time-string "%Y-%m-%d" (org-publish-find-date entry project))
+            ))
+
   (setq org-publish-project-alist
         '(
           ("Blog (deploy locally)"
