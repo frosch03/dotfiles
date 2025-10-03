@@ -5,8 +5,8 @@ After=graphical.target
 [Service]
 Type=forking
 Environment=DISPLAY=:0
-ExecStart=/home/frosch03/.nix-profile/bin/xcape -e "Hyper_L=Tab;Hyper_R=backslash"
-Restart=always
+ExecStart=/bin/sh -c 'xcape -e "Hyper_L=Tab;Hyper_R=backslash"'
+# Restart=always
 RestartSec=1
 
 [Install]
