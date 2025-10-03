@@ -85,6 +85,7 @@ By default split the buffer horizontal so that there are an upper and a lower bu
     (add-to-list 'load-path "~/.emacs.d/nginx-mode/")
     (add-to-list 'load-path "~/.nix-profile/share/emacs/site-lisp/mu4e/")
     (add-to-list 'load-path "~/.emacs.d/windows-mode/")
+    (add-to-list 'load-path "~/.emacs.d/tern/emacs/")
   #+END_SRC
 
 * Key-Bindings
@@ -516,17 +517,17 @@ Lets write html emails directly out of org mode
 
   (setq org-publish-project-alist
         '(
-          ("Blog (deploy locally)"
-           :components ("local-blog-posts" "local-blog-static" "local-blog-img" "local-blog-data"))
+          ("deploy blog local"
+           :components ("local-blog-posts" "local-blog-static" "local-blog-images" "local-blog-data"))
 
-          ("Blog"
-           :components ("blog-posts" "blog-static" "blog-img" "blog-data"))
+          ("deploy blog online"
+           :components ("blog-posts" "blog-static" "blog-images" "blog-data"))
 
           ("blog-posts"
-           :base-directory "~/Documents/Blog/"
+           :base-directory "~/Dropbox/Blog/posts/"
            :base-extension "org"
            :html-extension "html"
-           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/"
+           :publishing-directory "/ssh:frosch03@dipling.cloud:/home/docker/frosch03_nginx/data/posts/"
            :publishing-function org-html-publish-to-html
            :recursive t
            :section-numbers nil
@@ -535,75 +536,76 @@ Lets write html emails directly out of org mode
            :with-latex t
            :html-head-extra
            " <link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
-             <script src=\"static/respond.js\"></script>
-             <link href=\"static/style.css\" rel=\"stylesheet\">
-             <link href=\"static/theme.css\" rel=\"stylesheet\">"
+                                         <script src=\"static/respond.js\"></script>
+                                         <link href=\"static/style.css\" rel=\"stylesheet\">
+                                         <link href=\"static/theme.css\" rel=\"stylesheet\">"
            :headline-levels 4             ; Just the default for this project.
            :auto-sitemap t
-           :sitemap-title "Archive"
-           :sitemap-filename "archive.org"
-           :sitemap-soft-files anti-chronologically
+           :sitemap-title "frosch03.de"
+           :sitemap-filename "index.org"
+           :sitemap-sort-files anti-chronologically
            :sitemap-style list
-           :makeindex t
+           :sitemap-format-entry my-sitemap-format-entry 
            :html-preamble "
-             <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
-               <ul class=\"nav navbar-nav\">
-                 <li class=\"active page\"><a href=\"https://frosch03.de/posts\">Home</a></li>
-                 <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
-                 <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
-               </ul>
-             </div>"
+                                         <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
+                                           <ul class=\"nav navbar-nav\">
+                                             <li class=\"active page\"><a href=\"https://frosch03.de/\">Home</a></li>
+                                             <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+                                             <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
+                                           </ul>
+                                         </div>"
            :html-postamble "<a href=index.html>Other posts</a>
-                            <div id=\"disqus_thread\"></div>
-                            <script>
-                                /**
-                                ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-                                ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-                                /*
-                                var disqus_config = function () {
-                                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-                                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                                };
-                                ,*/
-                                (function() { // DON'T EDIT BELOW THIS LINE
-                                var d = document, s = d.createElement('script');
-                                s.src = 'https://frosch03.disqus.com/embed.js';
-                                s.setAttribute('data-timestamp', +new Date());
-                                (d.head || d.body).appendChild(s);
-                                })();
-                            </script>
-                            <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
+                                                        <div id=\"disqus_thread\"></div>
+                                                        <script>
+                                                            /**
+                                                            ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                                                            ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+                                                            /*
+                                                            var disqus_config = function () {
+                                                            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                                                            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                                                            };
+                                                            ,*/
+                                                            (function() { // DON'T EDIT BELOW THIS LINE
+                                                            var d = document, s = d.createElement('script');
+                                                            s.src = 'https://frosch03.disqus.com/embed.js';
+                                                            s.setAttribute('data-timestamp', +new Date());
+                                                            (d.head || d.body).appendChild(s);
+                                                            })();
+                                                        </script>
+                                                        <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
            )
 
           ("blog-static"
-           :base-directory "~/Documents/Blog/static/"
+           :base-directory "~/Dropbox/Blog/static/"
            :base-extension "css\\|js"
-           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/static/"
+           :publishing-directory "/ssh:frosch03@dipling.cloud:/home/docker/frosch03_nginx/data/posts/static/"
            :recursive t
            :publishing-function org-publish-attachment
            )
 
-          ("blog-img"
-           :base-directory "~/Documents/Blog/img/"
+          ("blog-images"
+           :base-directory "~/Dropbox/Blog/images/"
            :base-extension "png\\|jpg\\|gif\\|svg"
-           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/img/"
+           :publishing-directory "/ssh:frosch03@dipling.cloud:/home/docker/frosch03_nginx/data/posts/images/"
            :recursive t
            :publishing-function org-publish-attachment
            )
 
           ("blog-data"
-           :base-directory "~/Documents/Blog/data/"
+           :base-directory "~/Dropbox/Blog/data/"
            :base-extension "pdf"
-           :publishing-directory "/ssh:frosch03@frosch03.de:/home/frosch03/frosch03.de/www/posts/data/"
+           :publishing-directory "/ssh:frosch03@dipling.cloud:/home/docker/frosch03_nginx/data/posts/data/"
            :recursive t
            :publishing-function org-publish-attachment
            )
 
+
           ("local-blog-posts"
-           :base-directory "~/Documents/Blog/"
+           :base-directory "~/Dropbox/Blog/posts/"
            :base-extension "org"
            :html-extension "html"
-           :publishing-directory "~/Documents/Blog/local/"
+           :publishing-directory "~/Documents/local-blog/"
            :publishing-function org-html-publish-to-html
            :recursive t
            :section-numbers nil
@@ -612,73 +614,73 @@ Lets write html emails directly out of org mode
            :with-latex t
            :html-head-extra
            " <link href=\"https://fonts.googleapis.com/css?family=Jura\" rel=\"stylesheet\" type=\"text/css\">
-             <script src=\"static/respond.js\"></script>
-             <link href=\"static/style.css\" rel=\"stylesheet\">
-             <link href=\"static/theme.css\" rel=\"stylesheet\">"
+                                         <script src=\"static/respond.js\"></script>
+                                         <link href=\"static/style.css\" rel=\"stylesheet\">
+                                         <link href=\"static/theme.css\" rel=\"stylesheet\">"
            :headline-levels 4
            :auto-sitemap t
-           :sitemap-title "Archive"
-           :sitemap-filename "archive.org"
-           :sitemap-soft-files anti-chronologically
+           :sitemap-title "frosch03.de"
+           :sitemap-filename "index.org"
+           :sitemap-sort-files anti-chronologically
            :sitemap-style list
-           :makeindex t
+           :sitemap-format-entry my-sitemap-format-entry 
            :html-preamble "
-             <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
-               <ul class=\"nav navbar-nav\">
-                 <li class=\"active page\"><a href=\"https://frosch03.de/blog\">frosch03.de/blog</a></li>
-                 <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
-                 <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
-               </ul>
-             </div>"
+                                         <div class=\"navbar-header\" id=\"bs-example-navbar-collapse-1\">
+                                           <ul class=\"nav navbar-nav\">
+                                             <li class=\"active page\"><a href=\"file:///home/frosch03/Documents/local-blog/index.html\">Home</a></li>
+                                             <li class=\"active\"><a href=\"https://github.com/frosch03\">Github</a></li>
+                                             <li class=\"active\"><a href=\"https://social.frosch03.de/@frosch03\">Mastodon</a></li>
+                                           </ul>
+                                         </div>"
            :html-postamble "<a href=index.html>Other posts</a>
-                            <div id=\"disqus_thread\"></div>
-                            <script>
-                                /**
-                                ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-                                ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-                                /*
-                                var disqus_config = function () {
-                                this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-                                this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-                                };
-                                ,*/
-                                (function() { // DON'T EDIT BELOW THIS LINE
-                                var d = document, s = d.createElement('script');
-                                s.src = 'https://frosch03.disqus.com/embed.js';
-                                s.setAttribute('data-timestamp', +new Date());
-                                (d.head || d.body).appendChild(s);
-                                })();
-                            </script>
-                            <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
+                                                        <div id=\"disqus_thread\"></div>
+                                                        <script>
+                                                            /**
+                                                            ,*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                                                            ,*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+                                                            /*
+                                                            var disqus_config = function () {
+                                                            this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+                                                            this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                                                            };
+                                                            ,*/
+                                                            (function() { // DON'T EDIT BELOW THIS LINE
+                                                            var d = document, s = d.createElement('script');
+                                                            s.src = 'https://frosch03.disqus.com/embed.js';
+                                                            s.setAttribute('data-timestamp', +new Date());
+                                                            (d.head || d.body).appendChild(s);
+                                                            })();
+                                                        </script>
+                                                        <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript> "
            )
 
-          ("local-blog-img"
-           :base-directory "~/Documents/Blog/img/"
+          ("local-blog-images"
+           :base-directory "~/Dropbox/Blog/images/"
            :base-extension "png\\|jpg\\|gif\\|svg"
-           :publishing-directory "~/Documents/Blog/local/img/"
+           :publishing-directory "~/Documents/local-blog/images/"
            :recursive t
            :publishing-function org-publish-attachment
            )
 
           ("local-blog-data"
-           :base-directory "~/Documents/Blog/data/"
+           :base-directory "~/Dropbox/Blog/data/"
            :base-extension "pdf"
-           :publishing-directory "~/Documents/Blog/local/data/"
+           :publishing-directory "~/Documents/local-blog/data/"
            :recursive t
            :publishing-function org-publish-attachment
            )
 
           ("local-blog-static"
-           :base-directory "~/Documents/Blog/static/"
+           :base-directory "~/Dropbox/Blog/static/"
            :base-extension "css\\|js"
-           :publishing-directory "~/Documents/Blog/local/static/"
+           :publishing-directory "~/Documents/local-blog/static/"
            :recursive t
            :publishing-function org-publish-attachment
            )
-
           )
         )
 #+END_SRC
+
 
 * mu4e
 #+BEGIN_SRC emacs-lisp
