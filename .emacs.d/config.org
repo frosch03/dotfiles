@@ -118,7 +118,7 @@ By default split the buffer horizontal so that there are an upper and a lower bu
    #+BEGIN_SRC emacs-lisp
      (setq org-agenda-files
            '("~/Org/organizer.org"
-             ;; "~/Dropbox/Zettelkasten/Roam/Literaturnotizen.org"
+             ;; "~/Dropbox/Org-Zettelkasten/Roam/Literaturnotizen.org"
              ))
      ;; (setq org-agenda-file-regexp "\\`[^.].*\\.org\\'")
      (setq org-agenda-file-regexp "[0-9]\\{14\\}-[^.]*\\.org$\\|[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.org$")
@@ -193,7 +193,7 @@ Definition of a custom agenda view for Zettelkasten entries:
 #+begin_src emacs-lisp :results silent
   (setq org-agenda-custom-commands
         '(("z" "Zettelkasten todos" alltodo ""
-           ((org-agenda-files '("~/Dropbox/Zettelkasten/Notizen.org"))
+           ((org-agenda-files '("~/Dropbox/Org-Zettelkasten/Notizen.org"))
             (org-agenda-sorting-strategy '(time-up))))))
 #+end_src
 
@@ -220,7 +220,7 @@ Definition of a custom agenda view for Zettelkasten entries:
                                            "* TODO %a lesen\nSCHEDULED:%t\n\n%i" :immediate-finish t)
 
                                      ("z" "Zettelkasten Workflow")
-                                     ("zl" "Link" entry (file "~/Dropbox/Zettelkasten/Notizen.org")
+                                     ("zl" "Link" entry (file "~/Dropbox/Org-Zettelkasten/Notizen.org")
                                            "* TODO %a %?\n %T\n %i")
                                      ;; ("w" "Url [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]]")
                                      ;; ("W" "Url with Text [inbox]" entry (file "~/Org/inbox.org") "* TODO %?[[%:link][%:description]] \n  %:initial")
@@ -294,7 +294,7 @@ Lets write html emails directly out of org mode
        (org-cite-csl-styles-dir '"/home/frosch03/.emacs.d/csl-styles")
 
        (org-cite-global-bibliography
-        '("/home/frosch03/Dropbox/Zettelkasten/Roam/Literaturnotizen/Literatur.bib"))
+        '("/home/frosch03/Dropbox/Org-Zettelkasten/Roam/Literaturnotizen/Literatur.bib"))
 
        (org-cite-export-processors
         '((latex  biblatex)                                 ; For humanities
@@ -1669,7 +1669,7 @@ Configuration of ebib together with roam within my dropbox folder
     (global-set-key "\C-cne" 'ebib)
     :custom
     (ebib-preload-bib-files '("Literatur.bib"))
-    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/Zettelkasten/Roam/Literaturnotizen/"))
+    (ebib-bib-search-dirs '("/home/frosch03/Dropbox/Org-Zettelkasten/Roam/Literaturnotizen/"))
     ;; (global-set-key "\C-cne" '(ebib-open-bibtex-file "~/Org/Roam/Literatur.bib"))
     )
 #+end_src
