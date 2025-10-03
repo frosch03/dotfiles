@@ -1976,4 +1976,26 @@ In order to wrap on a defined position while using visual-line-mode, visual-fill
     (use-package visual-fill-column
       :ensure f)
 #+end_src
+* Python Configuration
+** elpy
+#+begin_src emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init
+    (advice-add 'python-mode :before 'elpy-enable))
+#+end_src
 
+** poetry
+#+begin_src emacs-lisp
+  (use-package poetry
+    :ensure t
+    :init
+    (add-hook 'elpy-mode-hook 'poetry-tracking-mode))
+#+end_src
+
+* ternjs
+- needs auto-complete.el
+#+begin_src emacs-lisp
+  (autoload 'tern-mode "tern.el" nil t)
+  (add-hook 'js-mode-hook (lambda () (tern-mode t)))
+#+end_src
