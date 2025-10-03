@@ -4,3 +4,6 @@
 *.o
 *xmonad*linux
 *.errors
+.emacs.d/*.tex
+.emacs.d/*.pdf
+.emacs.d/*.bbl
