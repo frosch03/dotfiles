@@ -1,6 +1,6 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, unstable, ... }:
 let 
-  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  # unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
 in
 
 {
