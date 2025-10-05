@@ -20,7 +20,7 @@ in
         xbindkeys
         lxappearance
         dex
-        lxde.lxsession
+        lxsession
         
         tmux
         rxvt-unicode
