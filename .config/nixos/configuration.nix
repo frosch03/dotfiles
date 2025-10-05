@@ -378,7 +378,7 @@ in
     local = {
       user = "frosch03";
       repository = "rclone:frognas:/share/CE_CACHEDEV1_DATA/Backups/v2308";
-      passwordFile = "/etc/nixos/restic-password";
+      passwordFile = "/etc/nixos/static/secrets/restic-password";
       paths = [ "/home/frosch03/backupStorage" ];
       # extraBackupArgs = [ "--exclude-file=/home/frosch03/backupStorage/Org/org-roam.bak" ];
       timerConfig = {

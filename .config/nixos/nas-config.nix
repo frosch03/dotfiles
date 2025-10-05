@@ -17,7 +17,7 @@ let
         # this line prevents hanging on network split
         automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
 
-      in ["${automount_opts},user,_netdev,uid=1000,gid=100,credentials=/etc/nixos/smb-secrets"];
+      in ["${automount_opts},user,_netdev,uid=1000,gid=100,credentials=/etc/nixos/static/secrets/frogNAS"];
     };
   };
   box-mounts = [
@@ -33,7 +33,7 @@ let
         # this line prevents hanging on network split
         automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
 
-      in ["${automount_opts},user,_netdev,dir_mode=0755,file_mode=0644,uid=1000,gid=100,credentials=/etc/nixos/smb-box-secrets"];
+      in ["${automount_opts},user,_netdev,dir_mode=0755,file_mode=0644,uid=1000,gid=100,credentials=/etc/nixos/static/secrets/the-box"];
     };
   };
   
