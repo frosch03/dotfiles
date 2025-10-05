@@ -2,10 +2,15 @@
   description = "frosch03 nixos configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-25.05";
   };
 
   outputs = { self, nixpkgs }: {
-    nixosConfigurations.v2309.modules = [ ./configuration.nix ];
+    nixosConfigurations.v2309 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [ 
+        ./configuration.nix
+      ];
+    };
   };
 }
