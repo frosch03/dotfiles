@@ -239,7 +239,7 @@ in
     kitty                                                                            
     libnotify                                                                        
     networkmanagerapplet                                                             
-    rofi-wayland                                                                     
+    rofi                                                                     
     swww                                                                             
     swaylock
     unstable.ashell
