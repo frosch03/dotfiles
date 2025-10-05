@@ -7,7 +7,8 @@ in
 
   runCommand name {
 
-    src = ./binary-files/PragmataPro0.829-ptikme.zip;
+    # src = ./static/binary-files/PragmataPro0.829-ptikme.zip;
+    src = /etc/nixos/static/binary-files/PragmataPro0.829-ptikme.zip;
 
     buildInputs = [ unzip ];
     } ''
