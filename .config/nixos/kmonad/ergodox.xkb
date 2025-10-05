@@ -1,0 +1,47 @@
+(defcfg
+  input (device-file "/dev/input/by-id/usb-ZSA_Ergodox_EZ_0-event-kbd")
+  output (uinput-sink "Frogs ErgodoxEZ KMonad output")
+  cmp-seq ralt
+  fallthrough true
+  allow-cmd false)
+
+
+(defsrc
+  =    1    2    3    4    5    `    '    6    7    8    9    0    bspc
+  tab  q    w    e    r    t              y    u    i    o    p    \
+       a    s    d    f    g              h    j    k    l    ;    ret
+  lsft z    x    c    v    b              n    m    ,    .    /    rsft
+  lctl [    left rght lalt                     ralt up   down ]    rctl
+                           ins            del
+                      lmet home           pgup rmet
+                           end            pgdn
+)
+
+#|
+(deflayer 
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _              _    _    _    _    _    _
+       _    _    _    _    _              _    _    _    _    _    _
+  _    _    _    _    _    _              _    _    _    _    _    _
+  _    _    _    _    _                        _    _    _    _    _
+                           _              _
+                      _    _              _    _
+                           _              _
+)
+|#
+
+(defalias
+  lhp (tap-next tab lmet)
+  rhp (tap-next \ rmet)
+)
+
+(deflayer default
+  =    1    2    3    4    5    `    '    6    7    8    9    0    bspc
+  @lhp q    w    e    r    t              y    u    i    o    p    @rhp
+       a    s    d    f    g              h    j    k    l    ;    ret
+  lsft z    x    c    v    b              n    m    ,    .    /    rsft
+  lctl [    left rght lalt                     ralt up   down ]    rctl
+                           ins            del
+                      lmet home           pgup rmet
+                           end            pgdn
+)
