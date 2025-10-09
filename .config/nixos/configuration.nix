@@ -242,6 +242,7 @@ in
     rofi                                                                     
     swww                                                                             
     swaylock
+    swayidle
     unstable.ashell
     
   ];

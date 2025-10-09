@@ -1,0 +1,3 @@
+# idle
+swayidle -w timeout 600 "swaylock  --color 000000" before-sleep "swaylock --color 000000" & # lock screen after 10 min of idle
+swayidle -w timeout 2400 "systemctl hibernate" &                                            # hibernate after 20 mins of idle
