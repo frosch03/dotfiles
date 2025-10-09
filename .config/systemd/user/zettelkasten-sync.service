@@ -1,0 +1,13 @@
+[Unit]
+Description=Zettelkasten Sync
+After=graphical.target
+
+[Service]
+Type=forking
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/env bash -c 'unison -ui text zettelkastensync &'
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=default.target
