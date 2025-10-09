@@ -244,6 +244,7 @@ in
     swaylock
     swayidle
     unstable.ashell
+    wpaperd
     
   ];
 
