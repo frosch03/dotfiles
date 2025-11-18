@@ -119,7 +119,8 @@ in
         # SDR
         rtl-sdr
         gqrx
-        wsjtx
+        unstable.wsjtx
+        unstable.gridtracker
     
         # steam
         steam
