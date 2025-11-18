@@ -194,5 +194,6 @@ in
       };
     };
 
-    programs.thunderbird.enable = true;
+    programs.thunderbird.enable = false;
+    programs.evolution.enable = true;
 }
