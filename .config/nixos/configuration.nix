@@ -247,6 +247,7 @@ in
     unstable.ashell
     wpaperd
     wireplumber
+    grimblast
     
   ];
 
