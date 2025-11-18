@@ -107,6 +107,8 @@ in
         gimp
         geeqie
 
+        freemind
+
         # Photo
         rawtherapee
         darktable
