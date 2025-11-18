@@ -149,7 +149,8 @@ in
   services.printing.drivers = [ pkgs.hplip ];
 
   # Enable sound.
-  services.pulseaudio.enable = false;
+  # services.pulseaudio.enable = false;
+  services.pipewire.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
@@ -245,6 +246,7 @@ in
     swayidle
     unstable.ashell
     wpaperd
+    wireplumber
     
   ];
 
